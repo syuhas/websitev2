@@ -1,0 +1,199 @@
+::ng-deep div.mat-drawer-inner-container {
+  overflow: visible !important;
+}
+
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 250px;
+}
+
+.mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #3b4850;
+  height: 100px;
+  background-image: url("/assets/home-images/techy2.png");
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: top;
+}
+
+.mat-sidenav {
+  background: #3b4850;
+  padding-top: 20px;
+  background-image: url("/assets/home-images/techy2.png");
+  background-repeat: no-repeat;
+}
+
+.mat-sidenav-content {
+  height: 100vh;
+}
+
+.mat-mdc-list-base {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100vh !important;
+  align-items: flex-start !important;
+  margin-top: 2rem;
+  & a {
+    margin-bottom: 4vh;
+  }
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 70%;
+  margin: 0 auto;
+  position: relative;
+  & p {
+    opacity: 60%;
+    padding-top: 1rem;
+    color: white !important;
+    font-size: x-large;
+    margin-left: 1rem;
+  }
+}
+
+.active {
+  position: relative;
+  z-index: 1;
+  transform: translateX(2px);
+  background: #fafafa !important;
+  color: black !important;
+  border-radius: 0% !important;
+  opacity: 100% !important;
+  border-top: 1px black solid !important;
+  border-bottom: .25px black solid !important;
+  & p {
+    color: black !important;
+    opacity: 100% !important;
+    font-style: italic;
+  }
+  .custom-size-mat-icon {
+    color: black !important;  
+  }
+}
+
+
+.custom-size-mat-icon {
+  transform: scale(1.5);
+  color: white;
+}
+
+.mat-expansion-panel {
+  width: 100%;
+  box-shadow: none !important;
+}
+.mat-expansion-panel-header {
+  background: #3b4850;
+  color: white;
+  font-size: x-large;
+  font-style: italic;
+  &:hover {
+    background: #3b4850 !important;
+    color: white;
+  }
+}
+
+#header {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  align-items: center;
+  width: 95%;
+  margin: 0 auto;
+  font-style: italic;
+  letter-spacing: 8px;
+  font-family: Roboto;
+}
+
+#header p {
+  opacity: 75%;
+  padding-top: 1rem;
+  transform: skewX(-10deg);
+}
+
+#header-links {
+  height: 100px;
+  display: flex;
+  align-items: center;
+}
+
+#header-links img {
+  object-fit: contain;
+  height: 40%;
+  width: auto;
+  margin: 0 10px;
+  background-color: white;
+  border-radius: 30%;
+  border: black 3px solid;
+}
+
+
+
+
+
+// .nav-link p {
+//   opacity: 60%;
+//   padding-top: 1rem;
+//   color: white !important;
+//   font-size: x-large;
+//   margin-left: 1rem;
+// }
+
+// .sub-links {
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;
+//   width: 100%;
+//   background: bottom;
+// }
+
+// .sub-link {
+//   display: flex;
+//   flex-direction: row;
+//   justify-content: flex-end;
+//   align-items: center;
+//   width: 70%;
+//   margin: 0 auto;
+//   position: relative;
+// }
+
+// .sub-link p {
+//   display: flex;
+//   justify-content: center;
+// }
+
+
+// .inactive:hover {
+//   background: rgba(0, 0, 0, 0.267) !important;
+//   & p {
+//     color: white !important;
+//     opacity: 100% !important;
+//   }
+// }
+
+
+
+
+
+
+
+
+
+// ::ng-deep .mat-mdc-list-item.active:focus {
+//   visibility: hidden;
+// }
+
+

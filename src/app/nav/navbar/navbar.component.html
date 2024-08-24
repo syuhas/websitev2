@@ -1,0 +1,25 @@
+
+<mat-sidenav-container class="nav-container">
+    <mat-sidenav mode="side" opened>
+      
+      <div class="logo"> <img src="/assets/home-images/DSTrans6.png" alt="DigitalSteve"></div>
+
+
+      <button mat-button routerLink="/home" routerLinkActive="active" class="mainButton">
+        <mat-icon mat-list-icon class="custom-icon">accessibility</mat-icon>
+        Home
+      </button>
+      
+      <button mat-button routerLink="/resume" routerLinkActive="active" class="mainButton">
+        <mat-icon mat-list-icon class="custom-icon">accessibility</mat-icon>
+        Resume
+      </button>
+      
+      <button mat-button routerLink="/projects" routerLinkActive="active" class="mainButton">
+        <mat-icon mat-list-icon class="custom-icon">accessibility</mat-icon>
+        Projects
+      </button>
+
+    </mat-sidenav>
+    <mat-sidenav-content><router-outlet></router-outlet></mat-sidenav-content>
+</mat-sidenav-container>

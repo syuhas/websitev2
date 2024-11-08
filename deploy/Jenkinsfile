@@ -1,0 +1,118 @@
+pipeline {
+    agent any
+    environment {
+        AWS_ACCOUNT_ID = "${ params.Account }"
+        ROLE_NAME = 'jenkinsAdminXacnt'
+    }
+
+    stages {
+        stage('SetEnvVariables') {
+            steps {
+                sh 'echo "Setting Environment Variables"'
+                script {
+                    if (AWS_ACCOUNT_ID == '551796573889') {
+                        env.TF_VAR_aws_security_group = 'sg-00d9ca388301c93a9'
+                        env.TF_VAR_aws_subnet_ids = '["subnet-0823df6c43b1a0ea4", "subnet-057dcb202796ed034"]'
+                        env.TF_VAR_aws_vpc_id = 'vpc-0fb8abe9d3c477bd0'
+                        env.TF_VAR_aws_tf_bucket = 'terraform-lock-bucket'
+                        env.TF_VAR_aws_ssl_certificate_arn = 'arn:aws:acm:us-east-1:551796573889:certificate/a96258a9-2996-4186-b5a8-815bf9c5b3e1'
+                        env.TF_VAR_aws_route53_zone_id = 'Z02299283BLAIJGG9JHMK'
+                        env.TF_VAR_aws_domain = 'digitalsteve.net'
+                        env.TF_VAR_aws_subdomain = "${ params.Subdomain }"
+                    } else if (AWS_ACCOUNT_ID == '061039789243') {
+                        env.TF_VAR_aws_security_group = 'sg-037b895bfb55fcedd'
+                        env.TF_VAR_aws_subnet_ids = '["subnet-0779315ccd9641510", "subnet-0e8054e0ff2fef1d8"]'
+                        env.TF_VAR_aws_vpc_id = 'vpc-04ad271ca687b3562'
+                        env.TF_VAR_aws_tf_bucket = 'terraform-lock-bucket-dev'
+                        env.TF_VAR_aws_ssl_certificate_arn = 'arn:aws:acm:us-east-1:061039789243:certificate/0f0c9829-728a-48d3-aa01-afd1637ad61a'
+                        env.TF_VAR_aws_route53_zone_id = 'Z067106723AVOCD6QFWVC'
+                        env.TF_VAR_aws_domain = 'dev.digitalsteve.net'
+                        env.TF_VAR_aws_subdomain = "${ params.Subdomain }"
+                    }
+                }
+                sh 'echo "Environment Variables Set"'
+            }
+        }
+        stage('AssumeRole') {
+            steps {
+                script {
+                    def assumeRoleCmd = """
+                        aws sts assume-role --role-arn arn:aws:iam::${AWS_ACCOUNT_ID}:role/jenkinsAdminXacnt --role-session-name jenkinsXacntSession
+                    """
+                    def assumeRoleOutput = sh(script: assumeRoleCmd, returnStdout: true).trim()
+                    def creds = readJSON(text: assumeRoleOutput).Credentials
+
+                    env.AWS_ACCESS_KEY_ID = creds.AccessKeyId
+                    env.AWS_SECRET_ACCESS_KEY = creds.SecretAccessKey
+                    env.AWS_SESSION_TOKEN = creds.SessionToken
+                }
+            }
+        }
+        stage('DestroyInfrastructure') {
+            when {
+                expression { params.Options == 'Destroy' }
+            }
+            steps {
+                dir('deploy') {
+                    sh 'terraform init'
+                    sh 'terraform destroy -auto-approve'
+                }
+            }
+        }
+
+        stage('TerraformBackend') {
+            steps {
+                dir('deploy') {
+                    sh """
+                        terraform init -reconfigure \
+                            -backend-config="bucket=${env.TF_VAR_aws_tf_bucket}" \
+                            -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
+                            -backend-config="region=us-east-1" \
+                            -backend-config="dynamodb_table=terraform-lock-table"
+                    """
+                }
+            }
+        }
+
+        stage('DeployInfrastructure') {
+            when {
+                expression { params.Options == 'Deploy' }
+            }
+            steps {
+                    dir('deploy') {
+                        // sh 'terraform init'
+                        sh 'terraform plan -out=plan.tfplan'
+                        sh 'terraform apply -auto-approve plan.tfplan'
+                        script {
+                            env.INSTANCE_ID = sh(script: 'terraform output -raw instance_id', returnStdout: true).trim()
+                            env.PUBLIC_IP = sh(script: 'terraform output -raw instance_public_ip', returnStdout: true).trim()
+                            env.PUBLIC_DNS = sh(script: 'terraform output -raw instance_public_dns', returnStdout: true).trim()
+                            env.INSTANCE_NAME = sh(script: 'terraform output -raw instance_name', returnStdout: true).trim()
+                        }
+                        sh 'echo "Instance ID: ${INSTANCE_ID}"'
+                        sh 'echo "Public IP: ${PUBLIC_IP}"'
+                        sh 'echo "Public DNS: ${PUBLIC_DNS}"'
+                        sh 'echo "Instance Name: ${INSTANCE_NAME}"'
+                    }
+            }
+        }
+
+        stage('ServerSetup') {
+            when {
+                expression { params.Options == 'Deploy' }
+            }
+            steps {
+                sshagent(['ec2']) {
+                    sh 'bash deploy/deploy.sh'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up workspace'
+            cleanWs()
+        }
+    }
+}

@@ -1,0 +1,52 @@
+<mat-sidenav-container>
+    <mat-sidenav [(opened)]="opened" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+        [mode]="(isHandset$ | async) ? 'over' : 'side'" class="background">
+        <mat-toolbar class="background"><img class="logo" src="assets/home-images/DSTrans6.png"
+                alt="Digital Steve"></mat-toolbar>
+        <mat-nav-list>
+            <a mat-list-item routerLink="/home" tabindex="-1" routerLinkActive="active"
+                [ngClass]="{'inactive': !isActive('/home')}" [disableRipple]="true" (click)="closeIfHandset()">
+                <div class="nav-link">
+                    <mat-icon mat-list-icon class="custom-size-mat-icon">home</mat-icon>
+                    <p>Home</p>
+                </div>
+            </a>
+            <a mat-list-item routerLink="/projects" tabindex="-1" routerLinkActive="active"
+                [ngClass]="{'inactive': !isActive('/projects')}" [disableRipple]="true" (click)="closeIfHandset()">
+                <div class="nav-link">
+                    <mat-icon mat-list-icon class="custom-size-mat-icon">computer</mat-icon>
+                    <p>Projects</p>
+                </div>
+            </a>
+            <a mat-list-item routerLink="/resume" tabindex="-1" routerLinkActive="active"
+                [ngClass]="{'inactive': !isActive('/resume')}" [disableRipple]="true" (click)="closeIfHandset()">
+                <div class="nav-link">
+                    <mat-icon mat-list-icon class="custom-size-mat-icon">work</mat-icon>
+                    <p>Resume</p>
+                </div>
+            </a>
+            <a mat-list-item tabindex="-1" routerLinkActive="active"
+                class="inactive" (click)="goToGithub()" [disableRipple]="true" (click)="closeIfHandset()">
+                <div class="nav-link">
+                    <span class="material-icons custom-size-mat-icon">alarm</span>
+                    <p>GitHub</p>
+                </div>
+            </a>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <mat-toolbar color="primary" class="background2">
+            <button mat-button tabindex="+1" (click)="opened = !opened"><span class="material-icons custom-size-mat-icon">density_medium</span></button>
+            <div [ngClass]="(isHandset$ | async) ? 'header-handset' : 'header-desktop'">
+                <p>Stephen Yuhas</p>
+                <div>
+                    <img src="/assets/home-images/git.png" alt="" (click)="goToGithub()" style="cursor: pointer;">
+                    <img src="/assets/home-images/linkedin.png" alt="" (click)="goToLinkedin()"
+                        style="cursor: pointer;">
+                    <img src="/assets/home-images/email.png" alt="" (click)="goToEmail()" style="cursor: pointer;">
+                </div>
+            </div>
+        </mat-toolbar>
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>

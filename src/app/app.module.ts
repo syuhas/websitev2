@@ -4,7 +4,6 @@ import { BrowserModule, provideClientHydration } from '@angular/platform-browser
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { NavbarComponent } from './nav/navbar/navbar.component';
 import { HomepageComponent } from './home/homepage/homepage.component';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
@@ -17,19 +16,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ResumeComponent } from './resume/resume/resume.component';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { Navbar2Component } from './navbar2/navbar2.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { NavComponent } from './nav/nav.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
     HomepageComponent,
     ProjectsComponent,
     ResumeComponent,
-    Navbar2Component
+    NavComponent
     
   ],
   imports: [

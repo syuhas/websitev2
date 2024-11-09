@@ -50,7 +50,7 @@ resource "aws_lb_target_group" "target_group" {
 }
 
 # create load balancer
-resource "aws_lb" "php-lb" {
+resource "aws_lb" "load_balancer" {
   name = "${var.aws_subdomain}.${var.aws_domain}-lb"
   internal = false
   load_balancer_type = "application"
@@ -60,7 +60,7 @@ resource "aws_lb" "php-lb" {
 
 # create http listener for load balancer
 resource "aws_lb_listener" "http-lb-listener" {
-  load_balancer_arn = aws_lb.php-lb.arn
+  load_balancer_arn = aws_lb.load_balancer.arn
   port = 80
   protocol = "HTTP"
 
@@ -72,7 +72,7 @@ resource "aws_lb_listener" "http-lb-listener" {
 
 # create https listener for load balancer
 resource "aws_lb_listener" "https-lb-listener" {
-  load_balancer_arn = aws_lb.php-lb.arn
+  load_balancer_arn = aws_lb.load_balancer.arn
   port = 443
   protocol = "HTTPS"
 
@@ -98,8 +98,8 @@ resource "aws_route53_record" "dns" {
   type = "A"
 
   alias {
-    name = aws_lb.php-lb.dns_name
-    zone_id = aws_lb.php-lb.zone_id
+    name = aws_lb.load_balancer.dns_name
+    zone_id = aws_lb.load_balancer.zone_id
     evaluate_target_health = true
   }
 }

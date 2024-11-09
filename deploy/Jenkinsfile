@@ -83,6 +83,11 @@ pipeline {
                     dir('deploy') {
                         try{
                             sh 'terraform plan -out=plan.tfplan'
+                        } catch (Exception e) {
+                            echo "Terraform plan failed: ${e}"
+                            error("Exiting due to Terraform plan failure")
+                        }
+                        try{
                             sh 'terraform apply -auto-approve plan.tfplan'
                             env.INSTANCE_ID = sh(script: 'terraform output -raw instance_id', returnStdout: true).trim()
                             env.PUBLIC_IP = sh(script: 'terraform output -raw instance_public_ip', returnStdout: true).trim()

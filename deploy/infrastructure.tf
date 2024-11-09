@@ -32,7 +32,7 @@ resource "aws_instance" "instance" {
   vpc_security_group_ids = [var.aws_security_group]
   key_name = "ec2"
   tags = {
-    Name = "${var.aws_subdomain}.${var.aws_domain}"
+    Name = "${var.aws_subdomain != "" ? "${var.aws_subdomain}.${var.aws_domain}" : "${var.aws_domain}"}"
   }
   iam_instance_profile = "instance_profile_role"
   subnet_id = element(var.aws_subnet_ids, 0)

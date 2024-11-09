@@ -7,15 +7,15 @@ sudo dnf install -y @angular/cli
 sudo dnf install -y nginx
 
 
-cd /tmp
+cd /home/ec2-user/app
 npm install
 ng build --configuration production
 
 sudo mkdir -p /var/www/html
 
-sudo cp -r /tmp/dist/websitev2/browser/* /var/www/html
+sudo cp -r /home/ec2-user/app/dist/websitev2/browser/* /var/www/html
 
-sudo cp /tmp/deploy/nginx.conf /etc/nginx/nginx.conf
+sudo cp /home/ec2-user/app/deploy/nginx.conf /etc/nginx/nginx.conf
 
 sudo systemctl enable nginx
 sudo systemctl start nginx

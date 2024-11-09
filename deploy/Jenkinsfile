@@ -79,21 +79,26 @@ pipeline {
                 expression { params.Options == 'Deploy' }
             }
             steps {
+                script {
                     dir('deploy') {
-                        // sh 'terraform init'
-                        sh 'terraform plan -out=plan.tfplan'
-                        sh 'terraform apply -auto-approve plan.tfplan'
-                        script {
+                        try{
+                            sh 'terraform plan -out=plan.tfplan'
+                            sh 'terraform apply -auto-approve plan.tfplan'
                             env.INSTANCE_ID = sh(script: 'terraform output -raw instance_id', returnStdout: true).trim()
                             env.PUBLIC_IP = sh(script: 'terraform output -raw instance_public_ip', returnStdout: true).trim()
                             env.PUBLIC_DNS = sh(script: 'terraform output -raw instance_public_dns', returnStdout: true).trim()
                             env.INSTANCE_NAME = sh(script: 'terraform output -raw instance_name', returnStdout: true).trim()
-                        }
-                        sh 'echo "Instance ID: ${INSTANCE_ID}"'
-                        sh 'echo "Public IP: ${PUBLIC_IP}"'
-                        sh 'echo "Public DNS: ${PUBLIC_DNS}"'
-                        sh 'echo "Instance Name: ${INSTANCE_NAME}"'
+                            sh 'echo "Instance ID: ${INSTANCE_ID}"'
+                            sh 'echo "Public IP: ${PUBLIC_IP}"'
+                            sh 'echo "Public DNS: ${PUBLIC_DNS}"'
+                            sh 'echo "Instance Name: ${INSTANCE_NAME}"'
+                        } catch (Exception e) {
+                            echo "Terraform apply failed: ${e}"
+                            echo "Rolling back changes"
+                            sh "terraform destroy -auto-approve"
+                            error("Exiting due to Terraform apply failure")
                     }
+                }
             }
         }
 

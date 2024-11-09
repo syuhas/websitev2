@@ -5,7 +5,7 @@ set -x
 sudo dnf update -y
 sudo dnf install -y git
 sudo dnf install -y nodejs
-npm install -g @angular/cli -y
+sudo npm install -g @angular/cli -y
 sudo dnf install -y nginx
 
 

@@ -101,7 +101,8 @@ resource "aws_lb_target_group_attachment" "target_group-attachment" {
 
 resource "aws_route53_record" "dns" {
   zone_id = var.aws_route53_zone_id
-  name = "${var.aws_subdomain}.${var.aws_domain}"
+  name = "${var.aws_subdomain != "" ? "${var.aws_subdomain}.${var.aws_domain}" : "${var.aws_domain}"}"
+
   type = "A"
 
   alias {

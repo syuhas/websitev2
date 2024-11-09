@@ -7,7 +7,7 @@ sudo dnf install -y @angular/cli
 sudo dnf install -y nginx
 
 
-cd /tmp
+cd /home/ec2-user
 npm install
 ng build --configuration production
 

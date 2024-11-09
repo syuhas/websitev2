@@ -18,13 +18,13 @@ sudo sed -i 's|server_name  tmp;.*|server_name  '"$INSTANCE_PUBLIC_DNS"';|' ./de
 sudo chmod +x -R ./*
 
 echo "Copying project files to remote server..."
-scp -o StrictHostKeyChecking=no -r ./ "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/tmp"
+scp -o StrictHostKeyChecking=no -r ./ "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/home/ec2-user"
 
 echo "Connecting to remote server via SSH..."
 
 ssh -o StrictHostKeyChecking=no "$REMOTE_USER@$INSTANCE_PUBLIC_DNS" << 'EOF'
-    chmod +x /tmp/deploy/build.sh
-    /tmp/deploy/build.sh
+    chmod +x /home/ec2-user/deploy/build.sh
+    /home/ec2-user/tmp/deploy/build.sh
 EOF
 
 

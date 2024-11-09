@@ -24,7 +24,7 @@ echo "Connecting to remote server via SSH..."
 
 ssh -o StrictHostKeyChecking=no "$REMOTE_USER@$INSTANCE_PUBLIC_DNS" << 'EOF'
     chmod +x /home/ec2-user/deploy/build.sh
-    /home/ec2-user/tmp/deploy/build.sh
+    /home/ec2-user/deploy/build.sh
 EOF
 
 

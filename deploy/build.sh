@@ -1,9 +1,11 @@
 #!/bin/bash
 
+set -x
+
 sudo dnf update -y
 sudo dnf install -y git
 sudo dnf install -y nodejs
-sudo dnf install -y @angular/cli
+sudo dnf install -g @angular/cli -y
 sudo dnf install -y nginx
 
 

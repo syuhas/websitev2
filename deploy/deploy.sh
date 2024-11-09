@@ -16,7 +16,7 @@ echo "Instance DNS: {$INSTANCE_PUBLIC_DNS}"
 sudo sed -i 's|server_name  tmp;.*|server_name  '"$INSTANCE_PUBLIC_DNS"';|' ./deploy/nginx.conf
 
 echo "Copying project files to remote server..."
-scp -o StrictHostKeyChecking=no -r ./ "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/home/$REMOTE_USER/app
+scp -o StrictHostKeyChecking=no -r ./ "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/home/$REMOTE_USER/app"
 
 echo "Connecting to remote server via SSH..."
 

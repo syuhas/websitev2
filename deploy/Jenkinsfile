@@ -97,6 +97,7 @@ pipeline {
                             echo "Rolling back changes"
                             sh "terraform destroy -auto-approve"
                             error("Exiting due to Terraform apply failure")
+                        }
                     }
                 }
             }

@@ -11,7 +11,7 @@ sudo dnf install -y nginx
 
 cd /home/ec2-user/app
 npm install
-ng build --configuration production
+# ng build --configuration production
 
 sudo mkdir -p /var/www/html
 

@@ -16,9 +16,9 @@ variable "aws_subdomain" {
 
 locals {
   load_balancer_pre = "${var.aws_subdomain != "" ? "${var.aws_subdomain}-${var.aws_domain}-lb" : "${var.aws_domain}-lb"}"
-  load_balancer_name = replace(local.load_balancer_name, ".", "-")
+  load_balancer_name = replace(local.load_balancer_pre, ".", "-")
   target_group_pre = "${var.aws_subdomain != "" ? "${var.aws_subdomain}-${var.aws_domain}-tg" : "${var.aws_domain}-tg"}"
-  target_group_name = replace(local.target_group_name, ".", "-")
+  target_group_name = replace(local.target_group_pre, ".", "-")
 }
 
 terraform {

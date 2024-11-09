@@ -35,7 +35,7 @@ resource "aws_instance" "instance" {
 
 # create target group for load balancer
 resource "aws_lb_target_group" "target_group" {
-  name = "${var.aws_subdomain}-${var.aws_domain}-tg"
+  name = "${var.aws_subdomain != "" ? "${var.aws_subdomain}-${var.aws_domain}-tg" : "${var.aws_domain}-tg"}"
   port = 80
   protocol = "HTTP"
   vpc_id = var.aws_vpc_id
@@ -51,7 +51,7 @@ resource "aws_lb_target_group" "target_group" {
 
 # create load balancer
 resource "aws_lb" "load_balancer" {
-  name = "${var.aws_subdomain}-${var.aws_domain}-lb"
+  name = "${var.aws_subdomain != "" ? "${var.aws_subdomain}-${var.aws_domain}-lb" : "${var.aws_domain}-lb"}"
   internal = false
   load_balancer_type = "application"
   security_groups = [var.aws_security_group]

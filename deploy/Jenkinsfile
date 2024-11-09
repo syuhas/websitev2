@@ -74,39 +74,63 @@ pipeline {
 
 
 
+        // stage('DeployInfrastructure') {
+        //     when {
+        //         expression { params.Options == 'Deploy' }
+        //     }
+        //     steps {
+        //         script {
+        //             dir('deploy') {
+        //                 try {
+        //                     sh 'terraform plan -out=plan.tfplan'
+        //                 } catch (Exception e) {
+        //                     echo "Terraform plan failed: ${e}"
+        //                     error("Exiting due to Terraform plan failure")
+        //                 }
+        //                 try {
+        //                     sh 'terraform apply -auto-approve plan.tfplan'
+        //                     env.INSTANCE_ID = sh(script: 'terraform output -raw instance_id', returnStdout: true).trim()
+        //                     env.PUBLIC_IP = sh(script: 'terraform output -raw instance_public_ip', returnStdout: true).trim()
+        //                     env.PUBLIC_DNS = sh(script: 'terraform output -raw instance_public_dns', returnStdout: true).trim()
+        //                     env.INSTANCE_NAME = sh(script: 'terraform output -raw instance_name', returnStdout: true).trim()
+        //                     sh 'echo "Instance ID: ${INSTANCE_ID}"'
+        //                     sh 'echo "Public IP: ${PUBLIC_IP}"'
+        //                     sh 'echo "Public DNS: ${PUBLIC_DNS}"'
+        //                     sh 'echo "Instance Name: ${INSTANCE_NAME}"'
+        //                 } catch (Exception e) {
+        //                     echo "Terraform apply failed: ${e}"
+        //                     echo "Rolling back changes"
+        //                     sh "terraform destroy -auto-approve"
+        //                     error("Exiting due to Terraform apply failure")
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
         stage('DeployInfrastructure') {
             when {
-                expression { params.Options == 'Deploy' }
+                expression { params.Options == 'Deploy' || params.Options == 'Update' }
             }
             steps {
-                script {
                     dir('deploy') {
-                        try {
-                            sh 'terraform plan -out=plan.tfplan'
-                        } catch (Exception e) {
-                            echo "Terraform plan failed: ${e}"
-                            error("Exiting due to Terraform plan failure")
-                        }
-                        try {
-                            sh 'terraform apply -auto-approve plan.tfplan'
+                        // sh 'terraform init'
+                        sh 'terraform plan -out=plan.tfplan'
+                        sh 'terraform apply -auto-approve plan.tfplan'
+                        script {
                             env.INSTANCE_ID = sh(script: 'terraform output -raw instance_id', returnStdout: true).trim()
                             env.PUBLIC_IP = sh(script: 'terraform output -raw instance_public_ip', returnStdout: true).trim()
                             env.PUBLIC_DNS = sh(script: 'terraform output -raw instance_public_dns', returnStdout: true).trim()
                             env.INSTANCE_NAME = sh(script: 'terraform output -raw instance_name', returnStdout: true).trim()
-                            sh 'echo "Instance ID: ${INSTANCE_ID}"'
-                            sh 'echo "Public IP: ${PUBLIC_IP}"'
-                            sh 'echo "Public DNS: ${PUBLIC_DNS}"'
-                            sh 'echo "Instance Name: ${INSTANCE_NAME}"'
-                        } catch (Exception e) {
-                            echo "Terraform apply failed: ${e}"
-                            echo "Rolling back changes"
-                            sh "terraform destroy -auto-approve"
-                            error("Exiting due to Terraform apply failure")
                         }
+                        sh 'echo "Instance ID: ${INSTANCE_ID}"'
+                        sh 'echo "Public IP: ${PUBLIC_IP}"'
+                        sh 'echo "Public DNS: ${PUBLIC_DNS}"'
+                        sh 'echo "Instance Name: ${INSTANCE_NAME}"'
                     }
-                }
             }
         }
+
 
         stage('ServerSetup') {
             when {

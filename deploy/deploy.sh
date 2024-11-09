@@ -21,8 +21,8 @@ scp -o StrictHostKeyChecking=no -r ./ "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/home/$
 echo "Connecting to remote server via SSH..."
 
 ssh -o StrictHostKeyChecking=no "$REMOTE_USER@$INSTANCE_PUBLIC_DNS" << 'EOF'
-    chmod +x /home/$REMOTE_USER/app/deploy/build.sh
-    /home/$REMOTE_USER/app/deploy/build.sh
+    chmod +x /home/${REMOTE_USER}/app/deploy/build.sh
+    /home/${REMOTE_USER}/app/deploy/build.sh
 EOF
 
 

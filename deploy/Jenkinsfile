@@ -48,18 +48,6 @@ pipeline {
                 }
             }
         }
-        stage('DestroyInfrastructure') {
-            when {
-                expression { params.Options == 'Destroy' }
-            }
-            steps {
-                dir('deploy') {
-                    sh 'terraform init'
-                    sh 'terraform destroy -auto-approve'
-                }
-            }
-        }
-
         stage('TerraformBackend') {
             steps {
                 dir('deploy') {
@@ -73,6 +61,18 @@ pipeline {
                 }
             }
         }
+        stage('DestroyInfrastructure') {
+            when {
+                expression { params.Options == 'Destroy' }
+            }
+            steps {
+                dir('deploy') {
+                    sh 'terraform destroy -auto-approve'
+                }
+            }
+        }
+
+
 
         stage('DeployInfrastructure') {
             when {

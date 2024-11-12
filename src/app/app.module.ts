@@ -20,6 +20,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { NavComponent } from './nav/nav.component';
+import { ProjectListComponent } from './projects/project-list/project-list.component';
+import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,9 @@ import { NavComponent } from './nav/nav.component';
     HomepageComponent,
     ProjectsComponent,
     ResumeComponent,
-    NavComponent
+    NavComponent,
+    ProjectListComponent,
+    ProjectDetailComponent,
     
   ],
   imports: [
@@ -46,7 +51,8 @@ import { NavComponent } from './nav/nav.component';
     MatExpansionModule,
     MatToolbarModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
+    HttpClientModule
   ],
   providers: [
     provideClientHydration(),

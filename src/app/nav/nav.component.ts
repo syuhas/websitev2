@@ -67,7 +67,7 @@ export class NavComponent implements OnInit {
     }
   }
   isActive(route: string): boolean {
-    return this.router.url === route;
+    return this.router.url.startsWith(route);
   }
 
   closeIfHandset() {

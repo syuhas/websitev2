@@ -1,0 +1,70 @@
+<div class="container-fluid mt-5" *ngIf="project">
+    <h1><strong>{{ project.title }}</strong></h1>
+    <h2>{{ project.subtitle }} [<a href="{{ project.github }}" target="_blank">Github</a>]</h2>
+    <hr class="my-4">
+    <ul class="nav nav-tabs nav-justified nav-fill">
+        <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': activeSection === 'Overview'}"
+                (click)="setTab('Overview')">Overview</a>
+        </li>
+        <li class="nav-item" *ngFor="let section of project.sections">
+            <a class="nav-link" [ngClass]="{'active': activeSection === section.tabTitle}"
+                (click)="setTab(section.tabTitle)">
+                {{ section.tabTitle }}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': activeSection === 'Summary'}"
+                (click)="setTab('Summary')">Summary</a>
+        </li>
+    </ul>
+
+
+    <div class="overview" *ngIf="activeSection === 'Overview'">
+        <div class="card">
+            <h2 class="card-title"><strong>Overview</strong></h2>
+            <img src="{{ project.titleImage }}" alt="" class="img-fluid">
+            <div class="col-md-12">
+                <p [innerHTML]="project.overview"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" *ngIf="activeSection !== 'Overview' && activeSection !== 'Summary'">
+        <div class="sections" *ngFor="let section of project.sections">
+            <div *ngIf="activeSection === section.tabTitle">
+                <h2 class="card-title"><strong>{{ section.title }}</strong></h2>
+
+                <div class="row" *ngFor="let subsection of section.subsections">
+                    <div class="col-md-8">
+                        <div>
+                            <p class="text-break lh-lg" [innerHTML]="subsection.content"></p>
+                        </div>
+                        <div *ngIf="subsection.listItems">
+                            <ul>
+                                <li class="text-break lh-lg" *ngFor="let item of subsection.listItems">{{ item }}</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8" *ngIf="subsection.imgs && subsection.imgs.length > 0" class="imgs">
+                        <div *ngFor="let image of subsection.imgs">
+                            <img src="{{ image }}" alt="" class="img-fluid">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overview" *ngIf="activeSection === 'Summary'">
+        <div class="card overview">
+            <h2 class="card-title"><strong>Summary</strong></h2>
+            <div class="col-md-12">
+                <p [innerHTML]="project.summary"></p>
+                <img src="{{ project.summaryImg }}" alt="" class="img-fluid">
+            </div>
+
+        </div>
+    </div>
+</div>

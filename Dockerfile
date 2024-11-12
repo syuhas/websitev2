@@ -1,19 +1,20 @@
-FROM node:lts-alpine as build
+# FROM node:18.13.0 as build
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY package.json ./
+# COPY package.json ./
 
-RUN npm install -g @angular/cli
+# RUN npm install -g @angular/cli --prefer-offline --no-audit
 
-RUN npm install
+# RUN npm install --prefer-offline --no-audit
 
-COPY . .
+# COPY . .
 
-RUN ng build --configuration production
+# RUN ng build --configuration production
 
 FROM nginx:latest
-COPY --from=build /app/dist/websitev2/browser /usr/share/nginx/html
+COPY /dist/websitev2/browser/ /usr/share/nginx/html
+COPY /deploy/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 

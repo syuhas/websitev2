@@ -1,0 +1,113 @@
+pipeline {
+    agent any
+    environment {
+        ROLE_NAME = 'jenkinsAdminXacnt'
+    }
+
+    stages {
+        stage('SetEnvVariables') {
+            steps {
+                sh 'echo "Setting Environment Variables"'
+                script {
+                    env.TF_VAR_aws_security_group = 'sg-00d9ca388301c93a9'
+                    env.TF_VAR_aws_subnet_ids = '["subnet-0823df6c43b1a0ea4", "subnet-057dcb202796ed034"]'
+                    env.TF_VAR_aws_tf_bucket = 'terraform-lock-bucket'
+                    env.TF_VAR_aws_route53_zone_id = 'Z02299283BLAIJGG9JHMK'
+                    env.TF_VAR_aws_domain = 'digitalsteve.net'
+                }
+                sh 'echo "Environment Variables Set"'
+            }
+        }
+        stage('AssumeRole') {
+            steps {
+                script {
+                    def assumeRoleCmd = """
+                        aws sts assume-role --role-arn arn:aws:iam::${AWS_ACCOUNT_ID}:role/jenkinsAdminXacnt --role-session-name jenkinsXacntSession
+                    """
+                    def assumeRoleOutput = sh(script: assumeRoleCmd, returnStdout: true).trim()
+                    def creds = readJSON(text: assumeRoleOutput).Credentials
+
+                    env.AWS_ACCESS_KEY_ID = creds.AccessKeyId
+                    env.AWS_SECRET_ACCESS_KEY = creds.SecretAccessKey
+                    env.AWS_SESSION_TOKEN = creds.SessionToken
+                }
+            }
+        }
+        stage('TerraformBackend') {
+            steps {
+                dir('deploy/docker') {
+                    sh """
+                        terraform init -reconfigure \
+                            -backend-config="bucket=${env.TF_VAR_aws_tf_bucket}" \
+                            -backend-config="key=${env.TF_VAR_aws_domain}/terraform.tfstate" \
+                            -backend-config="region=us-east-1" \
+                            -backend-config="dynamodb_table=terraform-lock-table"
+                    """
+                }
+            }
+        }
+        stage('DestroyInfrastructure') {
+            when {
+                expression { params.Options == 'Destroy' }
+            }
+            steps {
+                // go to deploy/docker directory
+                dir('deploy/docker') {
+                    sh 'terraform destroy -auto-approve'
+                }
+            }
+        }
+
+
+
+        stage('DeployInfrastructure') {
+            when {
+                expression { params.Options == 'Deploy' }
+            }
+            steps {
+                script {
+                    dir('deploy/docker') {
+                        try {
+                            sh 'terraform plan -out=plan.tfplan'
+                        } catch (Exception e) {
+                            echo "Terraform plan failed: ${e}"
+                            error("Exiting due to Terraform plan failure")
+                        }
+                        try {
+                            sh 'terraform apply -auto-approve plan.tfplan'
+                            env.PUBLIC_IP = sh(script: 'terraform output -raw instance_public_ip', returnStdout: true).trim()
+                            env.PUBLIC_DNS = sh(script: 'terraform output -raw instance_public_dns', returnStdout: true).trim()
+                            sh 'echo "Public IP: ${PUBLIC_IP}"'
+                            sh 'echo "Public DNS: ${PUBLIC_DNS}"'
+                        } catch (Exception e) {
+                            echo "Terraform apply failed: ${e}"
+                            echo "Rolling back changes"
+                            sh "terraform destroy -auto-approve"
+                            error("Exiting due to Terraform apply failure")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('DockerContainerBuild') {
+            when {
+                expression { params.Options == 'Deploy' }
+            }
+            steps {
+                sshagent(['ec2']) {
+                    dir('deploy/docker') {
+                        sh 'copy.sh'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up workspace'
+            cleanWs()
+        }
+    }
+}

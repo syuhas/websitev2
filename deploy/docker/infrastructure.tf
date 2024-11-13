@@ -31,7 +31,7 @@ resource "aws_instance" "instance" {
 resource "aws_route53_record" "dns" {
   zone_id = var.aws_route53_zone_id
   name = "${var.aws_domain}"
-
+  ttl     = 300
   type = "A"
   records = [aws_instance.instance.public_ip]
 }
@@ -39,7 +39,7 @@ resource "aws_route53_record" "dns" {
 resource "aws_route53_record" "dnswww" {
   zone_id = var.aws_route53_zone_id
   name = "${var.aws_www_domain}"
-
+  ttl     = 300
   type = "A"
   records = [aws_instance.instance.public_ip]
 }

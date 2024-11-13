@@ -99,7 +99,7 @@ pipeline {
             steps {
                 sshagent(['ec2']) {
                     dir('deploy/docker') {
-                        sh 'copy.sh'
+                        sh 'bash copy.sh'
                     }
                 }
             }

@@ -26,8 +26,8 @@ scp -o StrictHostKeyChecking=no Dockerfile "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/h
 echo "Connecting to remote server via SSH..."
 
 ssh -o StrictHostKeyChecking=no "$REMOTE_USER@$INSTANCE_PUBLIC_DNS" << 'EOF'
-    chmod +x /home/ec2-user/app/deploy/docker/deploy.sh
-    /home/ec2-user/app/deploy/docker/deploy.sh
+    chmod +x /home/ec2-user/app/docker/deploy.sh
+    /home/ec2-user/app/docker/deploy.sh
 EOF
 
 

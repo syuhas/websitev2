@@ -13,6 +13,10 @@ fi
 echo "Remote user: {$REMOTE_USER}"
 echo "Instance DNS: {$INSTANCE_PUBLIC_DNS}"
 
+echo "Current Directory:"
+pwd
+echo "Listing files:"
+ls -l
 
 echo "Copying project files to remote server..."
 scp -o StrictHostKeyChecking=no -r ./dist "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/home/ec2-user/app"

@@ -99,13 +99,15 @@ pipeline {
             steps {
                 sshagent(['ec2']) {
                     dir('deploy/docker') {
-                        try {
-                            sh 'bash copy.sh'
-                        } catch (Exception e) {
-                            echo "Bash script failed: ${e}"
-                            echo "Rolling back changes"
-                            sh "terraform destroy -auto-approve"
-                            echo "Exiting due to script failure"
+                        script{
+                            try {
+                                sh 'bash copy.sh'
+                            } catch (Exception e) {
+                                echo "Bash script failed: ${e}"
+                                echo "Rolling back changes"
+                                sh "terraform destroy -auto-approve"
+                                echo "Exiting due to script failure"
+                            }
                         }
                     }
                 }

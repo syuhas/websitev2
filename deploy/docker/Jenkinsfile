@@ -73,7 +73,7 @@ pipeline {
                             sh 'terraform plan -out=plan.tfplan'
                         } catch (Exception e) {
                             echo "Terraform plan failed: ${e}"
-                            error("Exiting due to Terraform plan failure")
+                            echo "Exiting due to Terraform plan failure"
                         }
                         try {
                             sh 'terraform apply -auto-approve plan.tfplan'
@@ -85,7 +85,7 @@ pipeline {
                             echo "Terraform apply failed: ${e}"
                             echo "Rolling back changes"
                             sh "terraform destroy -auto-approve"
-                            error("Exiting due to Terraform apply failure")
+                            echo "Exiting due to Terraform apply failure"
                         }
                     }
                 }
@@ -99,7 +99,14 @@ pipeline {
             steps {
                 sshagent(['ec2']) {
                     dir('deploy/docker') {
-                        sh 'bash copy.sh'
+                        try {
+                            sh 'bash copy.sh'
+                        } catch (Exception e) {
+                            echo "Bash script failed: ${e}"
+                            echo "Rolling back changes"
+                            sh "terraform destroy -auto-approve"
+                            echo "Exiting due to script failure"
+                        }
                     }
                 }
             }

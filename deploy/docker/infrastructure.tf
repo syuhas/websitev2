@@ -36,7 +36,7 @@ resource "aws_route53_record" "dns" {
   records = [aws_instance.instance.public_ip]
 }
 
-resource "aws_route53_record" "dns" {
+resource "aws_route53_record" "dnswww" {
   zone_id = var.aws_route53_zone_id
   name = "${var.aws_www_domain}"
 

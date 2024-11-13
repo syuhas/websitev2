@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
         ROLE_NAME = 'jenkinsAdminXacnt'
+        AWS_ACCOUNT_ID = '551796573889'
     }
 
     stages {

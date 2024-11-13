@@ -14,6 +14,7 @@ pipeline {
                     env.TF_VAR_aws_tf_bucket = 'terraform-lock-bucket'
                     env.TF_VAR_aws_route53_zone_id = 'Z02299283BLAIJGG9JHMK'
                     env.TF_VAR_aws_domain = 'digitalsteve.net'
+                    env.TF_VAR_aws_www_domain = 'www.digitalsteve.net'
                 }
                 sh 'echo "Environment Variables Set"'
             }

@@ -7,6 +7,7 @@ variable "aws_subnet_ids" {type = list(string)}
 variable "aws_tf_bucket" {type = string}
 variable "aws_route53_zone_id" {type = string}
 variable "aws_domain" {type = string}
+variable "aws_www_domain" {type = string}
 
 
 
@@ -37,7 +38,7 @@ resource "aws_route53_record" "dns" {
 
 resource "aws_route53_record" "dns" {
   zone_id = var.aws_route53_zone_id
-  name = "www.${var.aws_domain}"
+  name = "${var.aws_www_domain}"
 
   type = "A"
   records = [aws_instance.instance.public_ip]

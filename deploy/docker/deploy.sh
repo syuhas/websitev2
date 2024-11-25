@@ -14,11 +14,37 @@ sudo chmod 777 /var/run/docker.sock
 
 cd /home/ec2-user/app
 
-docker stop $(docker ps -q --filter "ancestor=websitev2:latest")
-docker stop $(docker ps -q --filter "ancestor=api:latest")
+echo "Stopping existing containers..."
+WEBSITE_CONTAINERS=$(docker ps -q --filter "ancestor=websitev2:latest")
+API_CONTAINERS=$(docker ps -q --filter "ancestor=api:latest")
 
-docker rm $(docker ps -a -q --filter "ancestor=websitev2:latest")
-docker rm $(docker ps -a -q --filter "ancestor=api:latest")
+if [ -n "$WEBSITE_CONTAINERS" ]; then
+  docker stop $WEBSITE_CONTAINERS
+else
+  echo "No running websitev2 containers to stop."
+fi
+
+if [ -n "$API_CONTAINERS" ]; then
+  docker stop $API_CONTAINERS
+else
+  echo "No running api containers to stop."
+fi
+
+echo "Removing existing containers..."
+ALL_WEBSITE_CONTAINERS=$(docker ps -a -q --filter "ancestor=websitev2:latest")
+ALL_API_CONTAINERS=$(docker ps -a -q --filter "ancestor=api:latest")
+
+if [ -n "$ALL_WEBSITE_CONTAINERS" ]; then
+  docker rm $ALL_WEBSITE_CONTAINERS
+else
+  echo "No stopped websitev2 containers to remove."
+fi
+
+if [ -n "$ALL_API_CONTAINERS" ]; then
+  docker rm $ALL_API_CONTAINERS
+else
+  echo "No stopped api containers to remove."
+fi
 
 docker build -t websitev2:latest .
 

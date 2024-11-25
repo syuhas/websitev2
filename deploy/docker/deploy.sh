@@ -39,6 +39,9 @@ docker run -d --network $NETWORK_NAME --name api-service -p 8000:8000 api:latest
 
 cd /home/ec2-user
 
+# sleep for 10 seconds to allow the API to start
+sleep 10
+
 # build and run website container
 docker build -t websitev2:latest .
 

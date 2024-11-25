@@ -11,7 +11,7 @@ sudo usermod -aG docker ec2-user
 sudo service docker start
 sudo chmod 777 /var/run/docker.sock
 
-sudo rm -rf /home/ec2-user/app
+
 
 cd /home/ec2-user/app
 

@@ -17,10 +17,57 @@
 
 }
 
+#certifications #badges {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    & .row {
+        display: flex;
+        gap: 8rem;
+    }
+    & img{
+        max-width: 5vw;
+        min-width: 90px;
+    }
+}
+
+#certifications button {
+    color: blue;
+    font-weight: 300;
+}
+
+#certifications button:hover {
+    color: rgba(0, 0, 255, 0.75);
+    font-weight: 600;
+}
+
+#download #downloads {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    & .row {
+        display: flex;
+        gap: 8rem;
+    }
+    & img{
+        max-width: 4vw;
+        min-width: 80px;
+    }
+}
 
 @media (max-width: 960px) {
     .contact-details {
         flex-direction: column;
         align-items: center;
-    }  
+    }
+    #certifications #badges {
+        & .row {
+            gap: 4rem;
+        }
+    }
+    #download #downloads {
+        & .row {
+            gap: 4rem;
+        }
+    }
 }

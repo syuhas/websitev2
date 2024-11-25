@@ -18,6 +18,12 @@ docker build -t websitev2:latest .
 
 docker run -d -p 443:443 websitev2:latest
 
+cd /home/ec2-user/app/api
+
+docker build -t api:latest .
+
+docker run -d -p 8000:8000 api:latest
+
 echo "Checking running containers..."
 docker ps
 

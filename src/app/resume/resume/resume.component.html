@@ -4,9 +4,9 @@
             <div class="profile-name">Stephen Yuhas</div>
             <hr>
             <div class="contact-details">
-                <p class="card-text"><strong>Location:</strong> Ijamsville, MD</p>
-                <p class="card-text"><strong>Phone:</strong> (443)-610-0984</p>
-                <p class="card-text"><strong>Email:</strong> <a href="mailto:syuhas22@gmail.com"> syuhas22&#64;gmail.com</a></p>
+                <p class="card-text"><strong>Location: </strong>Ijamsville, MD</p>
+                <p class="card-text"><strong>Phone: </strong>(443)-610-0984</p>
+                <p class="card-text"><strong>Email: </strong> <a href="mailto:syuhas22@gmail.com">syuhas22&#64;gmail.com</a></p>
             </div>
         </div>
     </div>
@@ -22,9 +22,9 @@
         <div class="card-body">
             <h2 class="card-title">Skills</h2>
             <ul class="list-unstyled">
-                <li><strong>AWS Services </strong>(Lambda, EC2, ECS, S3)</li>
+                <li><strong>AWS Services</strong></li>
                 <li><strong>CI/CD & Automation Scripting </strong>(Python, Bash, OOP)</li>
-                <li><strong>Web Applications and Frameworks </strong>(Flask, FastAPI, Angular)</li>
+                <li><strong>Web Applications and API's </strong>(Flask, FastAPI, Angular)</li>
                 <li><strong>Cloud Network Security</strong></li>
                 <li><strong>Strong Communication</strong></li>
                 <li><strong>Project Management</strong></li>
@@ -33,13 +33,30 @@
         </div>
     </div>
 
-    <div class="card mb-4 shadow-sm">
+    <!-- <div class="card mb-4 shadow-sm">
         <div class="card-body">
             <h2 class="card-title">Certifications</h2>
-            <ul class="list-unstyled">
-                <li><strong>AWS Certified Solutions Architect – Associate</strong></li>
-                <li><strong>AWS Certified Cloud Practitioner</strong></li>
+            <ul class="list-unstyled" id="certifications">
+                <li><button class="btn" (click)="goToBadgeSAA()"><strong>AWS Certified Solutions Architect – Associate</strong></button></li>
+                <li><button class="btn" (click)="goToBadgeCCP()"><strong>AWS Certified Cloud Practitioner</strong></button></li>
             </ul>
+        </div>
+    </div> -->
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body" id="certifications">
+            <h2 class="card-title">Certifications</h2>
+            <div id="badges">
+                <div class="row">
+                    <div class="col">
+                        <button class="btn" (click)="goToBadgeSAA()"><img src="/assets/home-images/saa.png" alt="" class="img-fluid"></button>
+                    </div>
+                    <div class="col">
+                        <button class="btn" (click)="goToBadgeCCP()"><img src="/assets/home-images/ccp.png" alt="" class="img-fluid"></button>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -55,6 +72,23 @@
                 <li><strong>Monitoring/Logging:</strong> Splunk, Cribl, AWS CloudWatch, AWS CloudTrail</li>
                 <li><strong>Languages:</strong> Python, TypeScript, Bash, JavaScript, Groovy, SQL, HTML/CSS, C++, Java, PHP</li>
             </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body" id="download">
+            <h2 class="card-title">Download</h2>
+            <div id="downloads">
+                <div class="row">
+                    <div class="col">
+                        <button class="btn" (click)="goToBadgeSAA()"><img src="/assets/home-images/pdf.png" alt="" class="img-fluid"></button>
+                    </div>
+                    <div class="col">
+                        <button class="btn" (click)="goToBadgeCCP()"><img src="/assets/home-images/word.png" alt="" class="img-fluid"></button>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

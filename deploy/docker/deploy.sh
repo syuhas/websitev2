@@ -30,6 +30,12 @@ docker build -t api:latest .
 
 docker run -d -p 8000:8000 api:latest
 
+cd /home/ec2-user
+
+sudo rm -rf app
+docker prune -f
+
+
 echo "Checking running containers..."
 docker ps
 

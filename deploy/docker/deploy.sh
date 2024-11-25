@@ -31,7 +31,7 @@ else
     echo "Docker network $NETWORK_NAME already exists."
 fi
 
-
+cd /home/ec2-user/app/api
 # build and run api container
 docker build -t api:latest .
 
@@ -42,12 +42,13 @@ cd /home/ec2-user
 # sleep for 10 seconds to allow the API to start
 sleep 10
 
+cd /home/ec2-user/app
 # build and run website container
 docker build -t websitev2:latest .
 
 docker run -d --network $NETWORK_NAME --name website-service -p 443:443 websitev2:latest
 
-cd /home/ec2-user/app/api
+
 
 
 # check the status of the deployment

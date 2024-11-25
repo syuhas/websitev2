@@ -11,6 +11,7 @@ sudo usermod -aG docker ec2-user
 sudo service docker start
 sudo chmod 777 /var/run/docker.sock
 
+sudo rm -rf /home/ec2-user/app
 
 cd /home/ec2-user/app
 
@@ -46,8 +47,6 @@ docker run -d --network $NETWORK_NAME --name api-service -p 8000:8000 api:latest
 
 cd /home/ec2-user
 
-sudo rm -rf app
-docker prune --force
 
 
 # check the status of the deployment

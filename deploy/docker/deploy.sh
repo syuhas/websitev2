@@ -47,7 +47,7 @@ docker run -d --network $NETWORK_NAME --name api-service -p 8000:8000 api:latest
 cd /home/ec2-user
 
 sudo rm -rf app
-docker prune -f
+docker prune --force
 
 
 # check the status of the deployment

@@ -14,6 +14,12 @@ sudo chmod 777 /var/run/docker.sock
 
 cd /home/ec2-user/app
 
+docker stop $(docker ps -q --filter "ancestor=websitev2:latest")
+docker stop $(docker ps -q --filter "ancestor=api:latest")
+
+docker rm $(docker ps -a -q --filter "ancestor=websitev2:latest")
+docker rm $(docker ps -a -q --filter "ancestor=api:latest")
+
 docker build -t websitev2:latest .
 
 docker run -d -p 443:443 websitev2:latest
@@ -27,8 +33,10 @@ docker run -d -p 8000:8000 api:latest
 echo "Checking running containers..."
 docker ps
 
-echo "Checking logs..."
-docker logs $(docker ps -q)
+echo "Checking logs for websitev2 container..."
+docker logs $(docker ps -q --filter "ancestor=websitev2:latest")
+echo "Checking logs for api container..."
+docker logs $(docker ps -q --filter "ancestor=api:latest")
 
 echo "Checking images..."
 docker images

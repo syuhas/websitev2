@@ -34,7 +34,7 @@ fi
 # build and run website container
 docker build -t websitev2:latest .
 
-docker run --network $NETWORK_NAME -d -p 443:443 websitev2:latest
+docker run -d --network $NETWORK_NAME --name website-service -p 443:443 websitev2:latest
 
 cd /home/ec2-user/app/api
 
@@ -42,7 +42,7 @@ cd /home/ec2-user/app/api
 # build and run api container
 docker build -t api:latest .
 
-docker run -d -p 8000:8000 api:latest
+docker run -d --network $NETWORK_NAME --name api-service -p 8000:8000 api:latest
 
 cd /home/ec2-user
 

@@ -50,10 +50,6 @@ docker run -d --network $NETWORK_NAME --name website-service -p 443:443 websitev
 cd /home/ec2-user/app/api
 
 
-
-
-
-
 # check the status of the deployment
 echo "Checking running containers..."
 docker ps

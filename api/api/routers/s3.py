@@ -1,15 +1,30 @@
 import boto3
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select
+
+#importing my schemas here. The schemas are already created in the database, and my lambdas are filling the data with new bucket/object info as s3 is updated. This is part of the event driven stuff
 from ..schema.s3buckets import S3BUCKETS, S3BUCKETOBJECTS
+
+# you can check what is going on here. Basically I am getting the session. All of this is done in the database.py file. I can then just import the session and work with it
+# the only important thing to remember here is that you need to open a session with the database to work with the data. The credentials for the engine(username and pw) are using kms and AWS Secrets Manager, which the role attached to the instance has access to both
+# this file also creates the engine and uses that to connect to a session. Check it out for more info
 from ..database.database import getDatabaseSession as s
 from fastapi.responses import StreamingResponse
 from botocore.exceptions import ClientError
 
 router = APIRouter()
 
+# connecting to s3 service., I do not need to pass in credentials because the IMDS service uses the role attached to the instance. And even though this is on docker, docker can access the instance metadata service as well
+# so all I need to do is start an s3 session :)
 s3 = boto3.client('s3')
 
+# this is an 'endpoint'. This endpoint will list all of the buckets. The way I have this setup, you can go to the endpoint(https://digitalsteve.net/api/s3/list_buckets) and it will return
+# a list of buckets in my account as json serializable data (btw look up serilization if you haven't already. Very important concept when working with db data)
+# serializtion = turning data objects into byte data to store or transmit
+# deserializtion = the oppposite, turning the byte data back into data objects
+# easy example, this returns a serialized list of python dictionaries, but this is not actually a list of python dictionaries...what you get is actually one long string. It may look like it, but only because all of the '['s and '{'s are there to allow for deserizalization
+# to deserialize it and use it, you need to use something like json.loads(the results) to turn it back into a python object, in this case a python list containing dictionaries, and then you can use it like you would any python dictionary
+# I only bring this up here because this is a SUPER important concept when dealing with data. You need to know how to work with the data you get. And this is how you do it
 @router.get("/list_buckets")
 async def list_buckets():
     async with s() as session:

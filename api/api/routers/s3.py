@@ -1,3 +1,6 @@
+# this is what you see when you access the docs page, under all the s3 routes. I havent created my ec2 routes yet, so these are all you will see.
+# for this, ignore all the async stuff. It just makes things marginally faster and I like using async. You can use non async stuff to start, it is a lot less complicated and I would reccomend starting there first
+
 import boto3
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select

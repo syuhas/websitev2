@@ -5,7 +5,7 @@ pipeline {
         AWS_ACCOUNT_ID = '551796573889'
     }
 
-    terraformInit(){
+    terraformInit ={
         sh """
             terraform init -reconfigure \
                 -backend-config="bucket=${env.TF_VAR_aws_tf_bucket}" \

@@ -65,7 +65,7 @@ pipeline {
 
         stage('DeployInfrastructure') {
             when {
-                expression { params.Options == 'Deploy' }
+                expression { params.Options == 'Deploy' || params.Options == 'Update' }
             }
             steps {
                 script {
@@ -96,7 +96,7 @@ pipeline {
 
         stage('DockerContainerBuild') {
             when {
-                expression { params.Options == 'Deploy' }
+                expression { params.Options == 'Deploy' || params.Options == 'Update' }
             }
             steps {
                 sshagent(['ec2']) {

@@ -20,8 +20,8 @@ s3 = boto3.client('s3')
 
 # this is an 'endpoint'. This endpoint will list all of the buckets. The way I have this setup, you can go to the endpoint(https://digitalsteve.net/api/s3/list_buckets) and it will return
 # a list of buckets in my account as json serializable data (btw look up serilization if you haven't already. Very important concept when working with db data)
-# serializtion = turning data objects into byte data to store or transmit
-# deserializtion = the oppposite, turning the byte data back into data objects
+# serialization = turning data objects into byte data to store or transmit
+# deserialization = the oppposite, turning the byte data back into data objects
 # easy example, this returns a serialized list of python dictionaries, but this is not actually a list of python dictionaries...what you get is actually one long string. It may look like it, but only because all of the '['s and '{'s are there to allow for deserizalization
 # to deserialize it and use it, you need to use something like json.loads(the results) to turn it back into a python object, in this case a python list containing dictionaries, and then you can use it like you would any python dictionary
 # I only bring this up here because this is a SUPER important concept when dealing with data. You need to know how to work with the data you get. And this is how you do it

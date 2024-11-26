@@ -78,7 +78,7 @@ async def list_objects(
 @router.get("/search_objects")
 async def search_objects(key = Query(...)):
     async with s() as session:
-        sql = select(S3BUCKETOBJECTS).where(S3BUCKETOBJECTS.key.ilike(f'%{key}%'))
+        sql = select(S3BUCKETOBJECTS).where(S3BUCKETOBJECTS.key.ilike(f'%{key}%')).limit(100)
         objects = (await session.execute(sql)).scalars().all()
         return objects
     

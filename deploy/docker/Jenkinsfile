@@ -45,10 +45,10 @@ pipeline {
                 }
             }
         }
-        
+
         stage('DestroyInfrastructure') {
             when {
-                expression { params.Options == 'Destroy' }
+                expression { params.Options == 'Deploy' || params.Options == 'Destroy' }
             }
             steps {
                 // go to deploy/docker directory

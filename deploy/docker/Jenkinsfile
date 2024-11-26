@@ -5,20 +5,21 @@ pipeline {
         AWS_ACCOUNT_ID = '551796573889'
     }
 
+    terraformInit(){
+        sh """
+            terraform init -reconfigure \
+                -backend-config="bucket=${env.TF_VAR_aws_tf_bucket}" \
+                -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
+                -backend-config="region=us-east-1" \
+                -backend-config="dynamodb_table=terraform-lock-table"
+        """
+    }
+
     stages {
-        stage('SetEnvVariablesAndFunctions') {
+        stage('SetEnvVariables') {
             steps {
                 sh 'echo "Setting Environment Variables"'
                 script {
-                    def terraformInit = {
-                        sh """
-                            terraform init -reconfigure \
-                                -backend-config="bucket=${env.TF_VAR_aws_tf_bucket}" \
-                                -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
-                                -backend-config="region=us-east-1" \
-                                -backend-config="dynamodb_table=terraform-lock-table"
-                        """
-                    }
                     env.TF_VAR_aws_security_group = 'sg-00d9ca388301c93a9'
                     env.TF_VAR_aws_subnet_ids = '["subnet-0823df6c43b1a0ea4", "subnet-057dcb202796ed034"]'
                     env.TF_VAR_aws_tf_bucket = 'terraform-lock-bucket'
@@ -52,7 +53,7 @@ pipeline {
             steps {
                 // go to deploy/docker directory
                 dir('deploy/docker') {
-                    script{terraformInit()}
+                    terraformInit()
                     sh 'terraform destroy -auto-approve'
                 }
             }
@@ -67,7 +68,7 @@ pipeline {
             steps {
                 script {
                     dir('deploy/docker') {
-                        script{terraformInit()}
+                        terraformInit()
                         try {
                             sh 'terraform plan -out=plan.tfplan'
                         } catch (Exception e) {

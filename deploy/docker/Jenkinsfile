@@ -52,7 +52,7 @@ pipeline {
             steps {
                 // go to deploy/docker directory
                 dir('deploy/docker') {
-                    terraformInit()
+                    script{terraformInit()}
                     sh 'terraform destroy -auto-approve'
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
             steps {
                 script {
                     dir('deploy/docker') {
-                        terraformInit()
+                        script{terraformInit()}
                         try {
                             sh 'terraform plan -out=plan.tfplan'
                         } catch (Exception e) {

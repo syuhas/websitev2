@@ -5,17 +5,6 @@ pipeline {
         ROLE_NAME = 'jenkinsAdminXacnt'
     }
 
-    def terraformInit(){
-        sh """
-            terraform init -reconfigure \
-                -backend-config="bucket=${env.TF_VAR_aws_tf_bucket}" \
-                -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
-                -backend-config="region=us-east-1" \
-                -backend-config="dynamodb_table=terraform-lock-table"
-        """
-    }
-
-
     stages {
         stage('SetEnvVariables') {
             steps {
@@ -59,28 +48,25 @@ pipeline {
                 }
             }
         }
-
-        // stage('TerraformBackend') {
-        //     steps {
-        //         dir('deploy') {
-        //             sh """
-        //                 terraform init -reconfigure \
-        //                     -backend-config="bucket=${env.TF_VAR_aws_tf_bucket}" \
-        //                     -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
-        //                     -backend-config="region=us-east-1" \
-        //                     -backend-config="dynamodb_table=terraform-lock-table"
-        //             """
-        //         }
-        //     }
-        // }
-
+        stage('TerraformBackend') {
+            steps {
+                dir('deploy') {
+                    sh """
+                        terraform init -reconfigure \
+                            -backend-config="bucket=${env.TF_VAR_aws_tf_bucket}" \
+                            -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
+                            -backend-config="region=us-east-1" \
+                            -backend-config="dynamodb_table=terraform-lock-table"
+                    """
+                }
+            }
+        }
         stage('DestroyInfrastructure') {
             when {
-                expression { params.Options == 'Deploy' || params.Options == 'Destroy' }
+                expression { params.Options == 'Destroy' }
             }
             steps {
                 dir('deploy') {
-                    terraformInit()
                     sh 'terraform destroy -auto-approve'
                 }
             }
@@ -95,7 +81,6 @@ pipeline {
             steps {
                 script {
                     dir('deploy') {
-                        terraformInit()
                         try {
                             sh 'terraform plan -out=plan.tfplan'
                         } catch (Exception e) {

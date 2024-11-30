@@ -35,6 +35,9 @@ export class ProjectDetailComponent implements OnInit {
             if (subsection.code) {
               subsection.code = this.sanitizer.bypassSecurityTrustHtml(subsection.code as string);
             }
+            if (subsection.listItems) {
+              subsection.listItems = subsection.listItems.map((item) => this.sanitizer.bypassSecurityTrustHtml(item as string));
+            }
 
         });
       });

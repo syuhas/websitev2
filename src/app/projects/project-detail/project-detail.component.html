@@ -42,7 +42,7 @@
                         </div>
                         <div *ngIf="subsection.listItems">
                             <ul>
-                                <li class="text-break lh-lg" *ngFor="let item of subsection.listItems">{{ item }}</li>
+                                <li class="text-break lh-lg" *ngFor="let item of subsection.listItems" [innerHtml]="item"></li>
                             </ul>
                         </div>
                         <div *ngIf="subsection.code">

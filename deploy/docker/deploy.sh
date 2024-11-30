@@ -48,8 +48,8 @@ docker build -t websitev2:latest .
 
 docker run -d --network $NETWORK_NAME --name website-service -p 443:443 websitev2:latest
 
-
-
+echo "Cleaning up deployment files..."
+sudo rm -rf /home/ec2-user/app
 
 # check the status of the deployment
 echo "Checking running containers..."

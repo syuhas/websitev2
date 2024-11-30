@@ -21,7 +21,7 @@ export interface ProjectSections {
 
 export interface ProjectSubSection {
     content: SafeHtml;
-    listItems? : string[];
+    listItems? : SafeHtml[];
     imgs?: string[];
     code?: SafeHtml;
 }

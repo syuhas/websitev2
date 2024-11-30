@@ -5,64 +5,66 @@
   description: |
     Utilizing a Jenkins server to build and deploy Docker images to AWS ECS using dynamically provisioned EC2 build nodes.
   overview: |
-    This project explores the creation and configuration of a reverse proxy to serve my backend FastAPI application and frontend Angular application in separate Docker containers on the same domain. The backend API is part of a larger project I was working on for an S3 dashboard, and it is built using FastAPI pulling resource metadata from a Postgres database. The front end is this website, which is the second version of my personal website built with Angular. <br><br>
-    The goal of this project is both to explore the process of setting up a reverse proxy to serve multiple applications on the same domain with different paths. Reverse proxy in general is a useful design pattern for many use cases including load balancing, security, SSL termination and migrations, but for my use case I wanted a convinient place to put my API that I will use for different functions as I develop more projects. The project also uses aspects like terraform to provision infrastructure in AWS in a repeatable and consistent way, LetsEncrypt for SSL certificates and Jenkins and Bash scripting for automation and CI/CD.
+    This project explores the creation and configuration of a reverse proxy to serve my backend FastAPI application and frontend Angular application in separate Docker containers on the same domain. The backend API is part of a larger project I was working on for an S3 dashboard and is built using FastAPI to pull resource metadata from a PostgreSQL database. The front end is this website, which represents the second version of my personal site, built with Angular.
+    <br><br>
+    The goal of this project was to understand how reverse proxies work and how I could use one to route all traffic with the /api path to my API. Additionally, I wanted to explore the cost-saving benefits of using a reverse proxy and self-managed SSL certificates, rather than hosting the API on a separate subdomain. A reverse proxy is a versatile design pattern that offers various advantages, including load balancing, enhanced security, SSL termination, and simplified migrations. This project also incorporates tools like Terraform for provisioning infrastructure in AWS in a repeatable and consistent way, LetsEncrypt for SSL certificates, and Jenkins combined with Bash scripting for automation and CI/CD.
 
   titleImage: /assets/project-images/rproxy-images/rproxy.png
   summaryImg: /assets/project-images/rproxy-images/prox_sum.png
   sections:
     - title: Defining Infrastructure with Terraform
-      tabTitle: Terraform 
+      tabTitle: Terraform
       subsections:
         - content: |
-            Firstly, I defined this project's infrastructure using Terraform. Terraform is a tool that will allow me to define and provision infrastructure as code in a repeatable and consistent way. In addition, using a backend state configuration stored in S3 and DynamoDB, I can keep track of the state of my infrastructure and Terraform will automatically detect changes and allow me to update the infrstructure as needed, or update the application without having to reprovision the entire infrastructure.<br><br>
+            Firstly, I defined this project's infrastructure using Terraform. Terraform is a tool that will allow me to define and provision infrastructure as code in a repeatable and consistent way. In addition, using a backend state configuration stored in S3 and DynamoDB, I can keep track of the state of my infrastructure and Terraform will automatically detect changes and allow me to update the infrastructure as needed, or update the application without having to reprovision the entire infrastructure.<br><br>
 
-            Terraform can access AWS and build resources by accessing the IMDSv2 (Instance Metadata Service) attached directly to the Jenkins build server that is dynamically provisioned and shut down as needed (check out <a href="/projects/jenkins?tab=Overview">Provisioning Builds Servers in Jenkins</a>). This is useful as it avoids having to pass sensitive credentials to Jenkins or store them anywhere in my code.
+            Terraform can access AWS and build resources by accessing the IMDSv2 (Instance Metadata Service) attached directly to the Jenkins build server that is dynamically provisioned and shut down as needed (check out <a href="/projects/jenkins?tab=Overview">Provisioning Build Servers in Jenkins</a>). This approach eliminates the need to pass sensitive credentials to Jenkins or store them in the code.<br><br>
+
 
             The main components of the infrastructure include:
-          listItems: 
+          listItems:
             - An EC2 instance to run the website and API with the reverse proxy
             - A security group to allow the correct ports for inbound traffic
-            - DNS and records to route traffic to the EC2 instance  
+            - DNS and records to route traffic to the EC2 instance
           imgs:
             - /assets/project-images/rproxy-images/prox1_1.png
 
         - content: |
-            In my Jenkinsfile, when I initialize the backend configuration (which is done here to allow for variables), I can also define TF_VAR variables that will be used in the actual Terraform configuration file. This is useful for defining things like sensitive information that I don't want to hard code into the configuration or subnets/security groups/etc that I want to pull from Jenkins via some lookup, but in this case I have a fairly simple setup, so I am just defining them here.
-          imgs: 
+            In my Jenkinsfile, I initialize the backend configuration, which allows for the use of variables. During this process, I can define TF_VAR variables that are utilized in the Terraform configuration file. This approach is particularly useful for handling sensitive information that I prefer not to hard code into the configuration, as well as for referencing dynamic resources such as subnets or security groups that I want to retrieve from Jenkins via a lookup. However, since this project has a relatively simple setup, I have opted to define the variables directly within the Jenkinsfile for convenience.
+          imgs:
             - /assets/project-images/rproxy-images/prox1_2.png
 
     - title: Creating SSL Certificates with LetsEncrypt
-      tabTitle: SSL/TLS 
+      tabTitle: SSL/TLS
       subsections:
         - content: |
-            To avoid having to use AWS Load Balancing and to save on cost, I decided to try to create my own SSL certificates using 3rd party tools. LetsEncrypt is a free tool that allows you to create your own domain validated SSL certificates. LetsEncrypt uses a CLI tool called Certbot to create the certificates which can then be used in your server configuration to validate the domain and encrypt the traffic. The certificates are valid for 90 days and can be renewed automatically with a cron job. This is a great way to save on cost and to learn how to create and manage your own SSL certificates.<br><br>
+            To avoid relying on AWS Load Balancing and to reduce costs, I opted to create my own SSL certificates using third-party tools. Let's Encrypt is a free service that enables the creation of domain-validated SSL certificates. It employs a CLI tool called Certbot to generate the certificates, which can then be integrated into your server configuration to validate the domain and encrypt traffic. These certificates are valid for 90 days and can be renewed automatically using a cron job. This approach not only helps save costs but also provides a valuable opportunity to learn how to create and manage SSL certificates.<br><br>
 
-            Certbot also has Route53 integration which allows for the DNS validation to be done automatically. This is useful for me as I am using Route53 for my domain and I can easily validate the domain and create the certificates in one step. In the below CLI command, I am telling Certbot to use the Route53 plugin to create and validate the certificates for my <strong style="color: blue;">digitalsteve.net</strong> and <strong style="color: blue;">www.digitalsteve.net</strong>. Certbot automatically sends a DNS TXT challenge to Route53 and then checks for the response to validate the domain. The certificates are then created and available for me to use in any server configuration that includes the domains I validated.
+            Certbot also supports Route53 integration, which automates the DNS validation process. Since I use Route53 for my domain, this feature simplifies the validation and certificate creation steps. In the CLI command shown below, I instruct Certbot to utilize the Route53 plugin to generate and validate SSL certificates for my <strong style="color: blue;">digitalsteve.net</strong> and <strong style="color: blue;">www.digitalsteve.net</strong>. Certbot initiates a DNS TXT challenge to Route53, waits for the response to validate the domain, and then creates the certificates. These certificates are ready to be incorporated into any server configuration associated with the validated domains.
           imgs:
             - /assets/project-images/rproxy-images/prox2_1.gif
 
         - content: |
-            Now that I have my newly created SSL certificates, I can use them in my Nginx configuration to encrypt the traffic between the client and the server. For this project I am including them with the deployment files so Jenkins can access them and copy them to the server. Here, the fullchain.pem and privkey.pem files are the certificates and private key that I will use in the Nginx configuration to encrypt the traffic.<br><br>
+            Now that I have created my SSL certificates, I can integrate them into my Nginx configuration to encrypt traffic between the client and the server. For this project, I have included the certificates with the deployment files so that Jenkins can access them and copy them to the server. Specifically, the fullchain.pem and privkey.pem files are the certificate and private key, respectively, that I will use in the Nginx configuration to ensure secure traffic encryption.<br><br>
 
-            In a later project, I plan to explore storing the certificates in either AWS Secrets Manager or S3 and pull them from there to the server. This will allow for a more secure way to store the certificates and easier management and renewal in the future.
-          imgs: 
+            In a future project, I plan to explore storing the certificates in AWS Secrets Manager or S3 and retrieving them directly from there during deployment. This approach would provide a more secure way to store the certificates and simplify their management and renewal process over time.
+          imgs:
             - /assets/project-images/rproxy-images/prox2_2.png
 
     - title: Applications - FastAPI and Angular
       tabTitle: Apps
       subsections:
         - content: |
-            The front end of this setup is the website you are on now and is built on Angular 17. The backend of the reverse proxy setup can be accessed via the /api path and contains an API built with FastAPI that contains various endpoints I plan to use in my future projects. <br><br>
+            The front end of this setup is the very website you are on, built using Angular 17. The backend of this reverse proxy configuration can be accessed through the /api path and hosts an API built with FastAPI. This API includes various endpoints that I plan to leverage in my future projects.<br><br>
 
-            The API pulls metadata information for AWS S3 resources that is stored in a <strong>Postgres</strong> database. It is built with FastAPI is served via <strong>uvicorn</strong>. The API is accessed via the /api path of this site which is made possible by the reverse proxy configuration in Nginx.<br><br>
+            The API retrieves metadata about AWS S3 resources, which is stored in a <strong>Postgres</strong> database. It is developed using FastAPI and served via <strong>uvicorn</strong>. The reverse proxy configuration in Nginx enables seamless access to the API through the /api path of this website.<br><br>
 
-            Test out the <a href="/projects/rproxy?tab=Swagger">Swagger API Documentation</a> in the next section.
-          imgs: 
+            You can explore the <a href="/projects/rproxy?tab=Swagger">Swagger API Documentation</a> in the next section.
+          imgs:
             - /assets/project-images/rproxy-images/prox3_3.png
             - /assets/project-images/rproxy-images/prox3_4.png
         - content: |
-            My Angular application is built with Angular 17. The application is built with a simple design and is meant to act as my base of operations, containing my portfolio, resume and projects. I am using templating via yaml files to display each additional project I add and plan to go over this in a future project.
+            My Angular application is developed using Angular 17 and features a straightforward, user-friendly design. The application serves as my base of operations, showcasing my portfolio, resume, and projects. To streamline content management, I utilize templating through YAML files, allowing for easy addition and display of new projects. I plan to delve deeper into this templating approach in a future project.
           imgs:
             - /assets/project-images/rproxy-images/prox3_1.png
             - /assets/project-images/rproxy-images/prox3_2.png
@@ -72,39 +74,38 @@
       subsections:
         - content: |
             <iframe src="https://www.digitalsteve.net/api/docs" style="width: 80vw; height: 100vh; border: none;"></iframe>
-          
+
           imgs:
 
     - title: Configuring Docker for Angular and Python
       tabTitle: Docker
       subsections:
         - content: |
-            I am using <strong>Docker</strong> to containerize my applications for this project. Docker is a tool that allows me to package all of the code, dependencies, and configurations into a single image that can be run on any machine that has Docker installed. For my purposes, one of these containers will hold the Angular application as well as the reverse proxy which, as this is a smaller project, is a design decision that I made as opposed to having a dedicated Nginx container for the reverse proxy.<br><br>
-
+            I am using <strong>Docker</strong> to containerize my applications for this project. Docker enables me to package all the code, dependencies, and configurations into a single image that can run on any machine with Docker installed. In this setup, one of the containers hosts both the Angular application and the reverse proxy. Given the smaller scale of this project, I opted for this design instead of deploying a dedicated Nginx container for the reverse proxy.<br><br>
 
           imgs:
             - /assets/project-images/rproxy-images/prox4_1.png
         - content: |
-              The first container will just hold the the API, and any url with the /api path will be routed to this container. I am using a lightweight Python image for this container, using a setup.py file to install the necessary dependencies and have defined an entry point in the application to start the uvicorn server via the <strong>"runserver"</strong> command. This application will be running on port 8000 in the server.
+            The first container will exclusively host the API, and any URL with the /api path will be routed to this container. I am using a lightweight Python image for this container, along with a setup.py file to install the required dependencies. Additionally, I have defined an entry point in the application to launch the Uvicorn server using the <strong>"runserver"</strong> command. This application will run on port 8000 within the server.<br><br>
           imgs:
 
         - content: |
 
-          imgs: 
+          imgs:
             - /assets/project-images/rproxy-images/prox4_2.png
             - /assets/project-images/rproxy-images/prox4_3.gif
         - content: |
-            The Angular application will be running on the second container and will be served via Nginx, which will also act as the reverse proxy. In my Dockerfile, I am copying over the entire Nginx configuration to the container, in addition to the prebuilt Angular production files and the SSL certificates. I also setup file permissions here to allow the container to have proper access to my SSL certificates to serve the application over HTTPS. In the next section, I will go over the Nginx configuration in more detail to explain how the reverse proxy is set up.
-          imgs: 
+            The Angular application runs in the second container and is served via Nginx, which also functions as the reverse proxy. In my Dockerfile, I copy the complete Nginx configuration into the container, along with the prebuilt Angular production files and the SSL certificates. Additionally, I configure file permissions within the container to ensure proper access to the SSL certificates, enabling the application to serve traffic securely over HTTPS. In the next section, I will provide a detailed overview of the Nginx configuration and explain how the reverse proxy is set up.<br><br>
+          imgs:
             - /assets/project-images/rproxy-images/prox4_4.png
 
     - title: Reverse Proxy Configuration with Nginx
       tabTitle: Reverse Proxy
       subsections:
         - content: |
-            The Nginx configuration is the core of this project. This is where the actual reverse proxy rules are defined to route traffic to the correct container based on the path. In order to serve the API container with the /api path, I just need to define a location block for each path.
+            The Nginx configuration is the backbone of this project. This is where the reverse proxy rules are defined to route traffic to the appropriate container based on the request path. To serve the API container through the /api path, I simply need to define a location block for each path.<br><br>
 
-            This inital port 80 server block is redundant for this setup as I am defining my SSL connection below this as well as my container path locations. This would only be used as a fallback or communication over HTTP between containers in the future as needed.
+            The initial server block for port 80 is redundant in this setup because I define the SSL connection and container path locations in the configuration below. However, this block could serve as a fallback or facilitate HTTP communication between containers if needed in the future.<br><br>
 
           code: |
             error_log /var/log/nginx/error.log notice;
@@ -126,10 +127,11 @@
                 location = /50x.html {
                 }
             }
-            
+
           imgs:
         - content: |
-            The main server block is defined here for the Angular container. Here, I am pointing the server to the SSL certificates that I created and validated in the previous step. The server is listening on port 443 and under the location block, all traffic for the root path('/') is routed to the main Angular application. In addition, SSL protocols and ciphers, the session cache, and session timeout are defined.
+            The main server block is defined here for the Angular container. In this block, I configure the server to use the SSL certificates created and validated in the previous step. The server listens on port 443, and under the location block, all traffic directed to the root path (/) is routed to the Angular application. Additionally, I define SSL protocols and ciphers, configure the session cache, and set the session timeout to ensure secure and efficient communication.<br><br>
+
           code: |
             <strong><span style="color: blue;">
             server {
@@ -166,7 +168,8 @@
             }
           imgs:
         - content: |
-            The second location block is what is actually creating the reverse proxy. Here, I am defining the path /api to be routed to the API container. The <strong>proxy_pass</strong> directive is pointing to the container name and port that the API is running on. The proxy_http_version, proxy_set_header, and proxy_cache_bypass directives are used to allow for the proper communication between the Nginx server and the API container. This is the core of the reverse proxy setup and is what allows me to serve both the Angular application and the API on the same domain.
+            The second location block is responsible for creating the reverse proxy. In this block, I define the /api path to route traffic to the API container. The <strong>proxy_pass</strong> directive specifies the container name and port where the API is running. Additional directives such as proxy_http_version, proxy_set_header, and proxy_cache_bypass are configured to ensure proper communication between the Nginx server and the API container. This block is the core of the reverse proxy setup, enabling me to serve both the Angular application and the API under the same domain.<br><br>
+
           code: |
             server {
                 listen 443 ssl;
@@ -203,35 +206,28 @@
 
           imgs:
 
-        # - content: |
-        #     FastAPI application built to initially to connect to a Postgres database that pulls metadata information for AWS S3 resources. The API is accessed via the /api path of this site.
-
-        #     In a later project, I plan to explore storing the certificates in either AWS Secrets Manager or S3 and pull them from there to the server. This will allow for a more secure way to store the certificates and easier management and renewal in the future.
-        #   imgs: 
-        #     - /assets/project-images/rproxy-images/prox5_2.png
-        #     - /assets/project-images/rproxy-images/prox5_3.png
-
     - title: Bash Scripting and Automation for Jenkins
       tabTitle: Bash Scripting
       subsections:
         - content: |
-            Now that I have the reverse proxy configured, I can write my Bash scripts to tell Jenkins how to deploy all of this to the server. I am using a Jenkinsfile to define the pipeline job and the stages that Jenkins will run to deploy the applications. In the final stages, after the infrastructure is provisioned, Jenkins will run these scripts to handle the bulk of the deployment of the applications.<br><br>
+            Now that I have configured the reverse proxy, I can create Bash scripts to instruct Jenkins on deploying the entire setup to the server. I use a Jenkinsfile to define the pipeline job and outline the stages Jenkins will execute to deploy the applications. In the final stages, once the infrastructure is provisioned, Jenkins runs these scripts to handle the bulk of the deployment process.<br><br>
 
-            The first script acts as an SSH script that will connect and copy my deployments files to the server over SCP. To speed things up, I have decided to bundle the production files for the Angular application locally instead of building them on the server. This is down to preference, but given the  size of the application the decision has a nominal impact on the deployment time.<br><br>
+            The first script acts as an SSH utility, connecting to the server and copying the deployment files over SCP. To expedite the process, I bundle the production files for the Angular application locally rather than building them directly on the server. This decision, based on preference, has a minimal impact on deployment time given the application's size.<br><br>
 
-            After the deployment files are copied over, the script will then SSH into the instance and run the next script in the process.
+            Once the deployment files are transferred, the script initiates an SSH connection to the instance and executes the next script in the deployment process.<br><br>
           imgs:
             - /assets/project-images/rproxy-images/prox6_1.png
         - content: |
-            Now that the 'copy' script has transferred everything that I need over to the server, I can begin to build and run the actual Docker containers which will run the applications.<br><br>
+            With the 'copy' script successfully transferring all necessary files to the server, the next step is to build and run the Docker containers that will host the applications.<br><br>
 
-            <strong>In the first image below</strong>, the necessary dependencies are installed on the server and the script then navigates to the working directory. For this project, I have parameterized the Jenkins job to allow for Deploy, Update and Destroy options. Deploy acts as a fresh install, tearing down all existing AWS resources associated with the Terraform project and building everything from scratch. Update will retain the existing AWS resources and update the application with the new deployment files. Therefore I have added a check to make sure if there are any running containers, they are stopped and removed before progressing with the Docker build and run commands.<br><br>
+            <strong>In the first image below</strong>, the script installs the required dependencies on the server and navigates to the working directory. For this project, I parameterized the Jenkins job to support three options: Deploy, Update, and Destroy. The Deploy option initiates a fresh install, tearing down all existing AWS resources associated with the Terraform project and rebuilding everything from scratch. The Update option retains existing AWS resources while updating the application with the latest deployment files. To ensure a clean deployment, I included a check to stop and remove any running containers before proceeding with the Docker build and run commands.<br><br>
 
-            In addition to the dependencies and Docker cleanup, I make sure the Docker network is configured correctly. This will ensure communication between the containers for the reverse proxy to work correctly.<br><br>
+            Additionally, the Docker network is configured to ensure seamless communication between the containers, which is critical for the reverse proxy to function properly.<br><br>
 
-            <strong>In the second image below</strong>, the script builds and runs both containers for both of the applications. Since the Nginx configuration depends on the API conatiner being built and running, the API must be deployed first. I added a sleep command to give the container time to spin up and for the network to detect the running container. The run commands are as follows:<br><br>
+            <strong>In the second image below</strong>, the script handles the building and running of both application containers. Since the Nginx configuration relies on the API container being operational, the API must be deployed first. To account for this, I added a sleep command to allow the container enough time to start up and for the network to recognize the running container. The run commands are as follows:<br><br>
+
           code: |
-            
+
             docker build -t api:latest .
             <span style="color: blue;"># the container is built and tagged with the latest tag for the API image</span>
 
@@ -244,11 +240,11 @@
 
             docker run -d --network $NETWORK_NAME --name website-service -p 443:443 websitev2:latest
             <span style="color: blue;"># the container is then run in detached mode, attached to the custom network, named and bound to the host machine on port 443</span>
-          imgs: 
+          imgs:
 
         - content: |
             The script will then do some basic logging to make sure that the containers are running and that the deployment was successful.
-            
+
           imgs:
             - /assets/project-images/rproxy-images/prox6_2.png
             - /assets/project-images/rproxy-images/prox6_3.png
@@ -257,16 +253,18 @@
       tabTitle: Jenkins
       subsections:
         - content: |
-            The scripts are now defined for the project and I can configure the pipeline job to provision the infrastructure and deploy the applications. In the Jenkinsfile, I have defined the stages that Jenkins will run to deploy the applications.<br><br>
+            With the project scripts defined, I can now configure the Jenkins pipeline job to provision the infrastructure and deploy the applications. The pipeline stages required for deployment are specified within the Jenkinsfile.<br><br>
 
-            The environment variables that will be passed to the Terraform file are defined first. The pipeline then assumes the role for the AWS account that the applications are being deployed to so that Terraform has the correct permissions to provision the infrastructure. If the infrastructure is being teared down first, the 'Destroy' step will run first and will tear down any infrastructured stored in the state file stored in S3/DynamoDB. Otherwise, this will be skipped.
+            The process begins by defining the environment variables that will be passed to the Terraform configuration file. These variables are crucial for ensuring the Terraform deployment aligns with the desired infrastructure setup. Next, the pipeline assumes the role for the AWS account where the applications are being deployed. This ensures that Terraform has the necessary permissions to provision the infrastructure.<br><br>
+
+            If the pipeline is tasked with tearing down existing infrastructure, the 'Destroy' step is executed first. This step removes any resources tracked in the state file stored in S3/DynamoDB. If no teardown is required, the 'Destroy' step is skipped, allowing the pipeline to proceed directly to provisioning or updating the infrastructure.<br><br>
           imgs:
             - /assets/project-images/rproxy-images/prox7_1.png
             - /assets/project-images/rproxy-images/prox7_2.png
 
-
         - content: |
-            After the role is assumed and Terraform is initialized, the next step will then reference the plan saved in the state file to provision, update or just check the existing infrastructure. Once complete, the Jenkinsfile will the run the initial 'copy' script to transfer the deployment files to the server.
+            After assuming the role and initializing Terraform, the next step involves referencing the plan saved in the state file. This step is critical for provisioning new infrastructure, updating existing resources, or simply verifying the current infrastructure's configuration. Once this process is complete, the Jenkinsfile proceeds to execute the initial 'copy' script. This script is responsible for transferring the necessary deployment files to the server, ensuring that all required assets are in place for subsequent steps.<br><br>
+
           imgs:
             - /assets/project-images/rproxy-images/prox7_3.png
             - /assets/project-images/rproxy-images/prox7_4.png
@@ -275,13 +273,13 @@
       tabTitle: Pipeline
       subsections:
         - content: |
-            This Jenkins project is a simple pipeline job. The only information that needs to be passed in is the GitHub repository url and the location of the Jenkinsfile in the build directory. The pipeline will then run the stages as defined in the Jenkinsfile. The project is also parameterized with a choice parameter(<strong>Deploy, Update and Destroy</strong>) to allow for the build options as previously mentioned. This will allow for the pipeline to be run in different ways depending on the desired outcome.<br><br>
+            This Jenkins project is configured as a straightforward pipeline job. The only required inputs are the GitHub repository URL and the location of the Jenkinsfile within the build directory. Once provided, the pipeline executes the stages as defined in the Jenkinsfile. To offer flexibility, the project is parameterized with a choice parameter (<strong>Deploy, Update, and Destroy</strong>), enabling the pipeline to be run in various modes depending on the desired outcome.<br><br>
 
-            <strong>Note:</strong> The provisioned build server is configured to pull credentials from IMDSv2 role attached to the instance during startup. This allows Terraform to be able to create resources and allows Jenkins to be able to assume roles as necessary, assuming the correct passrole and assumerole permissions are in place. 
+            <strong>Note:</strong> The provisioned build server is designed to pull credentials from the IMDSv2 role attached to the instance during startup. This setup ensures that Terraform can create resources and Jenkins can assume roles as needed, provided the appropriate <strong>passrole</strong> and <strong>assumerole</strong> permissions are in place.<br><br>
+
           imgs:
             - /assets/project-images/rproxy-images/prox8_1.png
             - /assets/project-images/rproxy-images/prox8_2.png
-
 
         - content: |
 
@@ -292,33 +290,33 @@
       tabTitle: Deployment
       subsections:
         - content: |
-            Now that I have my pipeline configured and my Jenkinsfile written I can run the job and deploy the site and reverse proxy to my API. First Terraform will check the infrastructure and check the state files to see what needs to be provisioned, if any.
+            With the pipeline configured and the Jenkinsfile finalized, I can now execute the job to deploy the site and configure the reverse proxy for my API. The process begins with Terraform analyzing the infrastructure and reviewing the state files to determine if any resources need to be provisioned or updated.<br><br>
           imgs:
             - /assets/project-images/rproxy-images/prox9_1.gif
             - /assets/project-images/rproxy-images/prox9_2.png
 
         - content: |
-            The deployment files are then copied to the server, including the Dockerfiles and Nginx configuration.
+            Following the infrastructure check, the deployment files are transferred to the server. This includes all necessary files such as the Dockerfiles and the Nginx configuration.<br><br>
           imgs:
             - /assets/project-images/rproxy-images/prox9_3.png
             - /assets/project-images/rproxy-images/prox9_4.png
 
         - content: |
-            The Docker containers are then built and run on the server. The API comes first since it is a dependency for the Nginx configuration. The Nginx container is then built and run with the reverse proxy configuration.<br><br>
+            The Docker containers are built and executed on the server, starting with the API container since it is a dependency for the Nginx configuration. Once the API container is running, the Nginx container is built and launched with the reverse proxy configuration.<br><br>
 
-            The full pipeline view can be seen below, with all of the stages listed out. The pipeline deployment files are cleaned up from the build server and the pipeline is comeplete.
+            The complete pipeline view is displayed below, showing all the stages executed in the deployment process. After the pipeline finishes, deployment files are cleaned up from the build server, ensuring a clean slate for future builds. The pipeline process is now complete.<br><br>
           imgs:
             - /assets/project-images/rproxy-images/prox9_5.png
             - /assets/project-images/rproxy-images/prox9_6.png
 
   summary: |
-    This project was intially concieved as a way to explore adding my API to my existing website while keeping costs at a minimum. There is a lot of overhead cost incurred not only from adding new AWS resources to run the application, but also from things like Load Balancing or Cloudfront to use my ACM(AWS Certificate Manager) certificates and using ECS in either Fargate or EC2 mode to have AWS manage my containers. Since this is a lightweight site and a fairly small API, I decided a reverse proxy is a good fit since managing these aspects on my own can reduce costs by a large margin versus provisioning more infrastructure to simply host my API.<br><br> 
-    
-    Prior to this project, I had very little exposure to actually setting up a reverse proxy as well as generating and managing my own domain validated SSL certificates. This project was a great way to learn about the various benefits of using a reverse proxy, and acted as a catalyst for me to dig in deeper to the world of Nginx/servers and all of the various configurations that are possible when setting one up in general. Load balancing, enhanced security posture, SSL termination, caching and monitoring and logging are all good reasons to consider a reverse proxy in particular.<br><br> 
-    
-    I also learned more about various design patterns that are possible when setting up reverse proxies. In this project, I mentioned having a dedicated container that would act as the reverse proxy, and why that might be beneficial as opposed to configuring it in the main container. This is a design decision that I made based on the use case and the complexity of the application. In this case, I decided to keep it simple and have the reverse proxy in the same container as the Angular application.<br><br>
+    This project was initially conceived as an opportunity to integrate my API into my existing website while minimizing costs. Adding new AWS resources to run the application incurs significant overhead, including expenses for Load Balancing, CloudFront to utilize ACM (AWS Certificate Manager) certificates, and ECS (either Fargate or EC2 mode) for container management. Given that this is a lightweight site with a relatively small API, implementing a reverse proxy was a cost-effective solution. Managing these aspects independently allowed me to reduce costs significantly compared to provisioning additional infrastructure solely to host the API.<br><br>
 
-    I am very happy with the outcome of this project both from a learning perspective as well as a cost perspective. I am now able to run my API on the same domain as my website and have the ability to add more applications in the future as the complexity of projects increases. I plan to also experiment with the other possibilities that come from utilizing this design pattern. As a bonus, I now have a better understanding of what is entailed with creating and managing my own SSL certificates and can use this knowledge in future projects. Overall, this project was a great learning experience and I am excited to see where the knowledge I acquired takes me in the future.
+    Before undertaking this project, I had limited experience with setting up reverse proxies or creating and managing domain-validated SSL certificates. This project provided an excellent learning opportunity to understand the various advantages of using a reverse proxy. It served as a gateway into the world of Nginx and server configurations, revealing the extensive customization options available. Reverse proxies offer numerous benefits, including load balancing, enhanced security, SSL termination, caching, monitoring, and logging—all of which make them a valuable design pattern.<br><br>
+
+    I also explored different design patterns for implementing reverse proxies. For instance, I considered using a dedicated container for the reverse proxy versus embedding it within the main container. The choice depended on the application's complexity and specific use case. For this project, simplicity prevailed, and I opted to include the reverse proxy within the Angular application container.<br><br>
+
+    The outcome of this project has been highly satisfying, both from a learning and cost-saving perspective. I can now run my API on the same domain as my website while leaving room to integrate additional applications as future projects grow in complexity. I also plan to experiment further with the possibilities that reverse proxies enable. Additionally, I gained a solid understanding of creating and managing SSL certificates, which I can leverage in upcoming projects. Overall, this project was a rewarding experience, and I am eager to apply the knowledge I gained in future endeavors.<br><br>
 
 - id: jenkins
   title: Jenkins Pipeline - Dynamic Cloud Node Provisioning with AWS
@@ -334,7 +332,7 @@
   summaryImg:
   sections:
     - title: Jenkins Master and Plugins
-      tabTitle: Jenkins Master 
+      tabTitle: Jenkins Master
       subsections:
         - content: |
             To run and configure all of the build jobs, I set up a master Jenkins server on an AWS EC2 instance. The server is routed through my domain at digitalsteve.net and behind a load balancer for HTTPS encryption and an Elastic IP address.
@@ -342,14 +340,14 @@
             - /assets/project-images/jenkins-images/master1.png
         - content: |
             The main plugins used for this project are:
-          listItems: 
+          listItems:
             - Amazon EC2
             - Cloudbees AWS Credentials
             - Credentials
             - GitHub
             - Pipeline
             - SSH Credentials
-          imgs: 
+          imgs:
             - /assets/project-images/jenkins-images/master2.png
             - /assets/project-images/jenkins-images/master3.png
     - title: GitHub Integration
@@ -375,10 +373,10 @@
             - /assets/project-images/jenkins-images/py1.png
             - /assets/project-images/jenkins-images/py2.png
         - content: |
-            
+
           imgs:
             - /assets/project-images/jenkins-images/py3.png
-            - /assets/project-images/jenkins-images/py4.png        
+            - /assets/project-images/jenkins-images/py4.png
     - title: AWS Integration
       tabTitle: AWS
       subsections:
@@ -404,7 +402,7 @@
         - content: |
             In addition to the access keys and attached policies, the slave node will need to SSH into the instance to update and configure the OS and dependencies. This will allow Jenkins to run the init script and pass the AWS credentials to the Jenkinsfile pipeline script.
           imgs:
-            - /assets/project-images/jenkins-images/aws5.png   
+            - /assets/project-images/jenkins-images/aws5.png
     - title: ECR Permissions
       tabTitle: Permissions
       subsections:
@@ -455,7 +453,7 @@
         - content: |
             Finally, I just need to configure a few small connection settings and I can now spin up a dynamically provisioned node only when I need it.
           imgs:
-            - /assets/project-images/jenkins-images/cloud9.png 
+            - /assets/project-images/jenkins-images/cloud9.png
     - title: Jenkinsfile & Dockerfile
       tabTitle: Jenkins/Dockerfile
       subsections:
@@ -558,7 +556,6 @@
   titleImage: /assets/project-images/usermgmt-images/usermgmt.png
   summaryImg:
   sections:
-
     - title: Design and Outline
       tabTitle: Design
       subsections:
@@ -597,7 +594,7 @@
             - /assets/project-images/usermgmt-images/pipe1.png
             - /assets/project-images/usermgmt-images/pipe2.png
         - content: |
-            
+
           imgs:
             - /assets/project-images/usermgmt-images/pipe3.png
             - /assets/project-images/usermgmt-images/pipe4.png
@@ -657,7 +654,7 @@
         - content: |
             I can now call either of these functions when I need to hash a password for a new user or check an existing password against the user input when they are logging in. Note that the user's password is at no point being stored in plain text past the point that it is sent to the hashing function. I will not have access to it after this initial process which means I cannot retrieve the password either. This is due to the fact that hashing, as opposed to encryption, is a one way process, meaning that when the user inputs their password, the program will never have access to the plain text version again. For this reason, a system needs to be in place to have the user reset their password since I can never retrieve it for them. This is done in a later step through the password recovery email.
         - content: |
-            
+
           imgs:
             - /assets/project-images/usermgmt-images/hash2.png
             - /assets/project-images/usermgmt-images/hash3.png
@@ -708,7 +705,7 @@
             In a previous section I covered how the user input is actually validated and how they are entered into the system. At the end of that route, a redirect is called to the mailer.send_confirm_email route in another file. This file handles all of the mail delivery for email verification and password resets, pictured in this section.
           imgs:
             - /assets/project-images/usermgmt-images/logic1.png
-        - content: |  
+        - content: |
 
           imgs:
             - /assets/project-images/usermgmt-images/logic2.png
@@ -731,7 +728,7 @@
         - content: |
             So far, the application has taken in user input via a sign up table, validated the data, connected to a database where the new user is added, sent the user an email verification link to confirm their account. The user is then returned to the login screen with a message letting them know that the confirmation was a success. Now the user is able to log in since they have the confirmed flag set to 1 (True) in the database. Most of the heavy lifting is out of the way and I now simply need to verify the user exists in the system when they go to log in and that their password matches the stored value in the database by sending the password to the hash check function.
 
-        - content: |  
+        - content: |
 
           imgs:
             - /assets/project-images/usermgmt-images/login1.png
@@ -744,11 +741,11 @@
           imgs:
             - /assets/project-images/usermgmt-images/login3.png
         - content: |
-              At the user route, the application connects to the database to first check if the user actually exists and that the user has correctly entered their username. Once the username is verified, the user's password is sent to the hash check function. This will return either True or False to check for a valid password. Once the password is verified, the program will check that this is a confirmed user via email verification. If all of these checks pass, the user is logged in and can proceed to the final step of filling out a profile.
+            At the user route, the application connects to the database to first check if the user actually exists and that the user has correctly entered their username. Once the username is verified, the user's password is sent to the hash check function. This will return either True or False to check for a valid password. Once the password is verified, the program will check that this is a confirmed user via email verification. If all of these checks pass, the user is logged in and can proceed to the final step of filling out a profile.
           imgs:
             - /assets/project-images/usermgmt-images/login4.png
         - content: |
-              If at any point the user decides to log out, they are sent to the logout route which will remove them from the session and return them to the login screen yet again.
+            If at any point the user decides to log out, they are sent to the logout route which will remove them from the session and return them to the login screen yet again.
           imgs:
             - /assets/project-images/usermgmt-images/login5.png
 
@@ -758,39 +755,39 @@
         - content: |
             For the final section, I wanted to have the user actually be able to do something now that they are logged in. I created a simple user profile where the user can fill out some basic contact information and use a delete feature if they wish to delete their account. As an added extra, the user can add a profile picture to their profile, made possible with the use of AWS S3 for hosting the pictures on the back end. All I needed to do was configure the proper permissions for the application to access my S3 bucket, which is served via HTTPS along with the rest of the site, as well as configuring some minor nginx file upload limits on the EC2 server for server to accept larger files for profile picture uploads.
 
-        - content: |  
+        - content: |
 
           imgs:
             - /assets/project-images/usermgmt-images/prof1.png
-            - /assets/project-images/usermgmt-images/prof2.png            
+            - /assets/project-images/usermgmt-images/prof2.png
         - content: |
             When greeted at the profile screen, the user has the option of filling in any of their profile details or profile image and updating with one click. The changes will be reflected upon being redirected back to the page, and messages will flash on the screen confirming that their requested details were successfully updated.
-        - content: |  
+        - content: |
 
           imgs:
             - /assets/project-images/usermgmt-images/prof3.png
-            - /assets/project-images/usermgmt-images/prof4.png   
-        - content: |  
+            - /assets/project-images/usermgmt-images/prof4.png
+        - content: |
 
           imgs:
             - /assets/project-images/usermgmt-images/prof5.png
         - content: |
-              The user also has the option of updating their password or updating their email. Updating the email will automatically set the user to unconfirmed and send the user another token link. They will follow the same validation process to validate the new email as when they initially created their account. If the user chooses to delete their account, a warning modal will pop up on the screen where some simple Javascript will require them to enter their username before the final option to delete is available.
-        - content: |  
+            The user also has the option of updating their password or updating their email. Updating the email will automatically set the user to unconfirmed and send the user another token link. They will follow the same validation process to validate the new email as when they initially created their account. If the user chooses to delete their account, a warning modal will pop up on the screen where some simple Javascript will require them to enter their username before the final option to delete is available.
+        - content: |
 
           imgs:
             - /assets/project-images/usermgmt-images/prof6.png
             - /assets/project-images/usermgmt-images/prof7.png
-        - content: |  
+        - content: |
             The user details are placed into a 'context' for the user and sent to the user profile template as a keyword argument where they can be unloaded in the template and displayed in their applicable forms as placeholders. This is done simply to clean up the code a bit, and allow for only one argument to be sent to the template.
           imgs:
             - /assets/project-images/usermgmt-images/prof8.png
-        - content: |  
+        - content: |
             The user details are placed into a 'context' for the user and sent to the user profile template as a keyword argument where they can be unloaded in the template and displayed in their applicable forms as placeholders. This is done simply to clean up the code a bit, and allow for only one argument to be sent to the template.
           imgs:
             - /assets/project-images/usermgmt-images/prof9.png
             - /assets/project-images/usermgmt-images/prof10.png
-        - content: |  
+        - content: |
             Now the only step left is to connect and upload the profile picture to AWS S3. This is done through the us of Boto3, the AWS SDK for python. I made a few configurations to load the file onto my S3 bucket as the name of the user followed by "_profile_img" so they are easier to track in the bucket and will be overriden in case the user changes their picture again. In addition, the bucket is also versioned so older versions of their profile pictures are kept for a given amount of time before they are permanently deleted.<br><br>
 
             I also need a way to connect each user's picture to their profile beyond the naming scheme of the files. In order to acheieve this, I have the program save the URL location of the bucket object as an entry in the database for each user. That way, I can display the user's profile image by simply querying the database and loading the stored S3 URL, along with the rest of the user context, into the user profile template.
@@ -812,12 +809,11 @@
     A functional user management system with registration, login authorization, database management and email validation.
   overview: |
     I created this site as a first project when transitioning into the industry. This was the first version of the current version of this website, and it was built from the ground up using AWS for features like hosting, CI/CD aspects, DNS services, load balancing, caching and TLS authentication. I have coded all the Python, HTML and CSS via a Flask app which is lightweight and provides the flexibility to add features in the future as desired. This project was not only a great way to display all of the content and projects I have completed but also an effective way to highlight some of the many capabilities of AWS when it comes to building a website or web app.<br><br> 
-    
+
     In addition, this was a fantastic learning experience to pull together all of the things I have learned so far in AWS and coding. In this overview of the site, I will review all of the core pieces of its development. As I implement more features, I will document them as separate projects to track the evolution of the site.
   titleImage: /assets/project-images/websitev1-images/WebsiteDiagram.png
   summaryImg: /assets/project-images/websitev1-images/site-outro-1.png
   sections:
-
     - title: Python Flask / HTML / CSS
       tabTitle: Flask
       subsections:
@@ -866,15 +862,15 @@
         - content: |
             At this point the Elastic Beanstalk environment could be configured. A web server environment was selected.
           imgs:
-            - /assets/project-images/websitev1-images/site-eb-3.png   
+            - /assets/project-images/websitev1-images/site-eb-3.png
         - content: |
             Flask runs on Python which is the AWS managed platform being used for this application.
           imgs:
-            - /assets/project-images/websitev1-images/site-eb-4.png   
+            - /assets/project-images/websitev1-images/site-eb-4.png
         - content: |
             Once the environment was configured and deployed, any changes made to the code via our git repository will flow through the pipeline to the environment and be reflected on the site.
           imgs:
-            - /assets/project-images/websitev1-images/site-eb-5.png   
+            - /assets/project-images/websitev1-images/site-eb-5.png
 
     - title: CodePipeline
       tabTitle: Pipeline
@@ -892,11 +888,11 @@
         - content: |
             At this point the GitHub repository was connected to the pipeline and ready to be synced to the desired provider.
           imgs:
-            - /assets/project-images/websitev1-images/site-pipelinesetup-3.png 
+            - /assets/project-images/websitev1-images/site-pipelinesetup-3.png
         - content: |
             In the deploy stage, a service is selected for where the code will sync to. Since Elastic Beanstalk is how I am deploying the site, it is selected as the provider. Now any changes made will go through the pipeline and deploy to the Elastic Beanstalk environment.
           imgs:
-            - /assets/project-images/websitev1-images/site-pipelinesetup-4.png 
+            - /assets/project-images/websitev1-images/site-pipelinesetup-4.png
         - content: |
             Once the pipeline is configured, I can see the source and deploy stages as they progress. The Elastic Beanstalk environment is now setup to receive changes through the pipeline.
           imgs:
@@ -918,7 +914,7 @@
         - content: |
             Later when the certificate is deployed, it can be viewed on the site from the CloudFront domain.
           imgs:
-            - /assets/project-images/websitev1-images/site-cm-3.png 
+            - /assets/project-images/websitev1-images/site-cm-3.png
 
     - title: Web Application Firewall
       tabTitle: WAF
@@ -936,7 +932,7 @@
         - content: |
             Now the web ACL was available to be associated with the CloudFront distribution.
           imgs:
-            - /assets/project-images/websitev1-images/site-waf-3.png 
+            - /assets/project-images/websitev1-images/site-waf-3.png
 
     - title: CloudFront
       tabTitle: CloudFront
@@ -960,15 +956,15 @@
 
             Now the Web ACL that was previously confgured can be added to the distribution as well.
           imgs:
-            - /assets/project-images/websitev1-images/site-cf-3.png 
+            - /assets/project-images/websitev1-images/site-cf-3.png
         - content: |
             Additionaly, the SSL/TLS certificate that we requested previously can now be deployed onto the distribution.
           imgs:
-            - /assets/project-images/websitev1-images/site-cf-4.png 
+            - /assets/project-images/websitev1-images/site-cf-4.png
         - content: |
             The CloudFront distribution was then created. At this step, I now have a fully operational distribution with a firewall, which can be visited securely over HTTPS port 443 via the SSL/TLS certificate.
           imgs:
-            - /assets/project-images/websitev1-images/site-cf-5.png 
+            - /assets/project-images/websitev1-images/site-cf-5.png
 
     - title: Route53
       tabTitle: Route53
@@ -986,12 +982,12 @@
         - content: |
             A hosted zone then had to be created for the domain name so records can be added to route traffic visiting the domain.
           imgs:
-            - /assets/project-images/websitev1-images/site-r53-3.png 
+            - /assets/project-images/websitev1-images/site-r53-3.png
         - content: |
             Finally, records were able to be added to the hosted zone to route traffic from the domain names to a destination. Two records were added, one for the domain name without the subdomain and one for the fully qualified domain name. For the routing, an Alias A Record was used to route the domain directly to an AWS service, that service being the CloudFront distribution for both records.
           imgs:
-            - /assets/project-images/websitev1-images/site-r53-4.png 
-            - /assets/project-images/websitev1-images/site-r53-5.png 
+            - /assets/project-images/websitev1-images/site-r53-4.png
+            - /assets/project-images/websitev1-images/site-r53-5.png
   summary: |
     My biggest takeaway from this project was that looks are often deceiving. A simple looking web concept on the surface can have layers of complexity under the hood. There are many more moving parts going on here than I would have thought given a cursory glance. The great thing for me about coding and developing projects like this are the moments where a complex series of operations going on behind the scenes produces a simple and clean finished product. Projects like these require lots of new learning experiences and chances to try out new technologies while producing something people can interact with, making this a very enjoyable project to have undertaken.<br><br>
 
@@ -1001,7 +997,7 @@
 
 - id: cdk
   title: AWS CDK Stack Creation
-  subtitle: 'AWS Cloud Development Kit: Infrastructure as Code with Typescript'
+  subtitle: "AWS Cloud Development Kit: Infrastructure as Code with Typescript"
   github: https://github.com/syuhas/cdk-demo-vpc
   description: |
     Defining and provisioning AWS resources as code with the AWS Cloud Development Kit (CDK).
@@ -1010,7 +1006,6 @@
   titleImage: /assets/project-images/cdk-images/CDKDemo.png
   summaryImg: /assets/project-images/websitev1-images/site-outro-1.png
   sections:
-
     - title: Installing Typescript and the CDK
       tabTitle: Installation
       subsections:
@@ -1024,7 +1019,7 @@
             Now the Cloud Developement Kit can be installed. To verify the installation, I can run a 'cdk --version' check. Additionally, a pip dependencies overview let's us see exactly what the CDK has installed on top of our previously existing dependencies.
           imgs:
             - /assets/project-images/cdk-images/cdk-2-checkinstall.png
-    
+
     - title: Bootstrapping and Initialization
       tabTitle: Bootstrap
       subsections:
@@ -1043,10 +1038,10 @@
         - content: |
             This is the file structure that the initialization process created. The key elemements here are:
           listItems:
-            - 'cdk-demo.ts: This is where I am going to create and load all of the stacks that I define.'
-            - 'cdk-demo-stack.ts: This is where I actually define the stack, including reasources and properties.'
-            - 'package.json: Dependencies and build scripts are defined here (npm watch, npm build, npm test).'
-            - 'cdk.json: Finally, this instructs the toolkit how to run your application.'
+            - "<span style='color: blue;'>cdk-demo.ts</span>: This is where I am going to create and load all of the stacks that I define."
+            - "<span style='color: blue;'>cdk-demo-stack.ts</span>: This is where I actually define the stack, including reasources and properties."
+            - "<span style='color: blue;'>package.json</span>: Dependencies and build scripts are defined here (npm watch, npm build, npm test)."
+            - "<span style='color: blue;'>cdk.json</span>: Finally, this instructs the toolkit how to run your application."
           imgs:
             - /assets/project-images/cdk-images/cdk-5-file-structure.png
         - content: |
@@ -1102,10 +1097,3 @@
             - /assets/project-images/cdk-images/cdk-15-result-subnets.png
         - content: |
             ...and the public subnets are properly deployed, one in each of the 3 Availability zones. Each has a subnet mask of /24 and the necessary route tables and internet gateways defined. The stack has now been successfully deployed and I can deploy more change sets to the stack via code to add or remove resources as needed.
-
-
-
-
-
-
-

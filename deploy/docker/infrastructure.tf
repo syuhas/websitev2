@@ -18,7 +18,7 @@ terraform {
 # create ec2 instance
 resource "aws_instance" "instance" {
   ami = "ami-06b21ccaeff8cd686"
-  instance_type = "t2.medium"
+  instance_type = "t2.micro"
   vpc_security_group_ids = [var.aws_security_group]
   key_name = "ec2"
   tags = {

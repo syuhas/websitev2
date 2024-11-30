@@ -3,7 +3,10 @@ provider "aws" {
 }
 
 variable "aws_security_group" {type = string}
-variable "aws_subnet_ids" {type = list(string)}
+variable "aws_subnet_ids" {
+  type = list(string)
+  ephemeral = true
+}
 variable "aws_tf_bucket" {type = string}
 variable "aws_route53_zone_id" {type = string}
 variable "aws_domain" {type = string}

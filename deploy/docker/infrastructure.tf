@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 variable "aws_security_group" {type = string}
-variable "aws_subnet_ids" {type = list(string)}
+# variable "aws_subnet_ids" {type = list(string)}
 variable "aws_tf_bucket" {type = string}
 variable "aws_route53_zone_id" {type = string}
 variable "aws_domain" {type = string}
@@ -25,7 +25,7 @@ resource "aws_instance" "instance" {
     Name = "${var.aws_domain}"
   }
   iam_instance_profile = "instance_profile_role"
-  subnet_id = element(var.aws_subnet_ids, 0)
+  subnet_id = "subnet-0823df6c43b1a0ea4"
 }
 
 resource "aws_route53_record" "dns" {

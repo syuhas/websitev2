@@ -91,12 +91,15 @@ pre {
     }
     .sections { 
         & img {
-            max-width: 100%;
-            min-width: 100%;
+            max-width: 110vw;
         }
         & .imgs {
             flex-direction: column;
         }
+    }
+    pre {
+        width: 90vw;
+        font-size: .4rem;
     }
     
 }

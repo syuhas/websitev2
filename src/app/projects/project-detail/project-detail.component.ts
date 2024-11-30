@@ -27,6 +27,18 @@ export class ProjectDetailComponent implements OnInit {
     this.http.get('assets/projects.yaml', {responseType: 'text'}).subscribe(data => {
       this.projects = yaml.load(data) as Project[];
       this.project = this.projects.find(p => p.id === projectId) as Project;
+      this.project = this.projects.find((p) => p.id === projectId) as Project;
+      
+      console.log(this.project.sections[5].subsections);
+      this.project.sections.forEach((section) => {
+        section.subsections.forEach((subsection) => {
+            subsection.content = this.sanitizer.bypassSecurityTrustHtml(subsection.content as string);
+            if (subsection.code) {
+              subsection.code = this.sanitizer.bypassSecurityTrustHtml(subsection.code as string);
+            }
+
+        });
+      });
     });
 
     this.route.queryParams.subscribe(params => {

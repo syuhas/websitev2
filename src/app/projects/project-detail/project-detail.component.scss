@@ -76,6 +76,15 @@ p {
     align-items: center;
 }
 
+pre {
+    background-color: #e4e4e4;
+    overflow: auto;
+    font-family: 'Monaco', monospace;
+    padding: 0 1em;
+    width: 50vw;
+    font-weight: 600;
+}
+
 @media(max-width: 1300px) {
     .col-md-12 {
         width: 100%;

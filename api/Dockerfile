@@ -10,13 +10,6 @@ COPY . .
 RUN pip3 install -e .
 
 
-
-COPY . .
-
-
-
-
-
 CMD ["runserver"]
 
 EXPOSE 8000

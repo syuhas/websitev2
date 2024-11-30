@@ -45,6 +45,10 @@
                                 <li class="text-break lh-lg" *ngFor="let item of subsection.listItems">{{ item }}</li>
                             </ul>
                         </div>
+                        <div *ngIf="subsection.code">
+                            <pre class="text-break" [innerHTML]="subsection.code">                             
+                            </pre>
+                        </div>
                     </div>
 
                     <div class="col-md-8" *ngIf="subsection.imgs && subsection.imgs.length > 0" class="imgs">
@@ -61,8 +65,8 @@
         <div class="card overview">
             <h2 class="card-title"><strong>Summary</strong></h2>
             <div class="col-md-12">
+                <div style="text-align: center;"><img src="{{ project.summaryImg }}" alt="" class="img-fluid"></div>
                 <p [innerHTML]="project.summary"></p>
-                <img src="{{ project.summaryImg }}" alt="" class="img-fluid">
             </div>
 
         </div>

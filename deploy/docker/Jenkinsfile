@@ -33,6 +33,23 @@ pipeline {
                 sh 'echo "Environment Variables Set"'
             }
         }
+
+        stage('TerraformInit') {
+            steps {
+                script {
+                        terraformInit = {
+                            sh """
+                                terraform init -reconfigure \
+                                    -backend-config="bucket=${env.TF_VAR_aws_tf_bucket}" \
+                                    -backend-config="key=${env.TF_VAR_aws_domain}/terraform.tfstate" \
+                                    -backend-config="region=us-east-1" \
+                                    -backend-config="dynamodb_table=terraform-lock-table"
+                            """
+                        }
+                }
+            }
+        }
+
         stage('AssumeRole') {
             steps {
                 script {

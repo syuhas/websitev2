@@ -12,6 +12,14 @@ pipeline {
             steps {
                 sh 'echo "Setting Environment Variables"'
                 script {
+                    env.TF_VAR_aws_security_group = 'sg-00d9ca388301c93a9'
+                    env.TF_VAR_aws_subnet_ids = '["subnet-0823df6c43b1a0ea4", "subnet-057dcb202796ed034"]'
+                    env.TF_VAR_aws_tf_bucket = 'terraform-lock-bucket'
+                    env.TF_VAR_aws_route53_zone_id = 'Z02299283BLAIJGG9JHMK'
+                    env.TF_VAR_aws_domain = 'digitalsteve.net'
+                    env.TF_VAR_aws_www_domain = 'www.digitalsteve.net'
+                }
+                script {
                         terraformInit = {
                             sh """
                                 terraform init -reconfigure \
@@ -21,13 +29,6 @@ pipeline {
                                     -backend-config="dynamodb_table=terraform-lock-table"
                             """
                         }
-                        
-                    env.TF_VAR_aws_security_group = 'sg-00d9ca388301c93a9'
-                    env.TF_VAR_aws_subnet_ids = '["subnet-0823df6c43b1a0ea4", "subnet-057dcb202796ed034"]'
-                    env.TF_VAR_aws_tf_bucket = 'terraform-lock-bucket'
-                    env.TF_VAR_aws_route53_zone_id = 'Z02299283BLAIJGG9JHMK'
-                    env.TF_VAR_aws_domain = 'digitalsteve.net'
-                    env.TF_VAR_aws_www_domain = 'www.digitalsteve.net'
                 }
                 sh 'echo "Environment Variables Set"'
             }

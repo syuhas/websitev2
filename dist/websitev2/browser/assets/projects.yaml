@@ -1,3 +1,325 @@
+- id: rproxy
+  title: Reverse Proxy - Nginx with Docker, FastAPI, and Angular
+  subtitle: Serving a FastAPI backend and Angular frontend with Nginx reverse proxy in Docker containers.
+  github: https://github.com/syuhas/websitev2
+  description: |
+    Utilizing a Jenkins server to build and deploy Docker images to AWS ECS using dynamically provisioned EC2 build nodes.
+  overview: |
+    This project explores the creation and configuration of a reverse proxy to serve my backend FastAPI application and frontend Angular application in separate Docker containers on the same domain. The backend API is part of a larger project I was working on for an S3 dashboard, and it is built using FastAPI pulling resource metadata from a Postgres database. The front end is this website, which is the second version of my personal website built with Angular. <br><br>
+    The goal of this project is both to explore the process of setting up a reverse proxy to serve multiple applications on the same domain with different paths. Reverse proxy in general is a useful design pattern for many use cases including load balancing, security, SSL termination and migrations, but for my use case I wanted a convinient place to put my API that I will use for different functions as I develop more projects. The project also uses aspects like terraform to provision infrastructure in AWS in a repeatable and consistent way, LetsEncrypt for SSL certificates and Jenkins and Bash scripting for automation and CI/CD.
+
+  titleImage: /assets/project-images/rproxy-images/rproxy.png
+  summaryImg: /assets/project-images/rproxy-images/prox_sum.png
+  sections:
+    - title: Defining Infrastructure with Terraform
+      tabTitle: Terraform 
+      subsections:
+        - content: |
+            Firstly, I defined this project's infrastructure using Terraform. Terraform is a tool that will allow me to define and provision infrastructure as code in a repeatable and consistent way. In addition, using a backend state configuration stored in S3 and DynamoDB, I can keep track of the state of my infrastructure and Terraform will automatically detect changes and allow me to update the infrstructure as needed, or update the application without having to reprovision the entire infrastructure.<br><br>
+
+            Terraform can access AWS and build resources by accessing the IMDSv2 (Instance Metadata Service) attached directly to the Jenkins build server that is dynamically provisioned and shut down as needed (check out <a href="/projects/jenkins?tab=Overview">Provisioning Builds Servers in Jenkins</a>). This is useful as it avoids having to pass sensitive credentials to Jenkins or store them anywhere in my code.
+
+            The main components of the infrastructure include:
+          listItems: 
+            - An EC2 instance to run the website and API with the reverse proxy
+            - A security group to allow the correct ports for inbound traffic
+            - DNS and records to route traffic to the EC2 instance  
+          imgs:
+            - /assets/project-images/rproxy-images/prox1_1.png
+
+        - content: |
+            In my Jenkinsfile, when I initialize the backend configuration (which is done here to allow for variables), I can also define TF_VAR variables that will be used in the actual Terraform configuration file. This is useful for defining things like sensitive information that I don't want to hard code into the configuration or subnets/security groups/etc that I want to pull from Jenkins via some lookup, but in this case I have a fairly simple setup, so I am just defining them here.
+          imgs: 
+            - /assets/project-images/rproxy-images/prox1_2.png
+
+    - title: Creating SSL Certificates with LetsEncrypt
+      tabTitle: SSL/TLS 
+      subsections:
+        - content: |
+            To avoid having to use AWS Load Balancing and to save on cost, I decided to try to create my own SSL certificates using 3rd party tools. LetsEncrypt is a free tool that allows you to create your own domain validated SSL certificates. LetsEncrypt uses a CLI tool called Certbot to create the certificates which can then be used in your server configuration to validate the domain and encrypt the traffic. The certificates are valid for 90 days and can be renewed automatically with a cron job. This is a great way to save on cost and to learn how to create and manage your own SSL certificates.<br><br>
+
+            Certbot also has Route53 integration which allows for the DNS validation to be done automatically. This is useful for me as I am using Route53 for my domain and I can easily validate the domain and create the certificates in one step. In the below CLI command, I am telling Certbot to use the Route53 plugin to create and validate the certificates for my <strong style="color: blue;">digitalsteve.net</strong> and <strong style="color: blue;">www.digitalsteve.net</strong>. Certbot automatically sends a DNS TXT challenge to Route53 and then checks for the response to validate the domain. The certificates are then created and available for me to use in any server configuration that includes the domains I validated.
+          imgs:
+            - /assets/project-images/rproxy-images/prox2_1.gif
+
+        - content: |
+            Now that I have my newly created SSL certificates, I can use them in my Nginx configuration to encrypt the traffic between the client and the server. For this project I am including them with the deployment files so Jenkins can access them and copy them to the server. Here, the fullchain.pem and privkey.pem files are the certificates and private key that I will use in the Nginx configuration to encrypt the traffic.<br><br>
+
+            In a later project, I plan to explore storing the certificates in either AWS Secrets Manager or S3 and pull them from there to the server. This will allow for a more secure way to store the certificates and easier management and renewal in the future.
+          imgs: 
+            - /assets/project-images/rproxy-images/prox2_2.png
+
+    - title: Applications - FastAPI and Angular
+      tabTitle: Apps
+      subsections:
+        - content: |
+            The front end of this setup is the website you are on now and is built on Angular 17. The backend of the reverse proxy setup can be accessed via the /api path and contains an API built with FastAPI that contains various endpoints I plan to use in my future projects. <br><br>
+
+            The API pulls metadata information for AWS S3 resources that is stored in a <strong>Postgres</strong> database. It is built with FastAPI is served via <strong>uvicorn</strong>. The API is accessed via the /api path of this site which is made possible by the reverse proxy configuration in Nginx.<br><br>
+
+            Test out the <a href="/projects/rproxy?tab=Swagger">Swagger API Documentation</a> in the next section.
+          imgs: 
+            - /assets/project-images/rproxy-images/prox3_3.png
+            - /assets/project-images/rproxy-images/prox3_4.png
+        - content: |
+            My Angular application is built with Angular 17. The application is built with a simple design and is meant to act as my base of operations, containing my portfolio, resume and projects. I am using templating via yaml files to display each additional project I add and plan to go over this in a future project.
+          imgs:
+            - /assets/project-images/rproxy-images/prox3_1.png
+            - /assets/project-images/rproxy-images/prox3_2.png
+
+    - title: Test Out the Swagger API
+      tabTitle: Swagger
+      subsections:
+        - content: |
+            <iframe src="https://www.digitalsteve.net/api/docs" style="width: 80vw; height: 100vh; border: none;"></iframe>
+          
+          imgs:
+
+    - title: Configuring Docker for Angular and Python
+      tabTitle: Docker
+      subsections:
+        - content: |
+            I am using <strong>Docker</strong> to containerize my applications for this project. Docker is a tool that allows me to package all of the code, dependencies, and configurations into a single image that can be run on any machine that has Docker installed. For my purposes, one of these containers will hold the Angular application as well as the reverse proxy which, as this is a smaller project, is a design decision that I made as opposed to having a dedicated Nginx container for the reverse proxy.<br><br>
+
+
+          imgs:
+            - /assets/project-images/rproxy-images/prox4_1.png
+        - content: |
+              The first container will just hold the the API, and any url with the /api path will be routed to this container. I am using a lightweight Python image for this container, using a setup.py file to install the necessary dependencies and have defined an entry point in the application to start the uvicorn server via the <strong>"runserver"</strong> command. This application will be running on port 8000 in the server.
+          imgs:
+
+        - content: |
+
+          imgs: 
+            - /assets/project-images/rproxy-images/prox4_2.png
+            - /assets/project-images/rproxy-images/prox4_3.gif
+        - content: |
+            The Angular application will be running on the second container and will be served via Nginx, which will also act as the reverse proxy. In my Dockerfile, I am copying over the entire Nginx configuration to the container, in addition to the prebuilt Angular production files and the SSL certificates. I also setup file permissions here to allow the container to have proper access to my SSL certificates to serve the application over HTTPS. In the next section, I will go over the Nginx configuration in more detail to explain how the reverse proxy is set up.
+          imgs: 
+            - /assets/project-images/rproxy-images/prox4_4.png
+
+    - title: Reverse Proxy Configuration with Nginx
+      tabTitle: Reverse Proxy
+      subsections:
+        - content: |
+            The Nginx configuration is the core of this project. This is where the actual reverse proxy rules are defined to route traffic to the correct container based on the path. In order to serve the API container with the /api path, I just need to define a location block for each path.
+
+            This inital port 80 server block is redundant for this setup as I am defining my SSL connection below this as well as my container path locations. This would only be used as a fallback or communication over HTTP between containers in the future as needed.
+
+          code: |
+            error_log /var/log/nginx/error.log notice;
+
+            server {
+                listen       80;
+                server_name  localhost;
+                root         /usr/share/nginx/html;
+                index        index.html;
+                location / {
+                        try_files $uri $uri/ /index.html;
+                }
+
+                error_page 404 /404.html;
+                location = /404.html {
+                }
+
+                error_page 500 502 503 504 /50x.html;
+                location = /50x.html {
+                }
+            }
+            
+          imgs:
+        - content: |
+            The main server block is defined here for the Angular container. Here, I am pointing the server to the SSL certificates that I created and validated in the previous step. The server is listening on port 443 and under the location block, all traffic for the root path('/') is routed to the main Angular application. In addition, SSL protocols and ciphers, the session cache, and session timeout are defined.
+          code: |
+            <strong><span style="color: blue;">
+            server {
+                listen 443 ssl;
+                server_name digitalsteve.net;
+
+                ssl_certificate /etc/ssl/certs/fullchain.pem;
+                ssl_certificate_key /etc/ssl/private/privkey.pem;
+
+                ssl_session_cache shared:le_nginx_SSL:10m;
+                ssl_session_timeout 1440m;
+                ssl_session_tickets off;
+
+                ssl_protocols TLSv1.2 TLSv1.3;
+                ssl_prefer_server_ciphers off;
+
+                location / {
+                    root /usr/share/nginx/html;
+                    index index.html;
+                    try_files $uri $uri/ /index.html;
+                }
+              </span></strong>
+
+
+                location /api {
+                    proxy_pass http://api-service:8000;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host $host;
+                    proxy_cache_bypass $http_upgrade;
+                }
+
+            }
+          imgs:
+        - content: |
+            The second location block is what is actually creating the reverse proxy. Here, I am defining the path /api to be routed to the API container. The <strong>proxy_pass</strong> directive is pointing to the container name and port that the API is running on. The proxy_http_version, proxy_set_header, and proxy_cache_bypass directives are used to allow for the proper communication between the Nginx server and the API container. This is the core of the reverse proxy setup and is what allows me to serve both the Angular application and the API on the same domain.
+          code: |
+            server {
+                listen 443 ssl;
+                server_name digitalsteve.net;
+
+                ssl_certificate /etc/ssl/certs/fullchain.pem;
+                ssl_certificate_key /etc/ssl/private/privkey.pem;
+
+                ssl_session_cache shared:le_nginx_SSL:10m;
+                ssl_session_timeout 1440m;
+                ssl_session_tickets off;
+
+                ssl_protocols TLSv1.2 TLSv1.3;
+                ssl_prefer_server_ciphers off;
+
+                location / {
+                    root /usr/share/nginx/html;
+                    index index.html;
+                    try_files $uri $uri/ /index.html;
+                }
+            <strong><span style="color: blue;">
+
+                location /api {
+                    proxy_pass http://api-service:8000;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host $host;
+                    proxy_cache_bypass $http_upgrade;
+                }
+
+            }
+            </span></strong>
+
+          imgs:
+
+        # - content: |
+        #     FastAPI application built to initially to connect to a Postgres database that pulls metadata information for AWS S3 resources. The API is accessed via the /api path of this site.
+
+        #     In a later project, I plan to explore storing the certificates in either AWS Secrets Manager or S3 and pull them from there to the server. This will allow for a more secure way to store the certificates and easier management and renewal in the future.
+        #   imgs: 
+        #     - /assets/project-images/rproxy-images/prox5_2.png
+        #     - /assets/project-images/rproxy-images/prox5_3.png
+
+    - title: Bash Scripting and Automation for Jenkins
+      tabTitle: Bash Scripting
+      subsections:
+        - content: |
+            Now that I have the reverse proxy configured, I can write my Bash scripts to tell Jenkins how to deploy all of this to the server. I am using a Jenkinsfile to define the pipeline job and the stages that Jenkins will run to deploy the applications. In the final stages, after the infrastructure is provisioned, Jenkins will run these scripts to handle the bulk of the deployment of the applications.<br><br>
+
+            The first script acts as an SSH script that will connect and copy my deployments files to the server over SCP. To speed things up, I have decided to bundle the production files for the Angular application locally instead of building them on the server. This is down to preference, but given the  size of the application the decision has a nominal impact on the deployment time.<br><br>
+
+            After the deployment files are copied over, the script will then SSH into the instance and run the next script in the process.
+          imgs:
+            - /assets/project-images/rproxy-images/prox6_1.png
+        - content: |
+            Now that the 'copy' script has transferred everything that I need over to the server, I can begin to build and run the actual Docker containers which will run the applications.<br><br>
+
+            <strong>In the first image below</strong>, the necessary dependencies are installed on the server and the script then navigates to the working directory. For this project, I have parameterized the Jenkins job to allow for Deploy, Update and Destroy options. Deploy acts as a fresh install, tearing down all existing AWS resources associated with the Terraform project and building everything from scratch. Update will retain the existing AWS resources and update the application with the new deployment files. Therefore I have added a check to make sure if there are any running containers, they are stopped and removed before progressing with the Docker build and run commands.<br><br>
+
+            In addition to the dependencies and Docker cleanup, I make sure the Docker network is configured correctly. This will ensure communication between the containers for the reverse proxy to work correctly.<br><br>
+
+            <strong>In the second image below</strong>, the script builds and runs both containers for both of the applications. Since the Nginx configuration depends on the API conatiner being built and running, the API must be deployed first. I added a sleep command to give the container time to spin up and for the network to detect the running container. The run commands are as follows:<br><br>
+          code: |
+            
+            docker build -t api:latest .
+            <span style="color: blue;"># the container is built and tagged with the latest tag for the API image</span>
+
+            docker run -d --network $NETWORK_NAME --name api-service -p 8000:8000 api:latest
+            <span style="color: blue;"># the container is then run in detached mode, attached to the custom network, named and bound to the host machine on port 8000</span>
+
+
+            docker build -t websitev2:latest .
+            <span style="color: blue;"># the container is built and tagged with the latest tag for the Angular image</span>
+
+            docker run -d --network $NETWORK_NAME --name website-service -p 443:443 websitev2:latest
+            <span style="color: blue;"># the container is then run in detached mode, attached to the custom network, named and bound to the host machine on port 443</span>
+          imgs: 
+
+        - content: |
+            The script will then do some basic logging to make sure that the containers are running and that the deployment was successful.
+            
+          imgs:
+            - /assets/project-images/rproxy-images/prox6_2.png
+            - /assets/project-images/rproxy-images/prox6_3.png
+
+    - title: Jenkins Configuration and Parameters
+      tabTitle: Jenkins
+      subsections:
+        - content: |
+            The scripts are now defined for the project and I can configure the pipeline job to provision the infrastructure and deploy the applications. In the Jenkinsfile, I have defined the stages that Jenkins will run to deploy the applications.<br><br>
+
+            The environment variables that will be passed to the Terraform file are defined first. The pipeline then assumes the role for the AWS account that the applications are being deployed to so that Terraform has the correct permissions to provision the infrastructure. If the infrastructure is being teared down first, the 'Destroy' step will run first and will tear down any infrastructured stored in the state file stored in S3/DynamoDB. Otherwise, this will be skipped.
+          imgs:
+            - /assets/project-images/rproxy-images/prox7_1.png
+            - /assets/project-images/rproxy-images/prox7_2.png
+
+
+        - content: |
+            After the role is assumed and Terraform is initialized, the next step will then reference the plan saved in the state file to provision, update or just check the existing infrastructure. Once complete, the Jenkinsfile will the run the initial 'copy' script to transfer the deployment files to the server.
+          imgs:
+            - /assets/project-images/rproxy-images/prox7_3.png
+            - /assets/project-images/rproxy-images/prox7_4.png
+
+    - title: Configuring the Pipeline Job
+      tabTitle: Pipeline
+      subsections:
+        - content: |
+            This Jenkins project is a simple pipeline job. The only information that needs to be passed in is the GitHub repository url and the location of the Jenkinsfile in the build directory. The pipeline will then run the stages as defined in the Jenkinsfile. The project is also parameterized with a choice parameter(<strong>Deploy, Update and Destroy</strong>) to allow for the build options as previously mentioned. This will allow for the pipeline to be run in different ways depending on the desired outcome.<br><br>
+
+            <strong>Note:</strong> The provisioned build server is configured to pull credentials from IMDSv2 role attached to the instance during startup. This allows Terraform to be able to create resources and allows Jenkins to be able to assume roles as necessary, assuming the correct passrole and assumerole permissions are in place. 
+          imgs:
+            - /assets/project-images/rproxy-images/prox8_1.png
+            - /assets/project-images/rproxy-images/prox8_2.png
+
+
+        - content: |
+
+          imgs:
+            - /assets/project-images/rproxy-images/prox8_3.png
+
+    - title: Running the Deployent Pipeline Job
+      tabTitle: Deployment
+      subsections:
+        - content: |
+            Now that I have my pipeline configured and my Jenkinsfile written I can run the job and deploy the site and reverse proxy to my API. First Terraform will check the infrastructure and check the state files to see what needs to be provisioned, if any.
+          imgs:
+            - /assets/project-images/rproxy-images/prox9_1.gif
+            - /assets/project-images/rproxy-images/prox9_2.png
+
+        - content: |
+            The deployment files are then copied to the server, including the Dockerfiles and Nginx configuration.
+          imgs:
+            - /assets/project-images/rproxy-images/prox9_3.png
+            - /assets/project-images/rproxy-images/prox9_4.png
+
+        - content: |
+            The Docker containers are then built and run on the server. The API comes first since it is a dependency for the Nginx configuration. The Nginx container is then built and run with the reverse proxy configuration.<br><br>
+
+            The full pipeline view can be seen below, with all of the stages listed out. The pipeline deployment files are cleaned up from the build server and the pipeline is comeplete.
+          imgs:
+            - /assets/project-images/rproxy-images/prox9_5.png
+            - /assets/project-images/rproxy-images/prox9_6.png
+
+  summary: |
+    This project was intially concieved as a way to explore adding my API to my existing website while keeping costs at a minimum. There is a lot of overhead cost incurred not only from adding new AWS resources to run the application, but also from things like Load Balancing or Cloudfront to use my ACM(AWS Certificate Manager) certificates and using ECS in either Fargate or EC2 mode to have AWS manage my containers. Since this is a lightweight site and a fairly small API, I decided a reverse proxy is a good fit since managing these aspects on my own can reduce costs by a large margin versus provisioning more infrastructure to simply host my API.<br><br> 
+    
+    Prior to this project, I had very little exposure to actually setting up a reverse proxy as well as generating and managing my own domain validated SSL certificates. This project was a great way to learn about the various benefits of using a reverse proxy, and acted as a catalyst for me to dig in deeper to the world of Nginx/servers and all of the various configurations that are possible when setting one up in general. Load balancing, enhanced security posture, SSL termination, caching and monitoring and logging are all good reasons to consider a reverse proxy in particular.<br><br> 
+    
+    I also learned more about various design patterns that are possible when setting up reverse proxies. In this project, I mentioned having a dedicated container that would act as the reverse proxy, and why that might be beneficial as opposed to configuring it in the main container. This is a design decision that I made based on the use case and the complexity of the application. In this case, I decided to keep it simple and have the reverse proxy in the same container as the Angular application.<br><br>
+
+    I am very happy with the outcome of this project both from a learning perspective as well as a cost perspective. I am now able to run my API on the same domain as my website and have the ability to add more applications in the future as the complexity of projects increases. I plan to also experiment with the other possibilities that come from utilizing this design pattern. As a bonus, I now have a better understanding of what is entailed with creating and managing my own SSL certificates and can use this knowledge in future projects. Overall, this project was a great learning experience and I am excited to see where the knowledge I acquired takes me in the future.
+
 - id: jenkins
   title: Jenkins Pipeline - Dynamic Cloud Node Provisioning with AWS
   subtitle: Fully automated build pipeline with dynamically provisioned cloud node to push containterized applications to AWS.

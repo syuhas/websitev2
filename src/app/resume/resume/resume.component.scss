@@ -1,9 +1,25 @@
+.container {
+    padding-bottom: 3rem;
+}
+
 .profile-name {
     font-size: 2rem;
     font-weight: bold;
     text-align: center;
     padding: 1rem;
 }
+
+.header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    & img {
+        height: clamp(75px, 4vw, 150px);
+    }
+}
+
 .contact-details {
     display: flex;
     justify-content: center;
@@ -13,8 +29,10 @@
 }
 
 .card {
-    background-color: rgb(245, 245, 245);
-
+    // background-color: rgb(245, 245, 245);
+    background-color: #161e2706;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.636);
+    color: #444A53;
 }
 
 #certifications #badges {

@@ -6,11 +6,13 @@ export interface Project {
     subtitle: string;
     github: string;
     description: string;
-    overview: string;
-    titleImage: string;
+    // overview: string;
+    listIcon?: string[];
+    titleIcons?: string[];
+    // titleImage: string;
     sections: ProjectSections[];
-    summary: string;
-    summaryImg?: string;
+    // summary: string;
+    // summaryImg?: string;
 }
 
 export interface ProjectSections {

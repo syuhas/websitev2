@@ -23,6 +23,8 @@ import { NavComponent } from './nav/nav.component';
 import { ProjectListComponent } from './projects/project-list/project-list.component';
 import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
 import { HttpClientModule } from '@angular/common/http';
+import { MatTabGroup } from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,9 @@ import { HttpClientModule } from '@angular/common/http';
     MatToolbarModule,
     MatIconModule,
     MatCardModule,
-    HttpClientModule
+    HttpClientModule,
+    MatTabGroup,
+    MatTabsModule
   ],
   providers: [
     provideClientHydration(),

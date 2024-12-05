@@ -30,7 +30,7 @@ export class NavComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.updateIconScale();
     }
-    this.isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+    this.isHandset$ = this.breakpointObserver.observe([Breakpoints.Tablet, Breakpoints.Handset]).pipe(
       map(result => result.matches),
       distinctUntilChanged(),
       shareReplay()

@@ -38,7 +38,6 @@
         <mat-toolbar color="primary" class="background2">
             <button mat-button tabindex="+1" (click)="opened = !opened"><span class="material-icons custom-size-mat-icon">density_medium</span></button>
             <div [ngClass]="(isHandset$ | async) ? 'header-handset' : 'header-desktop'">
-                <p>Stephen Yuhas</p>
                 <div>
                     <img src="/assets/home-images/git.png" alt="" (click)="goToGithub()" style="cursor: pointer;">
                     <img src="/assets/home-images/linkedin.png" alt="" (click)="goToLinkedin()"

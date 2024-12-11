@@ -50,7 +50,12 @@ hr {
 
 
 @media (max-width: 960px) {
-  .text-break {
+  .card {
     width: 100%;
+    margin: auto;
+  }
+  .text-break {
+    width: 105%;
+    font-size: smaller;
   }
 }

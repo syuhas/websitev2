@@ -1,17 +1,256 @@
+- id: event
+  title: AWS Serverless Event-Driven Architecture
+  subtitle: Event-driven architecture in AWS with EventBridge, Lambda, SQS, and S3.
+  github: https://github.com/syuhas/awsdash-lambda
+  description: |
+    Developing an event-driven architecture in AWS with serverless microservices
+  listIcon: /assets/project-images/event-images/event_icon3.png
+  titleIcons:
+    - /assets/project-images/event-images/event_icon.png
+    - /assets/project-images/event-images/event_icon2.png
+    - /assets/project-images/event-images/event_icon3.png
+    - /assets/project-images/event-images/event_icon4.png
+  sections:
+    - title: Overview
+      tabTitle: Overview
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/event-images/event.png
+
+        - content: |
+            This project demonstrates the implementation of a serverless, event-driven architecture in AWS, leveraging services such as EventBridge, Lambda, SQS, and S3 to process and respond to bucket and object-level events. By automating workflows triggered by predefined rules, it showcases the scalability and resilience of serverless solutions.<br><br>
+
+            The events are divided into two main categories:
+
+          listItems:
+            - "<span style='color: blue;'>Bucket-Level Events</span>: Triggered by the creation or deletion of S3 buckets."
+            - "<span style='color: blue;'>Object-Level Events</span>: Triggered by actions such as adding, modifying, or deleting objects within a bucket, including handling delete markers and post events."
+          imgs:
+        - content: |
+            The separation of bucket-level and object-level events is necessary because S3 Event Notifications can only handle object-level events after a bucket is created and event notifications are explicitly enabled. I wanted to design this separation in so I could use S3 Event Notifications and treat the bucket-level events as an enrollment process.<br><br>
+            For bucket-level events, CloudTrail captures logs for bucket creation or deletion, which are processed by EventBridge and sent downstream. For object-level events, S3 Event Notifications pass data events downstream for processing by additional AWS services.
+            <br><br>
+            In the following sections, I will provide a detailed overview of the architecture, including the setup of CloudTrail, EventBridge, SQS, and Lambda functions. I will also explain how the system processes bucket-level and object-level events, showcasing the end-to-end flow of the event-driven architecture.
+            <br><br><br><br>
+          imgs:
+    - title: Bucket-Level Events Overview
+      tabTitle: Buckets
+      subsections:
+        - content: |
+            The bucket-level event pipeline is triggered by management events such as bucket creation or deletion, recorded in CloudTrail logs. These events are filtered using EventBridge, which routes relevant events, like bucket creation, to an SQS queue for further processing.<br><br>
+
+            A Lambda function consumes events from the SQS queue, extracting metadata such as bucket name and associated account ID. This metadata is then stored in a PostgreSQL database, enabling detailed tracking and management of bucket-level activities. The Lambda function also enrolls newly created buckets for object-level event notifications, ensuring seamless integration with the next pipeline.
+          imgs:
+            - /assets/project-images/event-images/event_bucket.png
+
+    - title: Configuring CloudTrail Logging
+      tabTitle: CloudTrail
+      subsections:
+        - content: |
+            Setting up a CloudTrail trail is a crucial first step in this event-driven architecture. The primary purpose of this trail is to capture and log management events for S3 buckets, enabling integration with EventBridge. This integration allows EventBridge to read these events and trigger workflows based on bucket-level activities such as creating or deleting a bucket.<br><br>
+            In this setup, the CloudTrail trail is configured to log management events, with particular emphasis on Write API operations. These logs are delivered to a designated S3 bucket, where they can be accessed and processed. By enabling this trail, I ensure that EventBridge has the necessary visibility into bucket-level actions, which forms the foundation of the bucket pipeline.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event1_1.png
+            - /assets/project-images/event-images/event1_2.png
+        - content: |
+            Below is the bucket that the CloudTrail logs are delivered to. This trail is enabled organization-wide, so all S3 management events from all accounts in the org are captured. These logs will be used by EventBridge and filtered by CreateBucket and DeleteBucket events.
+          imgs:
+            - /assets/project-images/event-images/event1_3.png
+
+    - title: Configuring EventBridge Rules
+      tabTitle: EventBridge
+      subsections:
+        - content: |
+            In this setup, I created an EventBridge rule to filter out S3 bucket management events specifically for CreateBucket and DeleteBucket actions. The event pattern is configured to match these actions in the CloudTrail logs, ensuring that only relevant events trigger the rule. This allows for precise control over which bucket-level activities are passed through the pipeline.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event2_1.png
+        - content: |
+            Once the filtering rule is in place, the events are routed to an SQS queue. The SQS queue serves as a reliable target for EventBridge, providing a decoupled mechanism for handling the events. This ensures that the events can be processed asynchronously, even if the downstream services experience temporary unavailability.<br><br>
+
+            The combination of EventBridge rules and the SQS target creates a streamlined event-driven workflow for bucket-level events, efficiently filtering, routing, and queuing S3 management events for further processing.
+          imgs:
+            - /assets/project-images/event-images/event2_2.png
+
+    - title: SQS Event Queue for Bucket Events
+      tabTitle: SQS - Buckets
+      subsections:
+        - content: |
+            With the EventBridge rules in place, the next step involves setting up the SQS queue to handle bucket-level events. SQS serves as the intermediary messaging layer, ensuring reliable delivery of events and allowing for asychhronous decoupled processing by downstream services.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event3_2.png
+
+        - content: |
+            The first step in this configuration is to create an SQS queue and define the necessary settings, such as message retention period and visibility timeout, to suit the needs of the pipeline. The SQS details page showcases these settings and ensures that the queue is configured to handle the expected traffic effectively.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event3_1.png
+            - /assets/project-images/event-images/event3_3.png
+
+        - content: |
+            An example payload of a CreateBucket event demonstrates the data structure being passed to the SQS queue. A Lambda target is configured to ingest and process the message. This payload includes critical details such as the event name, bucket name, timestamp, and other metadata, ensuring that the Lambda function receives all the information needed to process the event effectively.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event3_4.png
+
+    - title: Lambda Bucket Manager Function
+      tabTitle: Lambda - Buckets
+      subsections:
+        - content: |
+            The Lambda Bucket Manager Function processes bucket-level events received from the SQS queue. For each event, it extracts critical metadata, such as the bucket name and event type, to track and monitor storage activity.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event4_1.png
+
+        - content: |
+            The main purpose of the function is to add new buckets to the database and enable S3 Event Notifications to enroll the bucket in the object-level event pipeline. The object-level function will compute the storage metrics for the buckets and objects whereas this function acts as more of an enrollment process.<br><br>
+
+            The function supports event types like CreateBucket and DeleteBucket. For creation, it registers the bucket in the database and configures event notifications. For deletion, it removes the bucket and associated object data from the database.<br><br>
+
+            These tasks ensure efficient bucket management and seamless integration with the object-level event pipeline.
+          imgs:
+            - /assets/project-images/event-images/event4_2.png
+            - /assets/project-images/event-images/event4_3.png
+
+    - title: Object-Level Events Overview
+      tabTitle: Objects
+      subsections:
+        - content: |
+            The object-level event pipeline handles events such as object creation, deletion, or modification within an S3 bucket. This process is triggered by S3 Event Notifications, which are configured on enrolled buckets. These notifications send event details, such as object metadata, to an SQS queue.<br><br>
+
+            A Lambda function processes these events by extracting critical information, including object size (in bytes, kilobytes, megabytes, etc.) and calculating the storage cost. The extracted data is then stored in a PostgreSQL database for further analysis and management. This pipeline ensures efficient and automated handling of object-level activities, providing real-time updates and insights.
+          imgs:
+            - /assets/project-images/event-images/event_object.png
+
+    - title: S3 Event Notifications
+      tabTitle: S3 Events
+      subsections:
+        - content: |
+            As part of the bucket-level pipeline, S3 Event Notifications are enabled for each new bucket to capture specific events, such as object Put, Post, and Delete, including delete markers. These notifications are configured via a Lambda function to ensure only relevant events are processed.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event5_1.png
+        - content: |
+            The Event Notifications publish events to an SQS queue, enabling asynchronous processing by downstream Lambda functions. This logical separation ensures efficient handling of object-level events, independent of the bucket-level events.
+          imgs:
+            - /assets/project-images/event-images/event5_1.png
+    - title: SQS Event Queue for Object Events
+      tabTitle: SQS - Objects
+      subsections:
+        - content: |
+            Again, SQS is used here to handle asynchronous event processing from S3 notifications, ensuring scalability and fault tolerance for downstream Lambda functions.<br><br>
+            The SQS queue is configured with key settings such as visibility timeout, message retention, encryption, and access permissions. These configurations ensure secure, reliable, and efficient handling of event messages generated by S3.
+          imgs:
+            - /assets/project-images/event-images/event6_2.png
+        - content: |
+            Once configured, the SQS queue is integrated with a Lambda function target. This setup enables the Lambda function to process messages from the queue, triggering event-driven workflows to handle object-level events efficiently.
+          imgs:
+            - /assets/project-images/event-images/event6_1.png
+            - /assets/project-images/event-images/event6_3.png
+        - content: |
+            To enhance reliability, a dead-letter queue (DLQ) is configured to capture any messages that fail to process, which I can capture and process separately or log for analytics. Additionally, an example payload demonstrates the structure of the messages sent to the SQS queue, highlighting the details provided for each event.
+          imgs:
+            - /assets/project-images/event-images/event6_4.png
+        - content: |
+          imgs:
+            - /assets/project-images/event-images/event6_5.png
+        - content: |
+            The asynchronous nature of SQS decouples the event source (S3) from the processing logic (Lambda), allowing the system to handle high-throughput events without being constrained by downstream processing capacity.<br><br>
+          imgs:
+
+    - title: Lambda Object Manager Function
+      tabTitle: Lambda - Objects
+      subsections:
+        - content: |
+            This section highlights the object-level Lambda function, which is triggered by SQS messages from the event queue. This is the main data handler for this architecture. Since most operations will be object-level events, this is doing most of the heavy lifting. The function is configured with an SQS trigger, as shown in the image, and both function in this architecture are deployed using Jenkins and Terraform, with the deployment details covered in the next section.
+          imgs:
+            - /assets/project-images/event-images/event7_1.png
+
+        - content: |
+            The provided code demonstrates how the function processes the events described earlier in this project. The function parses the SQS message to extract the event details, including the event name, bucket name, and object key. Based on the event type, it performs the following actions:
+          listItems:
+            - "<span style='color: blue;'>Add/Remove/Modify Object</span>"
+            - "<span style='color: blue;'>Calculate and Add/Update Metrics for the Object</span>"
+            - "<span style='color: blue;'>Calculate and Update Metrics for the Bucket</span>"
+          imgs:
+            - /assets/project-images/event-images/event7_2.png
+        - content: |
+            The function calculates the size of the object in kilobytes (KB), megabytes (MB), and gigabytes (GB).<br><br>
+            It computes the total cost for the object and updates the corresponding metrics in the database.<br><br>
+            Additionally, it updates the cumulative totals for these metrics for the bucket.<br><br>
+            This Lambda function serves as the core processing component of the event-driven architecture, ensuring accurate database updates based on bucket and object-level events.
+          imgs:
+
+    - title: Deploying Lambdas with Jenkins and Terraform
+      tabTitle: Deploy
+      subsections:
+        - content: |
+            To deploy the Lambda functions efficiently, I am using a combination of Jenkins and Terraform. Jenkins handles the automation of the deployment pipeline, while Terraform provisions the required infrastructure, ensuring a streamlined and repeatable process.
+            <br><br>
+            The following Jenkins pipelines show the overview of the deployment process, orchestrating the packaging, provisioning and deployment steps.
+          imgs:
+            - /assets/project-images/event-images/event8_1.png
+            - /assets/project-images/event-images/event8_2.png
+        - content: |
+            Terraform is used to manage the Lambda infrastructure and employs code hashing to detect changes, ensuring only updated functions are deployed. A bash script packages the Lambda functions, preparing them for deployment.
+          imgs:
+
+        - content: |
+
+          imgs:
+            - /assets/project-images/event-images/event8_3.png
+            - /assets/project-images/event-images/event8_4.png
+        - content: |
+            The Jenkinsfile defines and executes the pipeline's stages, coordinating infrastructure provisioning and Lambda deployment for a streamlined workflow.
+          imgs:
+            - /assets/project-images/event-images/event8_5.png
+
+    - title: Summary
+      tabTitle: Summary
+      subsections:
+        - content: |
+            This project was a valuable learning experience that brought together multiple AWS services into a cohesive event-driven architecture. It began with the challenge of automating the enrollment of S3 buckets and evolved into a full-scale pipeline capable of processing both bucket-level and object-level events efficiently. From setting up CloudTrail and EventBridge to leveraging SQS and Lambda functions, every step of the pipeline presented opportunities to deepen my understanding of event-driven design and AWS integration.
+
+            <br><br>
+
+            One of the most rewarding aspects of the project was working with Lambda functions to process and enrich event data. This included calculating storage metrics and costs for S3 objects and enrolling buckets for additional event notifications. Integrating PostgreSQL to store the processed data added a layer of persistence and visibility to the workflow, allowing for more meaningful insights into bucket usage and object-level changes.
+
+            <br><br>
+
+            Deploying the entire architecture with Jenkins and Terraform was another critical milestone. Building a CI/CD pipeline not only streamlined the deployment process but also ensured infrastructure consistency and reliability. Incorporating a bash script to package Lambda functions and leveraging Terraform’s state management and hashing features to track changes further emphasized the importance of automation and reproducibility.
+
+            <br><br>
+
+            Reflecting on the project, I gained significant experience in designing and deploying event-driven architectures. I also learned the importance of careful planning when integrating multiple AWS services to ensure seamless communication and error handling. This project demonstrated the potential for scalability and highlighted areas for future exploration, such as optimizing notification workflows or adding advanced monitoring capabilities.
+
+            <br><br>
+
+            Overall, this project was not only a technical accomplishment but also a major step forward in understanding how to build efficient, scalable, and cost-effective serverless solutions. It has laid the groundwork for future enhancements and provided a solid foundation for tackling more complex event-driven systems.
+          imgs:
+
 - id: rproxy
   title: Reverse Proxy - Nginx with Docker, FastAPI, and Angular
   subtitle: Serving a FastAPI backend and Angular frontend with Nginx reverse proxy in Docker containers.
   github: https://github.com/syuhas/websitev2
   description: |
-    Utilizing a Jenkins server to build and deploy Docker images to AWS ECS using dynamically provisioned EC2 build nodes.
-  overview: |
-    This project explores the creation and configuration of a reverse proxy to serve my backend FastAPI application and frontend Angular application in separate Docker containers on the same domain. The backend API is part of a larger project I was working on for an S3 dashboard and is built using FastAPI to pull resource metadata from a PostgreSQL database. The front end is this website, which represents the second version of my personal site, built with Angular.
-    <br><br>
-    The goal of this project was to understand how reverse proxies work and how I could use one to route all traffic with the /api path to my API. Additionally, I wanted to explore the cost-saving benefits of using a reverse proxy and self-managed SSL certificates, rather than hosting the API on a separate subdomain. A reverse proxy is a versatile design pattern that offers various advantages, including load balancing, enhanced security, SSL termination, and simplified migrations. This project also incorporates tools like Terraform for provisioning infrastructure in AWS in a repeatable and consistent way, LetsEncrypt for SSL certificates, and Jenkins combined with Bash scripting for automation and CI/CD.
-
-  titleImage: /assets/project-images/rproxy-images/rproxy.png
-  summaryImg: /assets/project-images/rproxy-images/prox_sum.png
+    Configuring a reverse proxy to serve a FastAPI backend and Angular frontend on the same EC2 instance and domain.
+  listIcon: /assets/project-images/rproxy-images/rproxy_icon2.png
+  titleIcons:
+    - /assets/project-images/rproxy-images/rproxy_icon2.png
+    - /assets/project-images/rproxy-images/rproxy_icon.png
+    - /assets/project-images/rproxy-images/rproxy_icon3.png
   sections:
+    - title: Overview
+      tabTitle: Overview
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/rproxy-images/rproxy.png
+
+        - content: |
+            This project explores the creation and configuration of a reverse proxy to serve my backend FastAPI application and frontend Angular application in separate Docker containers on the same domain. The backend API is part of a larger project I was working on for an S3 dashboard and is built using FastAPI to pull resource metadata from a PostgreSQL database. The front end is this website, which represents the second version of my personal site, built with Angular.
+            <br><br>
+            The goal of this project was to understand how reverse proxies work and how I could use one to route all traffic with the /api path to my API. Additionally, I wanted to explore the cost-saving benefits of using a reverse proxy and self-managed SSL certificates, rather than hosting the API on a separate subdomain. A reverse proxy is a versatile design pattern that offers various advantages, including load balancing, enhanced security, SSL termination, and simplified migrations. This project also incorporates tools like Terraform for provisioning infrastructure in AWS in a repeatable and consistent way, LetsEncrypt for SSL certificates, and Jenkins combined with Bash scripting for automation and CI/CD.
+          imgs:
+
     - title: Defining Infrastructure with Terraform
       tabTitle: Terraform
       subsections:
@@ -309,28 +548,49 @@
             - /assets/project-images/rproxy-images/prox9_5.png
             - /assets/project-images/rproxy-images/prox9_6.png
 
-  summary: |
-    This project was initially conceived as an opportunity to integrate my API into my existing website while minimizing costs. Adding new AWS resources to run the application incurs significant overhead, including expenses for Load Balancing, CloudFront to utilize ACM (AWS Certificate Manager) certificates, and ECS (either Fargate or EC2 mode) for container management. Given that this is a lightweight site with a relatively small API, implementing a reverse proxy was a cost-effective solution. Managing these aspects independently allowed me to reduce costs significantly compared to provisioning additional infrastructure solely to host the API.<br><br>
+    - title: Summary
+      tabTitle: Summary
+      subsections:
+        - content: |
 
-    Before undertaking this project, I had limited experience with setting up reverse proxies or creating and managing domain-validated SSL certificates. This project provided an excellent learning opportunity to understand the various advantages of using a reverse proxy. It served as a gateway into the world of Nginx and server configurations, revealing the extensive customization options available. Reverse proxies offer numerous benefits, including load balancing, enhanced security, SSL termination, caching, monitoring, and logging—all of which make them a valuable design pattern.<br><br>
+          imgs:
+            - /assets/project-images/rproxy-images/prox_sum.png
 
-    I also explored different design patterns for implementing reverse proxies. For instance, I considered using a dedicated container for the reverse proxy versus embedding it within the main container. The choice depended on the application's complexity and specific use case. For this project, simplicity prevailed, and I opted to include the reverse proxy within the Angular application container.<br><br>
+        - content: |
+            This project was initially conceived as an opportunity to integrate my API into my existing website while minimizing costs. Adding new AWS resources to run the application incurs significant overhead, including expenses for Load Balancing, CloudFront to utilize ACM (AWS Certificate Manager) certificates, and ECS (either Fargate or EC2 mode) for container management. Given that this is a lightweight site with a relatively small API, implementing a reverse proxy was a cost-effective solution. Managing these aspects independently allowed me to reduce costs significantly compared to provisioning additional infrastructure solely to host the API.<br><br>
 
-    The outcome of this project has been highly satisfying, both from a learning and cost-saving perspective. I can now run my API on the same domain as my website while leaving room to integrate additional applications as future projects grow in complexity. I also plan to experiment further with the possibilities that reverse proxies enable. Additionally, I gained a solid understanding of creating and managing SSL certificates, which I can leverage in upcoming projects. Overall, this project was a rewarding experience, and I am eager to apply the knowledge I gained in future endeavors.<br><br>
+            Before undertaking this project, I had limited experience with setting up reverse proxies or creating and managing domain-validated SSL certificates. This project provided an excellent learning opportunity to understand the various advantages of using a reverse proxy. It served as a gateway into the world of Nginx and server configurations, revealing the extensive customization options available. Reverse proxies offer numerous benefits, including load balancing, enhanced security, SSL termination, caching, monitoring, and logging—all of which make them a valuable design pattern.<br><br>
+
+            I also explored different design patterns for implementing reverse proxies. For instance, I considered using a dedicated container for the reverse proxy versus embedding it within the main container. The choice depended on the application's complexity and specific use case. For this project, simplicity prevailed, and I opted to include the reverse proxy within the Angular application container.<br><br>
+
+            The outcome of this project has been highly satisfying, both from a learning and cost-saving perspective. I can now run my API on the same domain as my website while leaving room to integrate additional applications as future projects grow in complexity. I also plan to experiment further with the possibilities that reverse proxies enable. Additionally, I gained a solid understanding of creating and managing SSL certificates, which I can leverage in upcoming projects. Overall, this project was a rewarding experience, and I am eager to apply the knowledge I gained in future endeavors.<br><br>
+          imgs:
 
 - id: jenkins
   title: Jenkins Pipeline - Dynamic Cloud Node Provisioning with AWS
   subtitle: Fully automated build pipeline with dynamically provisioned cloud node to push containterized applications to AWS.
   github: https://github.com/syuhas/jenkinsTest
   description: |
-    Utilizing a Jenkins server to build and deploy Docker images to AWS ECS using dynamically provisioned EC2 build nodes.
-  overview: |
-    For this project I wanted to delve into the popular CI/CD pipeline tool Jenkins and explore the benefits of using cloud computing to save on cost and resource usage. I created a simple Python Flask skeleton application to be containerized on Docker and my goal was to have Jenkins fully automate the process from the initial git push from my local machine all the way up to building and pushing the image to AWS ECR to be run as a task on ECS. To fully take advantage of the agility and speed of cloud computing as well as the ‘pay as you go’ philosophy behind cost savings, I wanted to only have a build server provisioned when I needed it. This way I am not running unnecessary idle servers, I can scale to multiple build nodes as needed in minutes and can benefit on the cost savings of only using the resources I need, when I need them. <br><br>
-
-    Much of the challenge of a project like this is configuration of authorization and integration between services. This task is made much easier through the use of Jenkins plugins that allow for easier storing and usage of credentials. In this project review I will go over all of the configuration needed to automate the pipeline and highlight all of the features I took advantage of to achieve the end result.
-  titleImage: /assets/project-images/jenkins-images/jenkinsDocker.png
-  summaryImg:
+    Utilizing Jenkins to build and deploy Docker images to AWS ECS using dynamically provisioned EC2 build nodes to save cost on idle servers.
+  listIcon: /assets/project-images/jenkins-images/jenkins_icon.png
+  titleIcons:
+    - /assets/project-images/jenkins-images/jenkins_icon.png
+    - /assets/project-images/jenkins-images/jenkins_icon3.png
+    - /assets/project-images/jenkins-images/jenkins_icon2.png
   sections:
+    - title: Overview
+      tabTitle: Overview
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/jenkins-images/jenkinsDocker.png
+
+        - content: |
+            For this project I wanted to delve into the popular CI/CD pipeline tool Jenkins and explore the benefits of using cloud computing to save on cost and resource usage. I created a simple Python Flask skeleton application to be containerized on Docker and my goal was to have Jenkins fully automate the process from the initial git push from my local machine all the way up to building and pushing the image to AWS ECR to be run as a task on ECS. To fully take advantage of the agility and speed of cloud computing as well as the ‘pay as you go’ philosophy behind cost savings, I wanted to only have a build server provisioned when I needed it. This way I am not running unnecessary idle servers, I can scale to multiple build nodes as needed in minutes and can benefit on the cost savings of only using the resources I need, when I need them. <br><br>
+
+            Much of the challenge of a project like this is configuration of authorization and integration between services. This task is made much easier through the use of Jenkins plugins that allow for easier storing and usage of credentials. In this project review I will go over all of the configuration needed to automate the pipeline and highlight all of the features I took advantage of to achieve the end result.
+          imgs:
     - title: Jenkins Master and Plugins
       tabTitle: Jenkins Master
       subsections:
@@ -534,12 +794,16 @@
             - /assets/project-images/jenkins-images/fin11.png
         - content: |
             Now that the pipeline has run and my new task is running on ECS, an idle timeout will have the instance self-terminate. The idle timeout is 30 minutes so the same process will be repeated each time new code is committed outside of the idle window. Otherwise, Jenkins will use an existing node if it is still in service.
-  summary: |
-    This project has made Jenkins my new favorite tool by far. It encompasses all the things that I love about cloud computing and DevOps. Integration, automation, containerization, dynamic provisioning of resources, and a ‘pay-as-you-go’ philosophy that makes cloud so innovative and interesting. I had a great time learning the ins and outs of Jenkins and the possibilities it presents with automating any task you can think of when paired with AWS.<br><br>
+    - title: Summary
+      tabTitle: Summary
+      subsections:
+        - content: |
+            This project has made Jenkins my new favorite tool by far. It encompasses all the things that I love about cloud computing and DevOps. Integration, automation, containerization, dynamic provisioning of resources, and a ‘pay-as-you-go’ philosophy that makes cloud so innovative and interesting. I had a great time learning the ins and outs of Jenkins and the possibilities it presents with automating any task you can think of when paired with AWS.<br><br>
 
-    My favorite aspect of this project was the automation for sure. When you do all the work up front and just watch it work, it really is that feeling of efficiency and preparation that makes CI/CD so interesting and fulfilling to me. I will be implementing Jenkins in more of my projects in the future and I have learned many useful tools while creating this project.<br><br>
+            My favorite aspect of this project was the automation for sure. When you do all the work up front and just watch it work, it really is that feeling of efficiency and preparation that makes CI/CD so interesting and fulfilling to me. I will be implementing Jenkins in more of my projects in the future and I have learned many useful tools while creating this project.<br><br>
 
-    Integrating AWS and Jenkins really shows the power of cloud integration and automation and really inspires me to explore more of the possibilities that are present when combining powerful tools like this. I learned a lot doing this project and was very happy with the result. I look forward to hearing your reactions to the project and I sincerely hope you enjoyed this dive into the world of Jenkins.
+            Integrating AWS and Jenkins really shows the power of cloud integration and automation and really inspires me to explore more of the possibilities that are present when combining powerful tools like this. I learned a lot doing this project and was very happy with the result. I look forward to hearing your reactions to the project and I sincerely hope you enjoyed this dive into the world of Jenkins.
+          imgs:
 
 - id: usermgmt
   title: User Management System
@@ -547,15 +811,28 @@
   github: https://github.com/syuhas/flaskdb
   description: |
     A functional user management system with registration, login authorization, database management and email validation.
-  overview: |
-    The purpose of this project is to build upon the basics of designing a web application within the Python Flask Framework by creating my own user Authorization and Management system for visitors to the site. Achieving this requires features like session management, database connection and modeling, email smtp servers, password encryption, and cloud storage. When the user visits the site, they are presented with a welcome page and given the ability to sign up or log in with a previously created account.<br><br>
-
-    When signing up for a new account, input validation is performed, the user's password is encrypted using a hashing algorithm and their data is stored in an AWS MySQL Database. The user is then required to validate the email provided by clicking a time-sensitive, personalized link that is generated with a URL compatible serializer token. Upon completion of the email validation process, the user is now able to log in and set up their profile information including a profile picture that is uploaded and saved to Amazon S3. If at any point the user forgets their password, the option is given to send a password reset link to the user's email. They are also able to update their existing email by carrying out an additional email validation process, and can also choose to delete their account.<br><br>
-
-    For the puropses of this project, the app is located in a different server environment. I will descibe all of the elements relevant to the user management system, while omitting the finer details of configuring an Elastic Beanstalk environment, setting up a pipeline, enabling SSL/TLS and enabling DNS routing. These steps can be found in my previous project found <a href="/projects/website" target="_blank">here</a>.
-  titleImage: /assets/project-images/usermgmt-images/usermgmt.png
-  summaryImg:
+  listIcon: /assets/project-images/usermgmt-images/usermgmt_icon.png
+  titleIcons:
+    - /assets/project-images/usermgmt-images/usermgmt_icon.png
+    - /assets/project-images/usermgmt-images/usermgmt_icon2.png
+    - /assets/project-images/usermgmt-images/usermgmt_icon3.png
   sections:
+    - title: Overview
+      tabTitle: Overview
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/usermgmt-images/usermgmt.png
+
+        - content: |
+            The purpose of this project is to build upon the basics of designing a web application within the Python Flask Framework by creating my own user Authorization and Management system for visitors to the site. Achieving this requires features like session management, database connection and modeling, email smtp servers, password encryption, and cloud storage. When the user visits the site, they are presented with a welcome page and given the ability to sign up or log in with a previously created account.<br><br>
+
+            When signing up for a new account, input validation is performed, the user's password is encrypted using a hashing algorithm and their data is stored in an AWS MySQL Database. The user is then required to validate the email provided by clicking a time-sensitive, personalized link that is generated with a URL compatible serializer token. Upon completion of the email validation process, the user is now able to log in and set up their profile information including a profile picture that is uploaded and saved to Amazon S3. If at any point the user forgets their password, the option is given to send a password reset link to the user's email. They are also able to update their existing email by carrying out an additional email validation process, and can also choose to delete their account.<br><br>
+
+            For the puropses of this project, the app is located in a different server environment. I will descibe all of the elements relevant to the user management system, while omitting the finer details of configuring an Elastic Beanstalk environment, setting up a pipeline, enabling SSL/TLS and enabling DNS routing. These steps can be found in my previous project found <a href="/projects/website" target="_blank">here</a>.
+          imgs:
+
     - title: Design and Outline
       tabTitle: Design
       subsections:
@@ -626,7 +903,6 @@
         - content: |
             Here is one example of the session being used to query the database. The connect() function is called and returns the session as the local_session variable. Arguments are passed to this function which creates a new unconfirmed user. The new user is defined using the User class. That new user is then added to the database session. Since the session is just a holding zone for the data, no changes will be made to the database until the session is actually commited. Once the session changes are commited to the database, the connection is automatically closed by the ORM and the session data is flushed.
           imgs:
-            - /assets/project-images/usermgmt-images/db4.png
 
     - title: Creating a New User
       tabTitle: Create User
@@ -794,26 +1070,43 @@
           imgs:
             - /assets/project-images/usermgmt-images/prof11.png
             - /assets/project-images/usermgmt-images/prof12.png
-  summary: |
-    My biggest takeaway from this project was that looks are often deceiving. A simple looking web concept on the surface can have layers of complexity under the hood. There are many more moving parts going on here than I would have thought given a cursory glance. The great thing for me about coding and developing projects like this are the moments where a complex series of operations going on behind the scenes produces a simple and clean finished product. Projects like these require lots of new learning experiences and chances to try out new technologies while producing something people can interact with, making this a very enjoyable project to have undertaken.<br><br>
 
-    I picked up many useful skills progressing through this project. From database management to cloud services integration all the way to handling more complex POST requests. I enjoyed learning more about how session data works and how it is handled in different contexts ranging from server side temporary data to connection pooling with a relational database. Learning through mistakes made along the way was a great way to gaining insight about how these systems can be optimized and improved as I create more complex projects in the future.<br><br>
+    - title: Summary
+      tabTitle: Summary
+      subsections:
+        - content: |
+            My biggest takeaway from this project was that looks are often deceiving. A simple looking web concept on the surface can have layers of complexity under the hood. There are many more moving parts going on here than I would have thought given a cursory glance. The great thing for me about coding and developing projects like this are the moments where a complex series of operations going on behind the scenes produces a simple and clean finished product. Projects like these require lots of new learning experiences and chances to try out new technologies while producing something people can interact with, making this a very enjoyable project to have undertaken.<br><br>
 
-    All around this was an invaluable project to me in my progression towards learning more about cloud and web infrastructure and I will use many of these tools in future projects moving forward. Thanks for taking the time to review this project and please reach out with any comments or suggestions.<br><br>
+            I picked up many useful skills progressing through this project. From database management to cloud services integration all the way to handling more complex POST requests. I enjoyed learning more about how session data works and how it is handled in different contexts ranging from server side temporary data to connection pooling with a relational database. Learning through mistakes made along the way was a great way to gaining insight about how these systems can be optimized and improved as I create more complex projects in the future.<br><br>
+
+            All around this was an invaluable project to me in my progression towards learning more about cloud and web infrastructure and I will use many of these tools in future projects moving forward. Thanks for taking the time to review this project and please reach out with any comments or suggestions.<br><br>
+          imgs:
 
 - id: websitev1
-  title: Making My Website (V1)
-  subtitle: A Scalable Account Creation, Authorization and Management System for Web Application Users.
+  title: Personal Portfolio Website (V1)
+  subtitle: How I Built My First Website Using various AWS Services and Python Flask.
   github: https://github.com/syuhas/web_resume
   description: |
-    A functional user management system with registration, login authorization, database management and email validation.
-  overview: |
-    I created this site as a first project when transitioning into the industry. This was the first version of the current version of this website, and it was built from the ground up using AWS for features like hosting, CI/CD aspects, DNS services, load balancing, caching and TLS authentication. I have coded all the Python, HTML and CSS via a Flask app which is lightweight and provides the flexibility to add features in the future as desired. This project was not only a great way to display all of the content and projects I have completed but also an effective way to highlight some of the many capabilities of AWS when it comes to building a website or web app.<br><br> 
-
-    In addition, this was a fantastic learning experience to pull together all of the things I have learned so far in AWS and coding. In this overview of the site, I will review all of the core pieces of its development. As I implement more features, I will document them as separate projects to track the evolution of the site.
-  titleImage: /assets/project-images/websitev1-images/WebsiteDiagram.png
-  summaryImg: /assets/project-images/websitev1-images/site-outro-1.png
+    The first version of my personal website. Built using Flask, HTML, and various AWS services, this project laid the foundation for showcasing my skills and projects, and has since been redesigned using Angular.
+  listIcon: /assets/project-images/websitev1-images/site_icon2.png
+  titleIcons:
+    - /assets/project-images/websitev1-images/site_icon.png
+    - /assets/project-images/websitev1-images/site_icon2.png
+    - /assets/project-images/websitev1-images/aws.png
   sections:
+    - title: Overview
+      tabTitle: Overview
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/websitev1-images/WebsiteDiagram.png
+        - content: |
+            I created this site as a first project when transitioning into the industry. This was the first version of the current version of this website, and it was built from the ground up using AWS for features like hosting, CI/CD aspects, DNS services, load balancing, caching and TLS authentication. I have coded all the Python, HTML and CSS via a Flask app which is lightweight and provides the flexibility to add features in the future as desired. This project was not only a great way to display all of the content and projects I have completed but also an effective way to highlight some of the many capabilities of AWS when it comes to building a website or web app.<br><br> 
+
+            In addition, this was a fantastic learning experience to pull together all of the things I have learned so far in AWS and coding. In this overview of the site, I will review all of the core pieces of its development. As I implement more features, I will document them as separate projects to track the evolution of the site.
+          imgs:
+
     - title: Python Flask / HTML / CSS
       tabTitle: Flask
       subsections:
@@ -988,12 +1281,21 @@
           imgs:
             - /assets/project-images/websitev1-images/site-r53-4.png
             - /assets/project-images/websitev1-images/site-r53-5.png
-  summary: |
-    My biggest takeaway from this project was that looks are often deceiving. A simple looking web concept on the surface can have layers of complexity under the hood. There are many more moving parts going on here than I would have thought given a cursory glance. The great thing for me about coding and developing projects like this are the moments where a complex series of operations going on behind the scenes produces a simple and clean finished product. Projects like these require lots of new learning experiences and chances to try out new technologies while producing something people can interact with, making this a very enjoyable project to have undertaken.<br><br>
 
-    I picked up many useful skills progressing through this project. From database management to cloud services integration all the way to handling more complex POST requests. I enjoyed learning more about how session data works and how it is handled in different contexts ranging from server side temporary data to connection pooling with a relational database. Learning through mistakes made along the way was a great way to gaining insight about how these systems can be optimized and improved as I create more complex projects in the future.<br><br>
+    - title: Summary
+      tabTitle: Overview
+      subsections:
+        - content: |
 
-    All around this was an invaluable project to me in my progression towards learning more about cloud and web infrastructure and I will use many of these tools in future projects moving forward. Thanks for taking the time to review this project and please reach out with any comments or suggestions.<br><br>
+          imgs:
+            - /assets/project-images/websitev1-images/site-outro-1.png
+        - content: |
+            My biggest takeaway from this project was that looks are often deceiving. A simple looking web concept on the surface can have layers of complexity under the hood. There are many more moving parts going on here than I would have thought given a cursory glance. The great thing for me about coding and developing projects like this are the moments where a complex series of operations going on behind the scenes produces a simple and clean finished product. Projects like these require lots of new learning experiences and chances to try out new technologies while producing something people can interact with, making this a very enjoyable project to have undertaken.<br><br>
+
+            I picked up many useful skills progressing through this project. From database management to cloud services integration all the way to handling more complex POST requests. I enjoyed learning more about how session data works and how it is handled in different contexts ranging from server side temporary data to connection pooling with a relational database. Learning through mistakes made along the way was a great way to gaining insight about how these systems can be optimized and improved as I create more complex projects in the future.<br><br>
+
+            All around this was an invaluable project to me in my progression towards learning more about cloud and web infrastructure and I will use many of these tools in future projects moving forward. Thanks for taking the time to review this project and please reach out with any comments or suggestions.<br><br>
+          imgs:
 
 - id: cdk
   title: AWS CDK Stack Creation
@@ -1001,11 +1303,22 @@
   github: https://github.com/syuhas/cdk-demo-vpc
   description: |
     Defining and provisioning AWS resources as code with the AWS Cloud Development Kit (CDK).
-  overview: |
-    This project illustrates the installation and operation of the AWS CDK(Cloud Development Kit), an IDE-based framework that lets you define infrastructure as code (IaC) using CloudFormation to provision the resources. An alternative to using the CloudFormation templates themselves, the CDK actually auto-generates the templates based on the code you define in one of many supported lanuages. This is a great solution for those who prefer to use a programming language of their choice to define and provision AWS infrastructure. For the following exercise, I will go over utilizing the CDK to provision a simple VPC with 3 public facing subnets, in 3 separate availability zones.
-  titleImage: /assets/project-images/cdk-images/CDKDemo.png
-  summaryImg: /assets/project-images/websitev1-images/site-outro-1.png
+  listIcon: /assets/project-images/cdk-images/cdk_icon.png
+  titleIcons:
+    - /assets/project-images/cdk-images/cdk_icon.png
+    - /assets/project-images/cdk-images/cdk_icon2.png
   sections:
+    - title: Overview
+      tabTitle: Overview
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/cdk-images/CDKDemo.png
+        - content: |
+            This project illustrates the installation and operation of the AWS CDK(Cloud Development Kit), an IDE-based framework that lets you define infrastructure as code (IaC) using CloudFormation to provision the resources. An alternative to using the CloudFormation templates themselves, the CDK actually auto-generates the templates based on the code you define in one of many supported lanuages. This is a great solution for those who prefer to use a programming language of their choice to define and provision AWS infrastructure. For the following exercise, I will go over utilizing the CDK to provision a simple VPC with 3 public facing subnets, in 3 separate availability zones.
+          imgs:
+
     - title: Installing Typescript and the CDK
       tabTitle: Installation
       subsections:
@@ -1097,3 +1410,17 @@
             - /assets/project-images/cdk-images/cdk-15-result-subnets.png
         - content: |
             ...and the public subnets are properly deployed, one in each of the 3 Availability zones. Each has a subnet mask of /24 and the necessary route tables and internet gateways defined. The stack has now been successfully deployed and I can deploy more change sets to the stack via code to add or remove resources as needed.
+
+    - title: Summary
+      tabTitle: Summary
+      subsections:
+        - content: |
+            For me, this project really highlighted the power and utility of the Cloud Development Kit. It is an extremely powerful tool, being able to define and deploy entire stacks of CloudFormation-generated
+            infrastructure using some code and your favorite IDE. As an alternative to CloudFormation templates, some may prefer this as the infrastructure can be defined using a language that some feel either
+            more comfortable with or proficient in. 
+            <br><br>
+            The ease at which you can provision and destroy architectures could have great applications for copying entire infrastructures over to another region for higher availability and resiliency, 
+            and in a disaster recovery plan to automate recovery to reduce RPO and RTO for less downtime.
+            <br><br>
+            Overall, the CDK is a great tool, a great alternative to CloudFormation templating and a very useful weapon to have in one's cloud arsenal.
+          imgs:

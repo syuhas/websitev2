@@ -9,16 +9,68 @@
     padding: 1rem;
 }
 
+// .header {
+//     display: flex;
+//     flex-direction: row;
+//     justify-content: center;
+//     align-content: center;
+//     align-items: center;
+//     & div {
+//         position: relative;
+//         z-index: 2;
+//         font-weight: bold;
+//         font-size: 1.75em; /* Adjust font size as needed */
+//         color: #333; /* Text color */
+//     }
+//     // & img {
+//     //     height: clamp(60px, 4vw, 75px);
+//     // }
+// }
+
+// .header::before {
+//     content: url('/assets/home-images/resume.png');
+//     position: absolute;
+//     top: 0;
+//     left: 50%;
+//     transform: translate(-50%, -50%);
+//     opacity: 0.1;
+//     z-index: 1;
+//     width: 150px; /* Adjust width */
+//     height: auto;
+// }
+
 .header {
+    position: relative; /* Ensure the parent container is positioned */
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
-    align-content: center;
     align-items: center;
-    & img {
-        height: clamp(75px, 4vw, 150px);
+    font-weight: bold;
+    font-size: 1.75em; /* Adjust font size as needed */
+    color: #333; /* Text color */
+    & a {
+        color: #222ceb;
     }
 }
+
+.header::before {
+    content: url('/assets/home-images/resume.png'); /* Adjust your path */
+    position: absolute;
+    top: 700%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.2); /* Scale the image */
+    opacity: 0.03; /* Faded effect */
+    z-index: 1; /* Behind the text */
+    object-fit: contain; /* Maintain the aspect ratio */
+    pointer-events: none; /* Prevent interaction with the image */
+}
+
+.header div {
+    position: relative; /* Ensure text is above the image */
+    z-index: 2;
+}
+
+
 
 .contact-details {
     display: flex;

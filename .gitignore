@@ -51,3 +51,9 @@ api/api/*.egg-info/
 
 __pycache__
 *egg-info
+
+deploy/.terraform/
+deploy/.terraform/*
+deploy/.terraform.tfstate
+deploy/.terraform.tfstate.backup
+deploy/.terraform.lock.hcl

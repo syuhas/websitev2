@@ -20,9 +20,21 @@
 .container-fluid h1, .container-fluid h2, .container-fluid h3 {
     text-align: center;
 }
-.container-fluid h2 > a {
-    letter-spacing: .15rem;
-    text-decoration: none;
+.container-fluid h2 {
+    & a{
+        letter-spacing: .15rem;
+        text-decoration: none;
+        font-family: monospace;
+        color: #211e6d;
+    }
+    & a:hover{
+        color: #a153f8;
+    }
+    & img {
+        height: 1.25em;
+        width: auto;
+        padding: .25rem;
+    }
 }
 
 .nav-tabs {
@@ -49,19 +61,20 @@
 .nav-item {
     cursor: pointer;
     font-weight: bold;
+    // min-width: 150px !important;
 }
+
 .nav-link{
     color: #0a1927;
     &:hover{
-        color: #C28422;
+        color: #222ceb;
     }
     height: 36px;
     border: 1px solid #00000044 !important;
-    min-width: 120px !important;
 }
 
 .active {
-    color: #C28422 !important;
+    color: #222ceb !important;
     background-color: #f5f5f5 !important;
     border: 1px solid #00000044 !important;
     border-bottom: 0 !important;
@@ -80,6 +93,8 @@ p {
 }
 
 
+
+
 .sections {
     & img {
         padding-right: 2rem;
@@ -87,14 +102,25 @@ p {
         width: clamp(700px, 50vw, 800px);
         padding-bottom: 0;
     }
-    & p {
-        padding: .5rem;
-    }
+
     & ul {
         padding: .5rem;
         font-weight: bold;
     }
+    & p {
+        padding: 1rem;
+    }
 }
+
+.expand {
+    padding: .75rem;
+    opacity: 50%;
+}
+
+.introSummaryImg {
+    max-width: clamp(400px, 50vw, 550px);
+}
+
 
 .row {
     justify-content: center;
@@ -131,12 +157,12 @@ pre {
   }
   
   .image-preview-modal img {
-    width: clamp(300px, 50vw, 1000px);
+    width: clamp(600px, 50vw, 1000px);
     height: auto;
     background-color: #f5f5f5;
     padding: .5rem;
     border-radius: 5px;
-    padding: 5rem;
+    padding: 1rem;
   }
 
 
@@ -157,23 +183,14 @@ pre {
   .image-detail-preview-modal img {
     width: clamp(300px, 50vw, 1200px);
     height: auto;
-    background-color: #f5f5f5;
+    // background-color: #f5f5f5;
+    background-color: #0a1927;
     // padding: .5rem;
     border-radius: 5px;
-    padding: .25rem;
+    padding: .75rem;
   }
 
 @media(max-width: 1400px) {
-    .sections {
-        & img {
-            padding-bottom: 1rem;
-            // width: unset;
-            width: clamp(700px, 100vw, 1000px);
-        }
-        & .detailImgs {
-            flex-direction: column;
-        }
-    }
     pre {
         width: 90vw;
         font-size: .6rem;
@@ -188,6 +205,16 @@ pre {
         width: 95vw;
         height: auto;
 
+    }
+    
+}
+
+@media(max-width: 1000px) {
+    .nav-item {
+        cursor: pointer;
+        font-weight: bold;
+        // min-width: 75px !important;
+        font-size: smaller;
     }
     
 }

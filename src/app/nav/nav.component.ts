@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, Observable, shareReplay } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-nav',
@@ -30,19 +30,12 @@ export class NavComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.updateIconScale();
     }
-    this.isHandset$ = this.breakpointObserver.observe([Breakpoints.Tablet, Breakpoints.Handset]).pipe(
+    this.isHandset$ = this.breakpointObserver.observe([Breakpoints.Tablet, Breakpoints.Handset, Breakpoints.Medium, Breakpoints.Small]).pipe(
       map(result => result.matches),
       distinctUntilChanged(),
       shareReplay()
     )
-    this.isHandset$.subscribe(isHandset => {
-      if (isHandset) {
-        this.opened = false;
-      } else {
-        this.opened = true;
-      }
-    });
-    
+    this.closeIfHandset();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -55,8 +48,8 @@ export class NavComponent implements OnInit {
   updateIconScale() {
     if (isPlatformBrowser(this.platformId)) {
       const icons = this.el.nativeElement.querySelectorAll('.custom-icon');
-      let scaleFactor = window.innerWidth / 1000; // Adjust the divisor to control the scale
-      const minScaleFactor = 1; // Set your minimum scale factor here
+      let scaleFactor = window.innerWidth / 1000;
+      const minScaleFactor = 1;
 
       if (scaleFactor < minScaleFactor) {
         scaleFactor = minScaleFactor;
@@ -75,6 +68,8 @@ export class NavComponent implements OnInit {
       console.log('isHandset:', isHandset);
       if (isHandset) {
         this.opened = false;
+      } else {
+        this.opened = true;
       }
     });
   }

@@ -5,7 +5,7 @@
         </div>
         <h1><strong>{{ project.title }}</strong></h1>
     </div>
-    <h2>{{ project.subtitle }} [<a class="my-4" href="{{ project.github }}" target="_blank">Github</a>]</h2>
+    <h2>{{ project.subtitle }} [ <img src="/assets/home-images/git.png" alt=""><a class="my-4" href="{{ project.github }}" target="_blank">Github</a> ]</h2>
     <!-- <hr class="my-0"> -->
 
 
@@ -40,8 +40,19 @@
                     <div class="col-md-10">
                         <div class="row">
                             <div class="col-xxl-6"  *ngFor="let image of subsection.imgs">
-                                <img  src="{{ image }}" *ngIf="(section.tabTitle == 'Overview') || (section.tabTitle == 'Summary');" alt="" class="img-fluid" (click)="openPreview(image)">
-                                <img  src="{{ image }}" *ngIf="(section.tabTitle != 'Overview') && (section.tabTitle != 'Summary');" alt="" class="img-fluid" (click)="openDetailPreview(image)">
+                                <img  src="{{ image }}" 
+                                    *ngIf="(section.tabTitle == 'Overview') || (section.tabTitle == 'Summary');" 
+                                    alt="" class="img-fluid" 
+                                    (click)="openPreview(image)" 
+                                    [ngClass]="{'introSummaryImg': ((section.tabTitle == 'Overview') || (section.tabTitle == 'Summary'))}"
+                                >
+                                <img  
+                                    src="{{ image }}" 
+                                    *ngIf="(section.tabTitle != 'Overview') && (section.tabTitle != 'Summary');" 
+                                    alt="" 
+                                    class="img-fluid" 
+                                    (click)="openDetailPreview(image)"
+                                >
 
 
                                 <!-- <div class="detailImg" *ngIf="(section.tabTitle == 'Overview') || (section.tabTitle == 'Summary');">
@@ -50,7 +61,7 @@
                                 <div class="detailImg";>
                                     <img src="{{ image }}" alt="" class="img-fluid" (click)="openDetailPreview(image)">
                                 </div> -->
-                                <p>Click to Expand</p>
+                                <p class="expand">Click to Expand</p>
                             </div>
                         </div>
                     </div>

@@ -1,24 +1,42 @@
 .mat-sidenav-container {
     height: 100vh;
+    background: linear-gradient(to top, #ffffff 10%, white 100%);
 }
 
+// Colors
+// #9e53e3 logo color mixed with a slight #1a1c42 gradient and a very slight #12ff00 green accent
+// #1a1c42 nav and header background ( with a slight gradient)
+// #12ff00 very slight green accent
+// #f5f5f5 card background
+
+
+
+
+
+
+
+// original 161e27
+
 .background {
-    background-image: url("/assets/home-images/techy2.png");
-    background-color: #161e27;
+    // background-image: url("/assets/home-images/techy2.png");
+    background: linear-gradient(to top, #11132c 1%, #1a1c42 50%);
     background-repeat: no-repeat;
     background-size: 300%;
 }
 
 .background2 {
-    background-image: url("/assets/home-images/techy2.png");
-    background-color: #161e27;
-    background-repeat: repeat;
-    background-size: 100%;
+    // background-image: url("/assets/home-images/techy2.png");
+    // background-color: #1a1c42;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background: linear-gradient(to bottom, #11132c 2%, #1a1c42 40%);
+
+
 }
 
 mat-sidenav {
+    background-color: #1a1c42;
     width: clamp(250px, 16vw, 300px);
-    background-color: #161e27;
 }
 
 mat-sidenav-content {
@@ -31,7 +49,7 @@ mat-sidenav-content {
     object-position: top;
   }
 .mat-toolbar {
-    background-color: #161e27;
+    background-color: #1a1c42;
     height: clamp(100px, 10vh, 200px);
 }
 
@@ -133,6 +151,15 @@ mat-list-item {
     border: 1px solid black !important;
 }
 
+.active::before {
+    background-color: white !important;
+}
+
+::ng-deep.mat-mdc-list-item-interactive:hover::before a:hover {
+    
+    background-color: green !important;
+}
+
 .nav-link {
     display: flex;
     flex-direction: row;
@@ -170,12 +197,19 @@ mat-list-item {
     }
 }
 
+.inactive:hover::before {
+    background-color: green;
+}
+
 .inactive:hover {
     background-color: rgba(198, 225, 255, 0.25);
     border-radius: 2% !important;
     & p {
       color: white !important;
       opacity: 100%;
+    }
+    .custom-size-mat-icon {
+        color: white !important;
     }
     // transform: scale(1.01);
 }

@@ -56,10 +56,10 @@
 .header::before {
     content: url('/assets/home-images/resume.png'); /* Adjust your path */
     position: absolute;
-    top: 700%;
+    top: 400%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(1.2); /* Scale the image */
-    opacity: 0.03; /* Faded effect */
+    transform: translate(-50%, -50%) scale(0.7); /* Scale the image */
+    opacity: 0.1; /* Faded effect */
     z-index: 1; /* Behind the text */
     object-fit: contain; /* Maintain the aspect ratio */
     pointer-events: none; /* Prevent interaction with the image */

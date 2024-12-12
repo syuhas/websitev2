@@ -255,7 +255,7 @@
       tabTitle: Terraform
       subsections:
         - content: |
-            Firstly, I defined this project's infrastructure using Terraform. Terraform is a tool that will allow me to define and provision infrastructure as code in a repeatable and consistent way. In addition, using a backend state configuration stored in S3 and DynamoDB, I can keep track of the state of my infrastructure and Terraform will automatically detect changes and allow me to update the infrastructure as needed, or update the application without having to reprovision the entire infrastructure.<br><br>
+            I defined this project's infrastructure in AWS using Terraform. Terraform is a tool that will allow me to define and provision infrastructure as code in a repeatable and consistent way. In addition, using a backend state configuration stored in S3 and DynamoDB, I can keep track of the state of my infrastructure and Terraform will automatically detect changes and allow me to update the infrastructure as needed, or update the application without having to reprovision the entire infrastructure.<br><br>
 
             Terraform can access AWS and build resources by accessing the IMDSv2 (Instance Metadata Service) attached directly to the Jenkins build server that is dynamically provisioned and shut down as needed (check out <a href="/projects/jenkins?tab=Overview">Provisioning Build Servers in Jenkins</a>). This approach eliminates the need to pass sensitive credentials to Jenkins or store them in the code.<br><br>
 

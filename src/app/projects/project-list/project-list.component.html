@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xxl-4 col-xl-6 col-md-12 col-sm-12 mb-3 px-auto hover" *ngFor="let project of projects">
+      <div class="col-xxl-4 col-xl-6 col-md-12 col-sm-12 mb-3 px-auto hover" *ngFor="let project of projects | paginate: {itemsPerPage: pageSize, currentPage: page}">
         <div class="thickbar"></div>
 
         <div class="card" (click)="goToProject(project)">
@@ -30,3 +30,5 @@
       </div>
     </div>
   </div>
+  <div *ngIf="projects.length > pageSize" class="pagination"><pagination-controls (pageChange)="page = $event"></pagination-controls></div>
+

@@ -3,7 +3,7 @@
         <div class="card-body">
             <div class="header">
                 <!-- <img src="/assets/home-images/resume.png" alt=""> -->
-                <div class="profile-name">Stephen Yuhas</div>
+                <h1 class="profile-name">Stephen Yuhas</h1>
             </div>
             <hr>
             <div class="contact-details">
@@ -17,14 +17,14 @@
     <div class="card mb-4">
         <div class="card-body">
             <h2 class="card-title">Summary</h2>
-            <p>Adaptable and driven IT professional with experience in AWS and DevOps automation. Over the past two years I've developed skills and expertise in delivering automation solutions and managing technical projects, earned two AWS certifications, and am pursuing a BS in Computer Science.</p>
+            <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">Adaptable and driven IT professional with experience in AWS and DevOps automation. Over the past two years I've developed skills and expertise in delivering automation solutions and managing technical projects, earned two AWS certifications, and am pursuing a BS in Computer Science.</p>
         </div>
     </div>
 
     <div class="card mb-4">
         <div class="card-body">
             <h2 class="card-title">Skills</h2>
-            <ul class="list-unstyled">
+            <ul class="list-unstyled text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
                 <li><strong>AWS Services</strong></li>
                 <li><strong>CI/CD & Automation Scripting </strong>(Python, Bash, OOP)</li>
                 <li><strong>Web Applications and API's </strong>(Flask, FastAPI, Angular)</li>
@@ -66,7 +66,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <h2 class="card-title">Technologies</h2>
-            <ul class="list-unstyled">
+            <ul class="list-unstyled text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
                 <li><strong>CI/CD/Automation:</strong> Jenkins, CodePipeline, Terraform, AWS CloudFormation, Rundeck</li>
                 <li><strong>Containerization:</strong> Docker, Kubernetes, AWS Elastic Container Service (ECS)</li>
                 <li><strong>Collaboration:</strong> Jira, Confluence, Asana</li>
@@ -95,7 +95,7 @@
         </div>
     </div>
 
-    <div class="card mb-4">
+    <div class="card mb-4 experience">
         <div class="card-body">
             <h2 class="card-title">Professional Experience</h2>
 
@@ -105,7 +105,7 @@
                 <h3><strong>FINRA (Financial Industry Regulatory Authority)</strong></h3>
                 <p><strong>Location:</strong> Rockville, MD</p>
                 <p><strong>Duration:</strong> July 2023 – Oct. 2024</p>
-                <ul>
+                <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
                     <li>Developed and maintained applications for reporting, monitoring Jira, AWS, and Jenkins activities, and automating IAM role entitlements to reduce operational workload</li>
                     <li>Scheduled daily production and development activities for the release team using Jira</li>
                     <li>Managed daily Jenkins production deployments and diagnosed and remediated resource and access issues</li>
@@ -127,7 +127,7 @@
                 <h3><strong>Baltimore County School System</strong></h3>
                 <p><strong>Location:</strong> Towson, MD</p>
                 <p><strong>Duration:</strong> March 2023 – July 2023</p>
-                <ul>
+                <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
                     <li>Investigated data integrity and vulnerability issues after a malware attack causing significant data loss</li>
                     <li>Reviewed and updated data entries, correcting outdated or incorrect health subscriber information</li>
                     <li>Identified bugs in the new database implementation and collaborated with the database team to address them</li>
@@ -139,7 +139,7 @@
                 <h3><strong>Mental Health Association of Maryland</strong></h3>
                 <p><strong>Location:</strong> Lutherville, MD</p>
                 <p><strong>Duration:</strong> Jan 2023 – July 2023</p>
-                <ul>
+                <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
                     <li>Gathered user story data for current company processes to analyze and extract pain points and requirements</li>
                     <li>Collaborated with behavioral health teams to translate their needs into actionable IT solutions</li>
                     <li>Coordinated with vendors to manage existing tools, resolve software issues, and assess new solutions for the organization</li>
@@ -151,7 +151,7 @@
             <h3><strong>The Ale House</strong> - Executive Chef</h3>
             <p><strong>Location:</strong> Columbia, MD</p>
             <p><strong>Duration:</strong> 2019 - 2023</p>
-            <ul>
+            <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
                 <li>Guided and mentored a team of professionals to execute efficiently and consistently</li>
                 <li>Developed unique menu items to deliver business value while keeping customer satisfaction at the forefront</li>
                 <li>Created and fostered relationships with key vendors/representatives</li>

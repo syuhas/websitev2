@@ -1,9 +1,12 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import * as yaml from 'js-yaml';
 import { Project } from '../project-model.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { map, Observable, shareReplay } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-project-detail',
@@ -18,8 +21,8 @@ export class ProjectDetailComponent implements OnInit {
   detailPreviewImage: string = '';
   showPreview: boolean = false;
   showDetailPreview: boolean = false;
-  isSmallScreen: boolean = false;
-  activeTabIndex: number = 0; // Tracks the currently active tab
+  isSmallScreen$!: Observable<boolean>;
+  private breakpointObserver = inject(BreakpointObserver);
 
   constructor (
     private route: ActivatedRoute,
@@ -32,7 +35,7 @@ export class ProjectDetailComponent implements OnInit {
     const projectId = String(this.route.snapshot.paramMap.get('id'));
     this.http.get('assets/projects.yaml', {responseType: 'text'}).subscribe(data => {
       this.projects = yaml.load(data) as Project[];
-      this.project = this.projects.find(p => p.id === projectId) as Project;
+      // this.project = this.projects.find(p => p.id === projectId) as Project;
       this.project = this.projects.find((p) => p.id === projectId) as Project;
       
       this.project.sections.forEach((section) => {
@@ -50,16 +53,6 @@ export class ProjectDetailComponent implements OnInit {
         });
       });
 
-      //  if I decide to go back to mat tabs
-
-      // this.route.queryParams.subscribe((params) => {
-      //   if (this.project.sections[0]) {
-      //     const tabTitle = params['tab'] || this.project.sections[0].tabTitle;
-      //     this.activeTabIndex = this.project.sections.findIndex(
-      //       (section: any) => section.tabTitle === tabTitle
-      //     );
-      //   }
-      // });
       this.route.queryParams.subscribe((params) => {
         const tab = params['tab'];
         if (tab) {
@@ -68,6 +61,12 @@ export class ProjectDetailComponent implements OnInit {
         }
       });
     });
+
+    this.isSmallScreen$ = this.breakpointObserver.observe([Breakpoints.Tablet, Breakpoints.Handset, Breakpoints.Medium, Breakpoints.Small]).pipe(
+      map(result => result.matches),
+      distinctUntilChanged(),
+      shareReplay()
+    )
   }
 
   setTab(tab: string) {
@@ -95,23 +94,5 @@ export class ProjectDetailComponent implements OnInit {
     this.showDetailPreview = false;
   }
 
-  // testing for small screen select idea, remove later if not used
-  @HostListener('window:resize', [])
-  onResize() {
-    this.isSmallScreen = window.innerWidth < 1200; // Adjust based on your breakpoint
-    console.log(this.isSmallScreen);
-  }
-
-  //  for mat tabs, remove later if not using mat tabs
-  setActiveTab(index: number): void {
-    this.activeTabIndex = index;
-    const tab = this.project.sections[index].tabTitle;
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab },
-      queryParamsHandling: 'merge'
-    });
-    this.activeSection = tab;
-  }
 
 }

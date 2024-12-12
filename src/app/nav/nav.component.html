@@ -8,28 +8,28 @@
                 [ngClass]="{'inactive': !isActive('/home')}" [disableRipple]="true" (click)="closeIfHandset()">
                 <div class="nav-link">
                     <mat-icon mat-list-icon class="custom-size-mat-icon">home</mat-icon>
-                    <p>Home</p>
+                    <p>HOME</p>
                 </div>
             </a>
             <a mat-list-item routerLink="/projects" tabindex="-1" routerLinkActive="active"
                 [ngClass]="{'inactive': !isActive('/projects')}" [disableRipple]="true" (click)="closeIfHandset()">
                 <div class="nav-link">
                     <mat-icon mat-list-icon class="custom-size-mat-icon">computer</mat-icon>
-                    <p>Projects</p>
+                    <p>PROJECTS</p>
                 </div>
             </a>
             <a mat-list-item routerLink="/resume" tabindex="-1" routerLinkActive="active"
                 [ngClass]="{'inactive': !isActive('/resume')}" [disableRipple]="true" (click)="closeIfHandset()">
                 <div class="nav-link">
                     <mat-icon mat-list-icon class="custom-size-mat-icon">work</mat-icon>
-                    <p>Resume</p>
+                    <p>RESUME</p>
                 </div>
             </a>
             <a mat-list-item tabindex="-1" routerLinkActive="active"
                 class="inactive" (click)="goToGithub()" [disableRipple]="true" (click)="closeIfHandset()">
                 <div class="nav-link">
                     <span class="material-icons custom-size-mat-icon">code</span>
-                    <p>GitHub</p>
+                    <p>GITHUB</p>
                 </div>
             </a>
         </mat-nav-list>

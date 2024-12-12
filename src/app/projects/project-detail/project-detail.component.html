@@ -24,11 +24,11 @@
                 <div class="row" *ngFor="let subsection of section.subsections">
                     <div class="col-xxl-8">
                         <div *ngIf="subsection.content != ''">
-                            <p *ngIf="subsection.content != ''" class="text-break lh-lg" [innerHTML]="subsection.content"></p>
+                            <p *ngIf="subsection.content != ''" class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'" [innerHTML]="subsection.content"></p>
                         </div>
                         <div *ngIf="subsection.listItems">
                             <ul>
-                                <li class="text-break lh-lg" *ngFor="let item of subsection.listItems" [innerHtml]="item"></li>
+                                <li class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-base' : 'lh-lg'" *ngFor="let item of subsection.listItems" [innerHtml]="item"></li>
                             </ul>
                         </div>
                         <div *ngIf="subsection.code">

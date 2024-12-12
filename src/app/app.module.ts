@@ -25,6 +25,7 @@ import { ProjectDetailComponent } from './projects/project-detail/project-detail
 import { HttpClientModule } from '@angular/common/http';
 import { MatTabGroup } from '@angular/material/tabs';
 import { MatTabsModule } from '@angular/material/tabs';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatCardModule,
     HttpClientModule,
     MatTabGroup,
-    MatTabsModule
+    MatTabsModule,
+    NgxPaginationModule
   ],
   providers: [
     provideClientHydration(),

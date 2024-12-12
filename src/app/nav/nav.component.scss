@@ -34,6 +34,10 @@
 
 }
 
+p {
+    font-family: "Anta", serif;
+}
+
 mat-sidenav {
     background-color: #1a1c42;
     width: clamp(250px, 16vw, 300px);
@@ -163,7 +167,8 @@ mat-list-item {
 .nav-link {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: flex-start;
+    gap: 1rem;
     align-items: center;
     width: 70%;
     margin: 0 auto;
@@ -171,7 +176,7 @@ mat-list-item {
         opacity: 60%;
         padding-top: 1rem;
         color: white !important;
-        font-size: clamp(1rem, .8vw, 1.25rem);
+        // font-size: clamp(1rem, .8vw, 1.25rem);
         margin-left: 1rem;
     }
 }
@@ -180,11 +185,37 @@ mat-list-item {
     background-color: white;
     border-radius: 2% !important;
     & p {
-      color: black !important;
-      opacity: inherit;
+        color: black !important;
+        opacity: inherit;
+        // transform: matrix3d(
+        //     1, 0, 0, 0, 
+        //     0, 1, 0, 0, 
+        //     0, 0, 1, 0, 
+        //     0, 0, 0, 1
+        // );
+        animation: pulse 0.4s ease-out;
     }
     .custom-size-mat-icon {
         color: black !important;
+    }
+    
+}
+
+@keyframes pulse {
+    0% {
+      transform: scale(1.3); /* Normal size */
+    }
+    25% {
+      transform: scale(1.2); /* Scales out */
+    }
+    50% {
+      transform: scale(1.1); /* Scales out */
+    }
+    75% {
+      transform: scale(1.05); /* Scales out */
+    }
+    100% {
+      transform: scale(1); /* Back to normal size */
     }
 }
 

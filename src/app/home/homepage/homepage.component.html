@@ -20,7 +20,7 @@
                     <h2 class="card-title"><strong>About Me</strong></h2>
                     <h3 style="text-align: center;">Hi There! </h3><br>
                     <h3 style="text-align: center;"> My Name is <strong style="font-style: italic;">Steve</strong>.</h3>
-                    <p class="text-break lh-lg" style="font-weight: 450;">
+                    <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'" style="font-weight: 450;">
                         Driven by a passion for technology, automation, and problem-solving, I transitioned into IT after over a decade of dedication to my prior career. Over the past three years, I’ve been on a journey to master cloud computing, DevOps, and automation, focusing heavily on Amazon Web Services (AWS). Along the way, I’ve earned two AWS certifications and gained hands-on experience designing innovative solutions in a variety of roles.
                         <br><br>
                         Seeing tremendous value in the evolution of cloud computing and its role in shaping the future of IT, I have a focused interest in creating efficient workflows and developing tools that reduce toil and empower teams to achieve more using modern development and design concepts and philosophies. From designing automated systems to crafting focused, impactful applications, I remain committed to continuous learning and delivering solutions that drive meaningful outcomes.
@@ -42,11 +42,11 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h2 class="card-title"><strong>Experience</strong></h2>
-                    <p class="text-break lh-lg">Over nearly a year and a half as a Release Engineer and Developer, I gained hands-on experience in automation, cloud resource management, and CI/CD processes. My contributions include:
+                    <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">Over nearly a year and a half as a Release Engineer and Developer, I gained hands-on experience in automation, cloud resource management, and CI/CD processes. My contributions include:
                     </p>
         
                     
-                    <ul class="text-break lh-lg">
+                    <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
                         <li>Delivering streamlined operations by developing and maintaining applications for internal reporting, monitoring tools, and automated IAM role management.</li>
                         <li>Ensuring smooth and reliable release cycles by managing Jenkins production deployments and resolving complex issues.</li>
                         <li>Driving efficiency across teams by developing key automation solutions, including custom Jira dashboards, AWS Lambda Canary monitoring, and cross-region database replication for over 100 AWS accounts.</li>
@@ -54,7 +54,7 @@
                         </li>
                     </ul>
         
-                    <p class="text-break lh-lg">These contributions not only supported organizational goals but also deepened my expertise in designing scalable solutions, troubleshooting deployment pipelines, and leveraging cloud-based tools to optimize workflows. This experience continues to shape my approach to tackling challenges and creating impactful systems.</p>
+                    <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">These contributions not only supported organizational goals but also deepened my expertise in designing scalable solutions, troubleshooting deployment pipelines, and leveraging cloud-based tools to optimize workflows. This experience continues to shape my approach to tackling challenges and creating impactful systems.</p>
         
                     <!-- <p class="text-break lh-lg">This website serves as a showcase of my journey, a catalog of my projects, and a space for new ideas and
                         skills as they develop. Thank you for visiting, and I hope you enjoy exploring my work!</p> -->

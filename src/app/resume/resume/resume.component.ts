@@ -1,16 +1,28 @@
-import { Component } from '@angular/core';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Component, inject, OnInit } from '@angular/core';
+import { distinctUntilChanged, map, Observable, shareReplay } from 'rxjs';
 
 @Component({
   selector: 'app-resume',
   templateUrl: './resume.component.html',
   styleUrl: './resume.component.scss'
 })
-export class ResumeComponent {
+export class ResumeComponent implements OnInit {
   baseUrl = 'https://s3.us-east-1.amazonaws.com/www.digitalsteve.net/';
   resume = ''
+  isSmallScreen$!: Observable<boolean>;
+  private breakpointObserver = inject(BreakpointObserver);
 
 
   constructor() { }
+
+  ngOnInit() {
+    this.isSmallScreen$ = this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.Medium, Breakpoints.Small]).pipe(
+      map(result => result.matches),
+      distinctUntilChanged(),
+      shareReplay()
+    )
+  }
 
   downloadResumeDoc() {
     let url = this.baseUrl + 'Stephen_Yuhas_Resume.docx';

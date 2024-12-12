@@ -3,6 +3,7 @@ import * as yaml from 'js-yaml';
 import { Project } from '../project-model.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
   selector: 'app-project-list',
@@ -13,6 +14,8 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 export class ProjectListComponent implements OnInit{
   projects: Project[] = [];
   project!: Project;
+  page = 1;
+  pageSize = 6;
 
   constructor (
     private route: ActivatedRoute,
@@ -20,7 +23,7 @@ export class ProjectListComponent implements OnInit{
     private router: Router
   ){}
   ngOnInit() {
-    const projectId = String(this.route.snapshot.paramMap.get('id'));
+    // const projectId = String(this.route.snapshot.paramMap.get('id'));
     this.http.get('assets/projects.yaml', {responseType: 'text'}).subscribe(data => {
       this.projects = yaml.load(data) as Project[];
     }

@@ -252,3 +252,12 @@ mat-list-item {
 .custom-icon {
     transform: scale(1);
 }
+
+@media (max-width: 1280px) {
+    .active {
+        & p {
+            animation: none;
+        }
+    }
+    
+}

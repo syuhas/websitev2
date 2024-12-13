@@ -11,10 +11,6 @@
 
 
 
-
-
-
-
 // original 161e27
 
 .background {
@@ -54,7 +50,10 @@ mat-sidenav-content {
   }
 .mat-toolbar {
     background-color: #1a1c42;
-    height: clamp(100px, 10vh, 200px);
+    height: 100px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .header-desktop {

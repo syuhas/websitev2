@@ -35,7 +35,7 @@
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
-        <mat-toolbar color="primary" class="background2">
+        <mat-toolbar class="background2">
             <button mat-button tabindex="+1" (click)="opened = !opened"><span class="material-icons custom-size-mat-icon">density_medium</span></button>
             <div [ngClass]="(isHandset$ | async) ? 'header-handset' : 'header-desktop'">
                 <div>

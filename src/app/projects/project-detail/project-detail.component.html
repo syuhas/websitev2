@@ -12,11 +12,13 @@
 
 
     <div class="card">
-        <ul class="nav nav-tabs nav-fill">
-            <li class="nav-item" *ngFor="let section of project.sections">
-                <a class="nav-link" [ngClass]="{'active': activeSection === section.tabTitle}" (click)="setTab(section.tabTitle)">{{ section.tabTitle }}</a>
-            </li>
-        </ul>
+        <div class="flipped">
+            <ul class="nav nav-tabs nav-fill">
+                <li class="nav-item" *ngFor="let section of project.sections">
+                    <a class="nav-link" [ngClass]="{'active': activeSection === section.tabTitle}" (click)="setTab(section.tabTitle)">{{ section.tabTitle }}</a>
+                </li>
+            </ul>
+        </div>
         <div class="sections" *ngFor="let section of project.sections">
             <div *ngIf="activeSection === section.tabTitle">
                 <h2 class="card-title my-4"><strong>{{ section.title }}</strong></h2>

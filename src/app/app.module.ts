@@ -22,7 +22,7 @@ import { MatCardModule } from '@angular/material/card';
 import { NavComponent } from './nav/nav.component';
 import { ProjectListComponent } from './projects/project-list/project-list.component';
 import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { MatTabGroup } from '@angular/material/tabs';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -62,7 +62,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
   ],
   providers: [
     provideClientHydration(),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent]
 })

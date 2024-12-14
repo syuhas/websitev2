@@ -8,8 +8,8 @@
 }
 
 .text-center img{
-  width: clamp(100px, 12vw, 150px);
-  padding-bottom: 2rem;
+  width: clamp(450px, 30vw, 650px);
+  // padding-bottom: 2rem;
 }
 
 hr {
@@ -44,9 +44,24 @@ hr {
   align-items: center;
 }
 
+.display-4 {
+  font-style: italic;
+  letter-spacing: .1rem;
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+.lead{
+  letter-spacing: .2rem;
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.25);
+}
+
 .text-break {
   width: 95%;
   padding-bottom: 1rem;
+}
+
+.card-title {
+  letter-spacing: .05rem;
 }
 
 
@@ -60,5 +75,9 @@ hr {
   .text-break {
     width: 100%;
     font-size: smaller;
+  }
+  .lead {
+    letter-spacing: .1rem;
+    padding-bottom: 1rem;
   }
 }

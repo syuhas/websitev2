@@ -1,22 +1,27 @@
 <div class="container mt-4 pageWrapper">
-    <div class="name-container">
-        <h2 class="name">Stephen Yuhas</h2>
-        <p class="title">DevOps | AWS | Release Engineering</p>
-    </div>
-    <div class="container mt-4 imgwrapper">
-        <div class="backgroundrad"><img src="/assets/home-images/bannerstraight15.png" alt="" class="img-fluid"></div>
-    </div>
-    <div class="name-container-mobile">
-        <h2 class="name">Stephen Yuhas</h2>
-        <p class="title">DevOps | AWS | Release Engineering</p>
-    </div>
-    <div class="container mt-4 imgwrapper-mobile">
-        <div class="banner-container">
-            <img src="/assets/home-images/portrait10.png" alt="" class="img-fluid face">
-            <img src="/assets/home-images/bannerstraight.png" alt="" class="img-fluid banner">
-        
+    <div class="desktop" *ngIf="!(isSmallScreen$ | async); else mobile">
+        <div class="name-container" *ngIf="!(isSmallScreen$ | async); else mobile">
+            <h2 class="name">Stephen Yuhas</h2>
+            <p class="title">DevOps | AWS | Release Engineering</p>
+        </div>
+        <div class="container mt-4 imgwrapper" *ngIf="!(isSmallScreen$ | async); else mobile">
+            <img src="/assets/home-images/bannerstraight15.png" alt="" class="img-fluid">
         </div>
     </div>
+
+    <ng-template #mobile>
+        <div class="name-container-mobile">
+            <h2 class="name">Stephen Yuhas</h2>
+            <p class="title">DevOps | AWS | Release Engineering</p>
+        </div>
+        <div class="container mt-4 imgwrapper-mobile">
+            <div class="banner-container">
+                <img src="/assets/home-images/portrait10.png" alt="" class="img-fluid face">
+                <img src="/assets/home-images/bannerstraightsmall.png" alt="" class="img-fluid banner">
+            
+            </div>
+        </div>
+    </ng-template>
 
     <!-- Content Sections -->
     <div class="row">

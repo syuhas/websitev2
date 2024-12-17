@@ -1,6 +1,6 @@
 
 .pageWrapper {
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - 100px);
   color: #444A53;
   padding-bottom: 3rem;
   font-family: "Roboto Condensed", sans-serif;
@@ -21,36 +21,15 @@
   align-items: center;
 }
 
-.portrait-container {
-  min-width: 150px;
-  & img {
-    width: clamp(180px, 13vw, 250px);
-  }
-  z-index: 1;
-}
-.name-container{
-  display: grid;
-  justify-content: center;
-  & .name {
-    font-style: italic;
-    letter-spacing: .2rem;
-    font-size: 1.5rem;
-    margin: 0;
-    font-weight: 700;
-    font-size: clamp(1.25rem, 2.25vw, 2rem);
-    animation: fadeInSpaceIn 1.3s ease-in-out;
-  }
-  & .title {
-    font-style: italic;
-    letter-spacing: .2rem;
-    font-size: 1.25rem;
-    margin: 0;
-    font-weight: 500;
-    font-size: clamp(1rem, 1.5vw, 1.5rem);
-    padding-left: 6vw;
-    animation: fadeInSpaceOut 1.3s ease-in-out;
-  }
-}
+// .portrait-container {
+//   min-width: 150px;
+//   & .rounded-circle {
+//     width: clamp(180px, 13vw, 250px);
+//   }
+//   z-index: 1;
+// }
+
+
 
 hr {
   border-top: 3px solid #1a1c42;
@@ -76,10 +55,41 @@ hr {
   }
 }
 
-
 .card-title {
   letter-spacing: .05rem;
 }
+
+// .portrait-container-mobile {
+//   min-width: 120px;
+//   & img {
+//     width: clamp(180px, 13vw, 250px);
+//   }
+//   z-index: 1;
+// }
+
+// .name-container-mobile {
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: center;  
+//   & .name {
+//     font-style: italic;
+//     letter-spacing: .2rem;
+//     // animation: fadeInFromRight 1.3s ease-in-out;
+//     // transform: translateX(-2%);
+//     margin: 0;
+//     font-size: clamp(1.2rem, 2.25vw, 1.75rem);
+//   }
+//   & .title {
+//     font-style: italic;
+//     letter-spacing: .05rem;
+//     // white-space: nowrap;
+//     // animation: fadeInFromLeft 1.3s ease-in-out;
+//     // transform: translateX(2%);
+//     margin: 0;
+//     font-size: clamp(.9rem, 2vw, 1.5rem);
+//   }
+// }
+
 @media (max-width: 960px) {
   .card {
     width: 100%;
@@ -88,9 +98,11 @@ hr {
   .text-break {
     width: 100%;
   }
+  .about {
+    padding: 2rem;
+  }
+  
 }
-
-
 
 @keyframes fadeInSpaceIn {
   from {
@@ -114,13 +126,125 @@ hr {
   }
 }
 
+@keyframes fadeInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-2%);
+  }  
+}
+
+@keyframes fadeInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(2%);
+  }  
+}
+
+.pageWrapper {
+  margin-top: 5rem;
+}
+
+// tester section
+// .name-container{
+//   display: grid;
+//   justify-content: center;
+//   & .name {
+//     font-style: italic;
+//     letter-spacing: .2rem;
+//     margin: 0;
+//     font-weight: 700;
+//     font-size: clamp(1.25rem, 2.25vw, 2rem);
+//     animation: fadeInSpaceIn 1.3s ease-in-out;
+//   }
+//   & .title {
+//     font-style: italic;
+//     letter-spacing: .2rem; 
+//     margin: 0;
+//     font-weight: 500;
+//     font-size: clamp(1rem, 1.5vw, 1.5rem);
+//     padding-left: 6vw;
+//     animation: fadeInSpaceOut 1.3s ease-in-out;
+//   }
+// }
+.name-container{
+  display: grid;
+  justify-content: center;
+  margin-top: 3rem;
+  // justify-content: flex-start;
+  & .name {
+    font-style: italic;
+    letter-spacing: .2rem;
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(1.6rem, 2.75vw, 2.5rem);
+    animation: fadeInSpaceIn 1.3s ease-in-out;
+  }
+  & .title {
+    font-style: italic;
+    letter-spacing: .2rem; 
+    margin: 0;
+    font-weight: 500;
+    font-size: clamp(1.1rem, 1.5vw, 1.5rem);
+    padding-left: 6vw;
+    animation: fadeInSpaceOut 1.3s ease-in-out;
+    margin-top: 1rem;
+  }
+}
+
+.about-container {
+  justify-content: center;
+}
+
+.face {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: fit-content;
+  margin: 0;
+  padding: 0;
+  & img {
+    width: clamp(225px, 20vw, 325px);
+    margin-right: 2rem;
+  }
+}
+
+.hi{
+  font-size: xx-large;
+  font-weight: 300;
+  & strong {
+    font-weight: 900;
+    letter-spacing: .4rem;
+  }
+}
+
+.about {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0;
+  padding: 1rem;
+}
 
 
 
-
-
-
-
+.certs {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  & img {
+    min-width: 200px;
+  }
+}
 
 
 

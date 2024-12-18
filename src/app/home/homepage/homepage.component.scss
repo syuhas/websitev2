@@ -131,14 +131,14 @@ hr {
 }
 
 #hi {
-  opacity: 0;
+  // opacity: 1;
   transform: translateY(-100px); /* Start from the right */
   animation: dropIn .4s forwards, fadeIn .4s forwards;
   animation-delay: .4s; /* Delay for 'Steve' */
 }
 
 #steve {
-  opacity: 0;
+  // opacity: 1;
   transform: translateX(100px); /* Start from the right */
   animation: slideIn 1s forwards, fadeIn 1s forwards;
   animation-delay: 2.5s; /* Delay for 'Steve' */
@@ -223,19 +223,23 @@ hr {
 @keyframes slideIn {
     0% {
       transform: translateX(100px);
+      opacity: 0;
     }
     100% {
       transform: translateX(0);
+      opacity: 1;
     }
 }
 @keyframes dropIn {
   0% {
     transform: translateY(-200px);
+    opacity: 0;
   }
   50% {
     transform: translateY(10px);
   }
   100% {
     transform: translateY(0);
+    opacity: 1;
   }
 }

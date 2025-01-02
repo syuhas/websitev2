@@ -1,0 +1,234 @@
+- id: event
+  title: AWS Serverless Event-Driven Architecture
+  subtitle: Event-driven architecture in AWS with EventBridge, Lambda, SQS, and S3.
+  github: https://github.com/syuhas/awsdash-lambda
+  description: |
+    Developing an event-driven architecture in AWS with serverless microservices
+  listIcon: /assets/project-images/event-images/event_icon3.png
+  titleIcons:
+    - /assets/project-images/event-images/event_icon.png
+    - /assets/project-images/event-images/event_icon2.png
+    - /assets/project-images/event-images/event_icon3.png
+    - /assets/project-images/event-images/event_icon4.png
+  sections:
+    - title: Overview
+      tabTitle: Overview
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/event-images/event.png
+
+        - content: |
+            This project demonstrates the implementation of a serverless, event-driven architecture in AWS, leveraging services such as EventBridge, Lambda, SQS, and S3 to process and respond to bucket and object-level events. By automating workflows triggered by predefined rules, it showcases the scalability and resilience of serverless solutions.<br><br>
+
+            The events are divided into two main categories:
+
+          listItems:
+            - "<span style='color: blue;'>Bucket-Level Events</span>: Triggered by the creation or deletion of S3 buckets."
+            - "<span style='color: blue;'>Object-Level Events</span>: Triggered by actions such as adding, modifying, or deleting objects within a bucket, including handling delete markers and post events."
+          imgs:
+        - content: |
+            The separation of bucket-level and object-level events is necessary because S3 Event Notifications can only handle object-level events after a bucket is created and event notifications are explicitly enabled. I wanted to design this separation in so I could use S3 Event Notifications and treat the bucket-level events as an enrollment process.<br><br>
+            For bucket-level events, CloudTrail captures logs for bucket creation or deletion, which are processed by EventBridge and sent downstream. For object-level events, S3 Event Notifications pass data events downstream for processing by additional AWS services.
+            <br><br>
+            In the following sections, I will provide a detailed overview of the architecture, including the setup of CloudTrail, EventBridge, SQS, and Lambda functions. I will also explain how the system processes bucket-level and object-level events, showcasing the end-to-end flow of the event-driven architecture.
+            <br><br><br><br>
+          imgs:
+    - title: Bucket-Level Events Overview
+      tabTitle: Buckets
+      subsections:
+        - content: |
+            The bucket-level event pipeline is triggered by management events such as bucket creation or deletion, recorded in CloudTrail logs. These events are filtered using EventBridge, which routes relevant events, like bucket creation, to an SQS queue for further processing.<br><br>
+
+            A Lambda function consumes events from the SQS queue, extracting metadata such as bucket name and associated account ID. This metadata is then stored in a PostgreSQL database, enabling detailed tracking and management of bucket-level activities. The Lambda function also enrolls newly created buckets for object-level event notifications, ensuring seamless integration with the next pipeline.
+          imgs:
+            - /assets/project-images/event-images/event_bucket.png
+
+    - title: Configuring CloudTrail Logging
+      tabTitle: CloudTrail
+      subsections:
+        - content: |
+            Setting up a CloudTrail trail is a crucial first step in this event-driven architecture. The primary purpose of this trail is to capture and log management events for S3 buckets, enabling integration with EventBridge. This integration allows EventBridge to read these events and trigger workflows based on bucket-level activities such as creating or deleting a bucket.<br><br>
+            In this setup, the CloudTrail trail is configured to log management events, with particular emphasis on Write API operations. These logs are delivered to a designated S3 bucket, where they can be accessed and processed. By enabling this trail, I ensure that EventBridge has the necessary visibility into bucket-level actions, which forms the foundation of the bucket pipeline.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event1_1.png
+            - /assets/project-images/event-images/event1_2.png
+        - content: |
+            Below is the bucket that the CloudTrail logs are delivered to. This trail is enabled organization-wide, so all S3 management events from all accounts in the org are captured. These logs will be used by EventBridge and filtered by CreateBucket and DeleteBucket events.
+          imgs:
+            - /assets/project-images/event-images/event1_3.png
+
+    - title: Configuring EventBridge Rules
+      tabTitle: EventBridge
+      subsections:
+        - content: |
+            In this setup, I created an EventBridge rule to filter out S3 bucket management events specifically for CreateBucket and DeleteBucket actions. The event pattern is configured to match these actions in the CloudTrail logs, ensuring that only relevant events trigger the rule. This allows for precise control over which bucket-level activities are passed through the pipeline.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event2_1.png
+        - content: |
+            Once the filtering rule is in place, the events are routed to an SQS queue. The SQS queue serves as a reliable target for EventBridge, providing a decoupled mechanism for handling the events. This ensures that the events can be processed asynchronously, even if the downstream services experience temporary unavailability.<br><br>
+
+            The combination of EventBridge rules and the SQS target creates a streamlined event-driven workflow for bucket-level events, efficiently filtering, routing, and queuing S3 management events for further processing.
+          imgs:
+            - /assets/project-images/event-images/event2_2.png
+
+    - title: SQS Event Queue for Bucket Events
+      tabTitle: SQS - Buckets
+      subsections:
+        - content: |
+            With the EventBridge rules in place, the next step involves setting up the SQS queue to handle bucket-level events. SQS serves as the intermediary messaging layer, ensuring reliable delivery of events and allowing for asychhronous decoupled processing by downstream services.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event3_2.png
+
+        - content: |
+            The first step in this configuration is to create an SQS queue and define the necessary settings, such as message retention period and visibility timeout, to suit the needs of the pipeline. The SQS details page showcases these settings and ensures that the queue is configured to handle the expected traffic effectively.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event3_1.png
+            - /assets/project-images/event-images/event3_3.png
+
+        - content: |
+            An example payload of a CreateBucket event demonstrates the data structure being passed to the SQS queue. A Lambda target is configured to ingest and process the message. This payload includes critical details such as the event name, bucket name, timestamp, and other metadata, ensuring that the Lambda function receives all the information needed to process the event effectively.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event3_4.png
+
+    - title: Lambda Bucket Manager Function
+      tabTitle: Lambda - Buckets
+      subsections:
+        - content: |
+            The Lambda Bucket Manager Function processes bucket-level events received from the SQS queue. For each event, it extracts critical metadata, such as the bucket name and event type, to track and monitor storage activity.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event4_1.png
+
+        - content: |
+            <strong><a href="https://github.com/syuhas/awsdash-lambda/blob/main/update_buckets/lambda_function.py" target="_blank">View Code in GitHub</a><br><br></strong>
+          imgs:
+
+        - content: |
+            The main purpose of the function is to add new buckets to the database and enable S3 Event Notifications to enroll the bucket in the object-level event pipeline. The object-level function will compute the storage metrics for the buckets and objects whereas this function acts as more of an enrollment process.<br><br>
+
+            The function supports event types like CreateBucket and DeleteBucket. For creation, it registers the bucket in the database and configures event notifications. For deletion, it removes the bucket and associated object data from the database.<br><br>
+
+            These tasks ensure efficient bucket management and seamless integration with the object-level event pipeline.
+          imgs:
+            - /assets/project-images/event-images/event4_2.png
+            - /assets/project-images/event-images/event4_3.png
+
+    - title: Object-Level Events Overview
+      tabTitle: Objects
+      subsections:
+        - content: |
+            The object-level event pipeline handles events such as object creation, deletion, or modification within an S3 bucket. This process is triggered by S3 Event Notifications, which are configured on enrolled buckets. These notifications send event details, such as object metadata, to an SQS queue.<br><br>
+
+            A Lambda function processes these events by extracting critical information, including object size (in bytes, kilobytes, megabytes, etc.) and calculating the storage cost. The extracted data is then stored in a PostgreSQL database for further analysis and management. This pipeline ensures efficient and automated handling of object-level activities, providing real-time updates and insights.
+          imgs:
+            - /assets/project-images/event-images/event_object.png
+
+    - title: S3 Event Notifications
+      tabTitle: S3 Events
+      subsections:
+        - content: |
+            As part of the bucket-level pipeline, S3 Event Notifications are enabled for each new bucket to capture specific events, such as object Put, Post, and Delete, including delete markers. These notifications are configured via a Lambda function to ensure only relevant events are processed.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event5_1.png
+        - content: |
+            The Event Notifications publish events to an SQS queue, enabling asynchronous processing by downstream Lambda functions. This logical separation ensures efficient handling of object-level events, independent of the bucket-level events.
+          imgs:
+            - /assets/project-images/event-images/event5_1.png
+    - title: SQS Event Queue for Object Events
+      tabTitle: SQS - Objects
+      subsections:
+        - content: |
+            Again, SQS is used here to handle asynchronous event processing from S3 notifications, ensuring scalability and fault tolerance for downstream Lambda functions.<br><br>
+            The SQS queue is configured with key settings such as visibility timeout, message retention, encryption, and access permissions. These configurations ensure secure, reliable, and efficient handling of event messages generated by S3.
+          imgs:
+            - /assets/project-images/event-images/event6_2.png
+        - content: |
+            Once configured, the SQS queue is integrated with a Lambda function target. This setup enables the Lambda function to process messages from the queue, triggering event-driven workflows to handle object-level events efficiently.
+          imgs:
+            - /assets/project-images/event-images/event6_1.png
+            - /assets/project-images/event-images/event6_3.png
+        - content: |
+            To enhance reliability, a dead-letter queue (DLQ) is configured to capture any messages that fail to process, which I can capture and process separately or log for analytics. Additionally, an example payload demonstrates the structure of the messages sent to the SQS queue, highlighting the details provided for each event.
+          imgs:
+            - /assets/project-images/event-images/event6_4.png
+        - content: |
+          imgs:
+            - /assets/project-images/event-images/event6_5.png
+        - content: |
+            The asynchronous nature of SQS decouples the event source (S3) from the processing logic (Lambda), allowing the system to handle high-throughput events without being constrained by downstream processing capacity.<br><br>
+          imgs:
+
+    - title: Lambda Object Manager Function
+      tabTitle: Lambda - Objects
+      subsections:
+        - content: |
+            This section highlights the object-level Lambda function, which is triggered by SQS messages from the event queue. This is the main data handler for this architecture. Since most operations will be object-level events, this is doing most of the heavy lifting. The function is configured with an SQS trigger, as shown in the image, and both function in this architecture are deployed using Jenkins and Terraform, with the deployment details covered in the next section.
+          imgs:
+            - /assets/project-images/event-images/event7_1.png
+
+        - content: |
+            <strong><a href="https://github.com/syuhas/awsdash-lambda/blob/main/update_objects/lambda_function.py" target="_blank">View Code in GitHub</a><br><br></strong>
+          imgs:
+
+        - content: |
+            The provided code demonstrates how the function processes the events described earlier in this project. The function parses the SQS message to extract the event details, including the event name, bucket name, and object key. Based on the event type, it performs the following actions:
+          listItems:
+            - "<span style='color: blue;'>Add/Remove/Modify Object</span>"
+            - "<span style='color: blue;'>Calculate and Add/Update Metrics for the Object</span>"
+            - "<span style='color: blue;'>Calculate and Update Metrics for the Bucket</span>"
+          imgs:
+            - /assets/project-images/event-images/event7_2.png
+        - content: |
+            The function calculates the size of the object in kilobytes (KB), megabytes (MB), and gigabytes (GB).<br><br>
+            It computes the total cost for the object and updates the corresponding metrics in the database.<br><br>
+            Additionally, it updates the cumulative totals for these metrics for the bucket.<br><br>
+            This Lambda function serves as the core processing component of the event-driven architecture, ensuring accurate database updates based on bucket and object-level events.
+          imgs:
+
+    - title: Deploying Lambdas with Jenkins and Terraform
+      tabTitle: Deploy
+      subsections:
+        - content: |
+            To deploy the Lambda functions efficiently, I am using a combination of Jenkins and Terraform. Jenkins handles the automation of the deployment pipeline, while Terraform provisions the required infrastructure, ensuring a streamlined and repeatable process.
+            <br><br>
+            The following Jenkins pipelines show the overview of the deployment process, orchestrating the packaging, provisioning and deployment steps.
+          imgs:
+            - /assets/project-images/event-images/event8_1.png
+            - /assets/project-images/event-images/event8_2.png
+        - content: |
+            Terraform is used to manage the Lambda infrastructure and employs code hashing to detect changes, ensuring only updated functions are deployed. A bash script packages the Lambda functions, preparing them for deployment.
+          imgs:
+
+        - content: |
+
+          imgs:
+            - /assets/project-images/event-images/event8_3.png
+            - /assets/project-images/event-images/event8_4.png
+        - content: |
+            The Jenkinsfile defines and executes the pipeline's stages, coordinating infrastructure provisioning and Lambda deployment for a streamlined workflow.
+          imgs:
+            - /assets/project-images/event-images/event8_5.png
+
+    - title: Summary
+      tabTitle: Summary
+      subsections:
+        - content: |
+            This project was a valuable learning experience that brought together multiple AWS services into a cohesive event-driven architecture. It began with the challenge of automating the enrollment of S3 buckets and evolved into a full-scale pipeline capable of processing both bucket-level and object-level events efficiently. From setting up CloudTrail and EventBridge to leveraging SQS and Lambda functions, every step of the pipeline presented opportunities to deepen my understanding of event-driven design and AWS integration.
+
+            <br><br>
+
+            One of the most rewarding aspects of the project was working with Lambda functions to process and enrich event data. This included calculating storage metrics and costs for S3 objects and enrolling buckets for additional event notifications. Integrating PostgreSQL to store the processed data added a layer of persistence and visibility to the workflow, allowing for more meaningful insights into bucket usage and object-level changes.
+
+            <br><br>
+
+            Deploying the entire architecture with Jenkins and Terraform was another critical milestone. Building a CI/CD pipeline not only streamlined the deployment process but also ensured infrastructure consistency and reliability. Incorporating a bash script to package Lambda functions and leveraging Terraform’s state management and hashing features to track changes further emphasized the importance of automation and reproducibility.
+
+            <br><br>
+
+            Reflecting on the project, I gained significant experience in designing and deploying event-driven architectures. I also learned the importance of careful planning when integrating multiple AWS services to ensure seamless communication and error handling. This project demonstrated the potential for scalability and highlighted areas for future exploration, such as optimizing notification workflows or adding advanced monitoring capabilities.
+
+            <br><br>
+
+            Overall, this project was not only a technical accomplishment but also a major step forward in understanding how to build efficient, scalable, and cost-effective serverless solutions. It has laid the groundwork for future enhancements and provided a solid foundation for tackling more complex event-driven systems.
+          imgs:

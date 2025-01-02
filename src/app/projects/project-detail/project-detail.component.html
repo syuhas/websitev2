@@ -1,4 +1,4 @@
-<div class="container-fluid mt-5" *ngIf="project">
+<div class="container-fluid mt-3" *ngIf="project">
     <div class="pageTitle">
         <div class="titleImgs">
             <img *ngFor="let icon of project.titleIcons" src="{{ icon }}" alt="">
@@ -21,10 +21,10 @@
         </div>
         <div class="sections" *ngFor="let section of project.sections">
             <div *ngIf="activeSection === section.tabTitle">
-                <h2 class="card-title my-4"><strong>{{ section.title }}</strong></h2>
+                <h2 class="card-title"><strong>{{ section.title }}</strong></h2>
 
                 <div class="row" *ngFor="let subsection of section.subsections">
-                    <div class="col-xxl-8">
+                    <div class="col-xxl-7 col-lg-8">
                         <div *ngIf="subsection.content != ''">
                             <p *ngIf="subsection.content != ''" class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'" [innerHTML]="subsection.content"></p>
                         </div>

@@ -1,8 +1,9 @@
 <mat-sidenav-container>
     <mat-sidenav [(opened)]="opened" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
         [mode]="(isHandset$ | async) ? 'over' : 'side'" class="background">
-        <mat-toolbar class="background2"><img class="logo" src="assets/home-images/DSTrans79.png"
-                alt="Digital Steve"></mat-toolbar>
+        <mat-toolbar class="background2">
+            <a href="/home"><img class="logo" src="assets/home-images/DSTrans80.png" alt="Digital Steve"></a>
+        </mat-toolbar>
         <mat-nav-list>
             <a mat-list-item routerLink="/home" tabindex="-1" routerLinkActive="active"
                 [ngClass]="{'inactive': !isActive('/home')}" [disableRipple]="true" (click)="closeIfHandset()">

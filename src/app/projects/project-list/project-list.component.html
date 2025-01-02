@@ -13,10 +13,10 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xxl-4 col-xl-6 col-md-12 col-sm-12 mb-3 px-auto hover" *ngFor="let project of projects | paginate: {itemsPerPage: pageSize, currentPage: page}">
+      <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-3 px-auto hover" *ngFor="let project of projects | paginate: {itemsPerPage: pageSize, currentPage: page}">
         <div class="thickbar"></div>
 
-        <div class="card" (click)="goToProject(project)">
+        <div class="card cardItem" (click)="goToProject(project)">
           <div class="card-body">
             <div class="title">
                 <img [src]="project.listIcon" class="img-fluid">

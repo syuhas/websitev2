@@ -12,7 +12,7 @@
         display: flex;
         gap: 2rem;
         & img {
-            height: clamp(50px, 2.5vw, 75px);;
+            height: clamp(50px, 2.5vw, 75px);
         }
     }
 }
@@ -21,6 +21,7 @@
     text-align: center;
 }
 .container-fluid h2 {
+    margin: .25rem;
     & a{
         letter-spacing: .15rem;
         text-decoration: none;
@@ -69,7 +70,7 @@
     cursor: pointer;
     font-weight: bold;
     // max-width: 150px !important;
-    min-width: clamp(75px, 7vw, 150px);
+    // min-width: 75px !important;
 }
 
 .nav-link{
@@ -94,9 +95,10 @@
     border-top: 0;
     background-color: #f5f5f5;
     padding-bottom: 5rem;
+    // min-height: calc(100vh - 500px);
 }
 p {
-    font-weight: 425;
+    font-weight: 550;
     padding: 1rem;
     font-family: "Roboto Condensed", sans-serif;
 }
@@ -109,25 +111,26 @@ p {
         padding-right: 2rem;
         padding-left: 2rem;
         width: clamp(700px, 50vw, 800px);
-        padding-bottom: 0;
     }
 
     & ul {
         // padding: .5rem;
         font-weight: bold;
     }
-    & p {
+    // & p {
         // padding: 1rem;
-    }
+    // }
 }
 
 .expand {
     padding: .75rem;
     opacity: 50%;
+    padding-top: 0;
 }
 
 .introSummaryImg {
-    max-width: clamp(400px, 50vw, 550px);
+    // max-width: 600px;
+    max-width: clamp(400px, 50vw, 950px);
 }
 
 
@@ -136,19 +139,26 @@ p {
     align-items: center;
 }
 
-.col-xxl-6, .col-xxl-8 {
+.col-xxl-6, .col-lg-8 {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 pre {
-    background-color: #e4e4e4;
+    // background-color: #e4e4e4;
+    background-color: black;
+    color: white;
     overflow: auto;
-    font-family: 'Monaco', monospace;
+    // font-size: clamp(.1rem, .2vw, .3rem);
+    // font-family: 'Consolas','Monaco', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New';
     padding: 0 1em;
     width: 50vw;
-    font-weight: 600;
+    font-weight: 400;
+    max-height: 800px;
+    & code {
+        font-size: clamp(.1rem, .2vw, .3rem);
+    }
 }
 
 .image-preview-modal {
@@ -202,7 +212,7 @@ pre {
 @media(max-width: 1400px) {
     pre {
         width: 90vw;
-        font-size: .6rem;
+        // font-size: .6rem;
     }
 
     .image-preview-modal img {

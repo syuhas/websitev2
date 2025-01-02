@@ -63,7 +63,7 @@
     padding-left: 6vw;
     animation: fadeInSpaceOut .5s ease-in-out;
     margin-top: 1rem;
-    text-shadow: 1px 3px 3px #0000004b;
+    text-shadow: 1px 1px 1px #1a1c4244;
   }
 }
 
@@ -89,7 +89,7 @@ hr {
   margin: 0;
   padding: 0;
   & img {
-    width: clamp(225px, 18vw, 325px);
+    width: clamp(205px, 18vw, 325px);
     margin-right: 2rem;
   }
 }
@@ -100,7 +100,7 @@ hr {
   white-space: nowrap;
   & strong {
     font-weight: 900;
-    letter-spacing: .4rem;
+    letter-spacing: .15rem;
   }
   padding-bottom: 2rem;
 }
@@ -116,18 +116,18 @@ hr {
 }
 
 .text:nth-child(2) {
-  animation-delay: 1.5s; /* Delay for 'my' */
+  animation-delay: 1.25s; /* Delay for 'my' */
 }
 
 .text:nth-child(3) {
-  animation-delay: 1.75s; /* Delay for 'name' */
+  animation-delay: 1.5s; /* Delay for 'name' */
 }
 
 .text:nth-child(4) {
-  animation-delay: 2s; /* Delay for 'is' */
+  animation-delay: 1.75s; /* Delay for 'is' */
 }
 .text:nth-child(5) {
-  animation-delay: 3s; /* Delay for 'name' */
+  animation-delay: 2.5s; /* Delay for 'name' */
 }
 
 #hi {
@@ -186,6 +186,14 @@ hr {
   }
   .about {
     padding: 2rem;
+  }
+  
+}
+
+@media (max-width: 768px) {
+
+  .pageWrapper {
+    margin-top: 1.75rem;
   }
   
 }

@@ -1,3 +1,597 @@
+- id: backfill
+  title: AWS Serverless Event-Driven Architecture
+  subtitle: Event-driven architecture in AWS with EventBridge, Lambda, SQS, and S3.
+  github: https://github.com/syuhas/awsdash-lambda
+  description: |
+    Developing an event-driven architecture in AWS with serverless microservices
+  listIcon: /assets/project-images/event-images/event_icon3.png
+  titleIcons:
+    - /assets/project-images/event-images/event_icon.png
+    - /assets/project-images/event-images/event_icon2.png
+    - /assets/project-images/event-images/event_icon3.png
+    - /assets/project-images/event-images/event_icon4.png
+  sections:
+    - title: Overview
+      tabTitle: Overview
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/event-images/event.png
+
+        - content: |
+            This project demonstrates the implementation of a serverless, event-driven architecture in AWS, leveraging services such as EventBridge, Lambda, SQS, and S3 to process and respond to bucket and object-level events. By automating workflows triggered by predefined rules, it showcases the scalability and resilience of serverless solutions.<br><br>
+
+            The events are divided into two main categories:
+
+          listItems:
+            - "<span style='color: blue;'>Bucket-Level Events</span>: Triggered by the creation or deletion of S3 buckets."
+            - "<span style='color: blue;'>Object-Level Events</span>: Triggered by actions such as adding, modifying, or deleting objects within a bucket, including handling delete markers and post events."
+          imgs:
+        - content: |
+            The separation of bucket-level and object-level events is necessary because S3 Event Notifications can only handle object-level events after a bucket is created and event notifications are explicitly enabled. I wanted to design this separation in so I could use S3 Event Notifications and treat the bucket-level events as an enrollment process.<br><br>
+            For bucket-level events, CloudTrail captures logs for bucket creation or deletion, which are processed by EventBridge and sent downstream. For object-level events, S3 Event Notifications pass data events downstream for processing by additional AWS services.
+            <br><br>
+            In the following sections, I will provide a detailed overview of the architecture, including the setup of CloudTrail, EventBridge, SQS, and Lambda functions. I will also explain how the system processes bucket-level and object-level events, showcasing the end-to-end flow of the event-driven architecture.
+            <br><br><br><br>
+          imgs:
+    - title: Bucket-Level Events Overview
+      tabTitle: Buckets
+      subsections:
+        - content: |
+            The bucket-level event pipeline is triggered by management events such as bucket creation or deletion, recorded in CloudTrail logs. These events are filtered using EventBridge, which routes relevant events, like bucket creation, to an SQS queue for further processing.<br><br>
+
+            A Lambda function consumes events from the SQS queue, extracting metadata such as bucket name and associated account ID. This metadata is then stored in a PostgreSQL database, enabling detailed tracking and management of bucket-level activities. The Lambda function also enrolls newly created buckets for object-level event notifications, ensuring seamless integration with the next pipeline.
+          code: |
+            from typing import List, Dict, Union
+            import boto3
+            import json
+            import boto3.session
+            from loguru import logger
+            from sqlalchemy import create_engine, select
+            from sqlalchemy.orm import sessionmaker, declarative_base, relationship, scoped_session
+            from sqlalchemy import Column, Integer, String, ForeignKey, DECIMAL, BigInteger
+            from botocore.exceptions import ClientError
+            from concurrent.futures import ThreadPoolExecutor
+            import time
+
+            account_lookup = [
+                {
+                    'sdlc': 'prod',
+                    'account_id': '551796573889',
+                    'region': 'us-east-1',
+                    'role_arn': 'arn:aws:iam::551796573889:role/jenkinsAdminXacnt'
+                },
+                {
+                    'sdlc': 'dev',
+                    'account_id': '061039789243',
+                    'region': 'us-east-1',
+                    'role_arn': 'arn:aws:iam::061039789243:role/jenkinsAdminXacnt'
+                }
+            ]
+
+            Base = declarative_base()
+            class S3BUCKETS(Base):
+                __tablename__ = 's3'
+                id = Column(Integer, primary_key=True)
+                account_id = Column(String)
+                bucket = Column(String)
+                totalSizeBytes = Column(BigInteger)
+                totalSizeKb = Column(DECIMAL)
+                totalSizeMb = Column(DECIMAL)
+                totalSizeGb = Column(DECIMAL)
+                costPerMonth = Column(DECIMAL)
+                objects = relationship('S3BUCKETOBJECTS', backref='s3objects')
+                def __repr__(self):
+                    return f'Bucket {self.bucket}'
+
+            class S3BUCKETOBJECTS(Base):
+                __tablename__ = 's3objects'
+                id = Column(Integer, primary_key=True)
+                bucket_id = Column(Integer, ForeignKey('s3.id'))
+                bucket = Column(String)
+                key = Column(String)
+                sizeBytes = Column(BigInteger)
+                sizeKb = Column(DECIMAL)
+                sizeMb = Column(DECIMAL)
+                sizeGb = Column(DECIMAL)
+                costPerMonth = Column(DECIMAL)
+
+            def lambda_handler(event, context):
+                logger.info("Starting backfill process...")
+                start_time = time.time()
+
+                for account in account_lookup:
+
+
+                    logger.info("Retrieving existing buckets for {}...", account['account_id'])
+
+                    session = getAccountSession(account)
+
+                    buckets = getBucketsData(session)
+
+                    logger.info("Backfilling database for {}...", account['account_id'])
+
+                    backfillDatabase(buckets, account['account_id'])
+                
+                end_time = time.time()
+
+                logger.info(f"Execution time: {end_time - start_time} seconds")
+
+
+            def backfillDatabase(buckets: List[dict], account_id: str) -> dict:
+                try:
+                    current_keys = set()
+                    session = getDatabaseSession()
+                    existing_db_buckets = {b.bucket: b.id for b in session.query(S3BUCKETS).filter(S3BUCKETS.account_id == account_id).all()}
+                    existing_db_objects = {(obj.bucket_id, obj.key): {
+                                                "id": obj.id,
+                                                "hash": hash((obj.sizeBytes, obj.costPerMonth))
+                    } for obj in session.query(S3BUCKETOBJECTS).join(S3BUCKETS, S3BUCKETS.id == S3BUCKETOBJECTS.bucket_id).filter(S3BUCKETS.account_id == account_id).all()}
+
+                    try:
+                        with ThreadPoolExecutor() as executor:
+                            futures = [
+                                executor.submit(processBucket, bucket, existing_db_buckets, existing_db_objects, account_id, current_keys) for bucket in buckets
+                            ]
+                            for future in futures:
+                                future.result()
+
+                        current_buckets = {bucket['bucket'] for bucket in buckets}
+                        
+                    except Exception as e:
+                        logger.exception(e)
+                        session.rollback()
+                        return {
+                            'statusCode': 500,
+                            'body': json.dumps(f'An error occurred: {e}')
+                        }
+                        
+
+                    objects_to_delete = set(existing_db_objects.keys()) - current_keys
+                    buckets_to_delete = set(existing_db_buckets.keys()) - current_buckets
+                    for obj in objects_to_delete:
+                        logger.info(f'Deleting object from database {obj}')
+                        deleteObject(session, existing_db_objects[obj]['id'])
+                    for bucket in buckets_to_delete:
+                        logger.info(f'Deleting bucket from database {bucket}')
+                        deleteBucket(session, existing_db_buckets[bucket])
+
+                except Exception as e:
+                    session.rollback()
+                    return {
+                        'statusCode': 500,
+                        'body': json.dumps(f'An error occurred: {e}')
+                    }
+                finally:
+                    session.commit()
+                    session.close()
+
+
+
+            def processBucket(bucket: Dict, existing_db_buckets: Dict, existing_db_objects: Dict, account_id: str, current_keys: set) -> None:
+                bucket_id = existing_db_buckets.get(bucket['bucket'])
+                try:
+                    thread_session = getThreadsafeDatabaseSession()
+                    if bucket_id:
+                        logger.info(f'Bucket {bucket["bucket"]} already exists in the database.')
+                        if bucketNeedsUpdate(thread_session, bucket_id, bucket, account_id):
+                            modifyBucket(thread_session, bucket_id, bucket, account_id)
+                            logger.info(f'Bucket {bucket["bucket"]} updated.')
+                    else:
+                        logger.info(f'Adding bucket {bucket["bucket"]} to the database.')
+                        bucket_id = addBucket(thread_session, bucket, account_id)
+
+                    for obj in bucket['objects']:
+                        object_key = (bucket_id, obj['key'])
+                        if object_key in existing_db_objects:
+                            # logger.info(f'{obj["key"]} exists in the database.')
+                            existing_object = existing_db_objects[object_key]
+                            if objectNeedsUpdate(existing_object, obj):
+                                modifyObject(thread_session, existing_object['id'], obj)
+
+                        else:
+                            logger.info(f'Adding object {obj["key"]} to the database.')
+                            addObject(thread_session, bucket_id, obj)
+
+                        current_keys |= ({(bucket_id, obj['key'])})
+                    thread_session.commit()
+                    thread_session.remove()
+
+                except Exception as e:
+                    logger.exception(e)
+
+
+
+
+            #################################### Helper Functions for Buckets ##################################################
+
+            def bucketNeedsUpdate(session, bucket_id: int, bucket: Dict, account_id: str) -> bool:
+                existing_bucket = session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).one()
+                return (
+                    existing_bucket.account_id != account_id or
+                    existing_bucket.totalSizeBytes != bucket['totalSizeBytes'] or
+                    existing_bucket.totalSizeKb != bucket['totalSizeKb'] or
+                    existing_bucket.totalSizeMb != bucket['totalSizeMb'] or
+                    existing_bucket.totalSizeGb != bucket['totalSizeGb'] or
+                    existing_bucket.costPerMonth != bucket['costPerMonth']
+                )
+
+            def modifyBucket(session, bucket_id: int, bucket: Dict, account_id: str) -> None:
+                session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).update({
+                    "account_id": account_id,
+                    "totalSizeBytes": bucket["totalSizeBytes"],
+                    "totalSizeKb": bucket["totalSizeKb"],
+                    "totalSizeMb": bucket["totalSizeMb"],
+                    "totalSizeGb": bucket["totalSizeGb"],
+                    "costPerMonth": bucket["costPerMonth"],
+                })
+                session.commit()
+
+
+            def addBucket(session: sessionmaker, bucket: Dict, account_id: str) -> str:
+                new_bucket = S3BUCKETS(
+                    account_id=account_id,
+                    bucket=bucket['bucket'],
+                    totalSizeBytes=bucket['totalSizeBytes'],
+                    totalSizeKb=bucket['totalSizeKb'],
+                    totalSizeMb=bucket['totalSizeMb'],
+                    totalSizeGb=bucket['totalSizeGb'],
+                    costPerMonth=bucket['costPerMonth']
+                )
+                session.add(new_bucket)
+                session.commit()
+                return new_bucket.id
+
+            def deleteBucket(session: sessionmaker, bucket_id: int) -> None:
+                session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.bucket_id == bucket_id).delete()
+                session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).delete()
+                session.commit()
+
+            ##################################### Helper Functions for Objects #################################################
+
+            def objectNeedsUpdate(existing_object, object: Dict) -> bool:
+                return (
+                    existing_object['hash'] != object['hash']
+                )
+
+            def modifyObject(session: sessionmaker, object_id: int, object: Dict) -> None:
+                session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.id == object_id).update({
+                    "sizeBytes": object["sizeBytes"],
+                    "sizeKb": object["sizeKb"],
+                    "sizeMb": object["sizeMb"],
+                    "sizeGb": object["sizeGb"],
+                    "costPerMonth": object["costPerMonth"]
+                })
+                session.commit()
+
+            def addObject(session: sessionmaker, bucket_id: int, obj: Dict) -> None:
+                new_object = S3BUCKETOBJECTS(
+                    bucket_id=bucket_id,
+                    bucket=obj['bucket'],
+                    key=obj['key'],
+                    sizeBytes=obj['sizeBytes'],
+                    sizeKb=obj['sizeKb'],
+                    sizeMb=obj['sizeMb'],
+                    sizeGb=obj['sizeGb'],
+                    costPerMonth=obj['costPerMonth']
+                )
+                session.add(new_object)
+                session.commit()
+
+            def deleteObject(session: sessionmaker, object_id: int) -> None:
+                session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.id == object_id).delete()
+                session.commit()
+
+            ##################################### AWS Helper Functions #################################################
+
+            def getAccountSession(account: dict) -> boto3.session.Session:
+                session = boto3.Session()
+                sts = session.client('sts')
+                response = sts.assume_role(
+                    RoleArn=account['role_arn'],
+                    RoleSessionName='s3-backfill',
+                    DurationSeconds=900
+                )
+                credentials = response['Credentials']
+                account_session = boto3.Session(
+                    aws_access_key_id=credentials['AccessKeyId'],
+                    aws_secret_access_key=credentials['SecretAccessKey'],
+                    aws_session_token=credentials['SessionToken'],
+                    region_name=account['region']
+                )
+                return account_session
+
+            def getBucketsData(session: boto3.session.Session) -> list:
+                logger.info('Retrieving S3 bucket data from AWS...')
+                bucket_list = []
+
+                s3 = session.client('s3')
+                buckets = s3.list_buckets()
+
+                for bucket in buckets['Buckets']:
+                    # if bucket['Name'].startswith('aws-cloudtrail'):
+                    bucket_dict = {
+                        'bucket': bucket['Name'],
+                        'totalSizeBytes': 0,
+                        'totalSizeKb': 0,
+                        'totalSizeMb': 0,
+                        'totalSizeGb': 0,
+                        'costPerMonth': 0,
+                        'objects': []
+                    }
+                    
+                    paginator = s3.get_paginator('list_objects_v2')
+                
+                    object_list = []
+                
+                    total_bucket_cost = 0
+                
+                    object_iterator = paginator.paginate(Bucket=bucket['Name'])
+                    for page in object_iterator:
+                        if 'Contents' in page:
+                            for obj in page['Contents']:
+                                object_dict = {
+                                    'key': obj['Key'],
+                                    'bucket': bucket['Name'],
+                                    'sizeBytes': obj['Size'],
+                                    'sizeKb': round(obj['Size'] / 1024, 2),  # Converts bytes to KB
+                                    'sizeMb': round(obj['Size'] / (1024 * 1024), 2),  # Converts bytes to MB
+                                    'sizeGb': round(obj['Size'] / (1024 * 1024 * 1024), 4),  # Converts bytes to GB
+                                }
+                                object_dict['costPerMonth'] = object_dict['sizeGb'] * 0.023
+                                object_dict['hash'] = hash((object_dict['sizeBytes'], object_dict['costPerMonth']))
+                                total_bucket_cost = total_bucket_cost + object_dict['costPerMonth']
+                                object_list.append(object_dict)
+
+                    bucket_dict['totalSizeBytes'] = sum([obj['sizeBytes'] for obj in object_list])
+                    bucket_dict['totalSizeKb'] = round(sum([obj['sizeKb'] for obj in object_list]), 4)
+                    bucket_dict['totalSizeMb'] = round(sum([obj['sizeMb'] for obj in object_list]), 4)
+                    bucket_dict['totalSizeGb'] = round(sum([obj['sizeGb'] for obj in object_list]), 4)
+                    bucket_dict['costPerMonth'] = round(total_bucket_cost, 6)
+                    bucket_dict['objects'] = object_list
+                    bucket_list.append(bucket_dict)
+
+                logger.info('S3 bucket data retrieved.')
+                return bucket_list
+
+            def getDatabaseCredentials() -> dict:
+                secret_id = "arn:aws:secretsmanager:us-east-1:061039789243:secret:rds!db-555390f8-60f2-4d37-ad75-e63d8f0cbfa9-0s9oyX"
+                region = "us-east-1"
+                session = boto3.session.Session()
+                client = session.client('secretsmanager', region_name=region)
+
+                try:
+                    secret_response = client.get_secret_value(SecretId=secret_id)
+                    secret = secret_response['SecretString']
+                    json_secret = json.loads(secret)
+                    credentials = {
+                        'username': json_secret['username'],
+                        'password': json_secret['password']
+                    }
+                    return credentials
+                except ClientError as e:
+                    raise e
+
+            ##################################### Database Helper Functions #################################################
+
+            def getEngine() -> create_engine:
+                credentials = getDatabaseCredentials()
+                engine = create_engine(
+                    f'postgresql://{credentials["username"]}:{credentials["password"]}@resources.czmo2wqo0w7e.us-east-1.rds.amazonaws.com:5432'
+                )
+                return engine
+
+            def getDatabaseSession() -> sessionmaker:
+                engine = getEngine()
+                Session = sessionmaker(bind=engine)
+                session = Session()
+                # session_factory = sessionmaker(bind=engine)
+                # session = scoped_session(session_factory)
+                return session
+
+            def getThreadsafeDatabaseSession() -> scoped_session:
+                engine = getEngine()
+                # Session = sessionmaker(bind=engine)
+                # session = Session()
+                session_factory = sessionmaker(bind=engine)
+                session = scoped_session(session_factory)
+                return session
+
+            def getBuckets(account_id: str) -> list:
+                session = getDatabaseSession()
+                result = session.query(S3BUCKETS).filter(S3BUCKETS.account_id == account_id).all()
+                session.close()
+                return result
+
+            def getObjectsForBucket(bucket_id: int) -> list:
+                session = getDatabaseSession()
+                result = session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.bucket_id == bucket_id).all()
+                session.close()
+                return result
+          imgs:
+            - /assets/project-images/event-images/event_bucket.png
+
+    - title: Configuring CloudTrail Logging
+      tabTitle: CloudTrail
+      subsections:
+        - content: |
+            Setting up a CloudTrail trail is a crucial first step in this event-driven architecture. The primary purpose of this trail is to capture and log management events for S3 buckets, enabling integration with EventBridge. This integration allows EventBridge to read these events and trigger workflows based on bucket-level activities such as creating or deleting a bucket.<br><br>
+            In this setup, the CloudTrail trail is configured to log management events, with particular emphasis on Write API operations. These logs are delivered to a designated S3 bucket, where they can be accessed and processed. By enabling this trail, I ensure that EventBridge has the necessary visibility into bucket-level actions, which forms the foundation of the bucket pipeline.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event1_1.png
+            - /assets/project-images/event-images/event1_2.png
+        - content: |
+            Below is the bucket that the CloudTrail logs are delivered to. This trail is enabled organization-wide, so all S3 management events from all accounts in the org are captured. These logs will be used by EventBridge and filtered by CreateBucket and DeleteBucket events.
+          imgs:
+            - /assets/project-images/event-images/event1_3.png
+
+    - title: Configuring EventBridge Rules
+      tabTitle: EventBridge
+      subsections:
+        - content: |
+            In this setup, I created an EventBridge rule to filter out S3 bucket management events specifically for CreateBucket and DeleteBucket actions. The event pattern is configured to match these actions in the CloudTrail logs, ensuring that only relevant events trigger the rule. This allows for precise control over which bucket-level activities are passed through the pipeline.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event2_1.png
+        - content: |
+            Once the filtering rule is in place, the events are routed to an SQS queue. The SQS queue serves as a reliable target for EventBridge, providing a decoupled mechanism for handling the events. This ensures that the events can be processed asynchronously, even if the downstream services experience temporary unavailability.<br><br>
+
+            The combination of EventBridge rules and the SQS target creates a streamlined event-driven workflow for bucket-level events, efficiently filtering, routing, and queuing S3 management events for further processing.
+          imgs:
+            - /assets/project-images/event-images/event2_2.png
+
+    - title: SQS Event Queue for Bucket Events
+      tabTitle: SQS - Buckets
+      subsections:
+        - content: |
+            With the EventBridge rules in place, the next step involves setting up the SQS queue to handle bucket-level events. SQS serves as the intermediary messaging layer, ensuring reliable delivery of events and allowing for asychhronous decoupled processing by downstream services.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event3_2.png
+
+        - content: |
+            The first step in this configuration is to create an SQS queue and define the necessary settings, such as message retention period and visibility timeout, to suit the needs of the pipeline. The SQS details page showcases these settings and ensures that the queue is configured to handle the expected traffic effectively.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event3_1.png
+            - /assets/project-images/event-images/event3_3.png
+
+        - content: |
+            An example payload of a CreateBucket event demonstrates the data structure being passed to the SQS queue. A Lambda target is configured to ingest and process the message. This payload includes critical details such as the event name, bucket name, timestamp, and other metadata, ensuring that the Lambda function receives all the information needed to process the event effectively.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event3_4.png
+
+    - title: Lambda Bucket Manager Function
+      tabTitle: Lambda - Buckets
+      subsections:
+        - content: |
+            The Lambda Bucket Manager Function processes bucket-level events received from the SQS queue. For each event, it extracts critical metadata, such as the bucket name and event type, to track and monitor storage activity.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event4_1.png
+
+        - content: |
+            The main purpose of the function is to add new buckets to the database and enable S3 Event Notifications to enroll the bucket in the object-level event pipeline. The object-level function will compute the storage metrics for the buckets and objects whereas this function acts as more of an enrollment process.<br><br>
+
+            The function supports event types like CreateBucket and DeleteBucket. For creation, it registers the bucket in the database and configures event notifications. For deletion, it removes the bucket and associated object data from the database.<br><br>
+
+            These tasks ensure efficient bucket management and seamless integration with the object-level event pipeline.
+          imgs:
+            - /assets/project-images/event-images/event4_2.png
+            - /assets/project-images/event-images/event4_3.png
+
+    - title: Object-Level Events Overview
+      tabTitle: Objects
+      subsections:
+        - content: |
+            The object-level event pipeline handles events such as object creation, deletion, or modification within an S3 bucket. This process is triggered by S3 Event Notifications, which are configured on enrolled buckets. These notifications send event details, such as object metadata, to an SQS queue.<br><br>
+
+            A Lambda function processes these events by extracting critical information, including object size (in bytes, kilobytes, megabytes, etc.) and calculating the storage cost. The extracted data is then stored in a PostgreSQL database for further analysis and management. This pipeline ensures efficient and automated handling of object-level activities, providing real-time updates and insights.
+          imgs:
+            - /assets/project-images/event-images/event_object.png
+
+    - title: S3 Event Notifications
+      tabTitle: S3 Events
+      subsections:
+        - content: |
+            As part of the bucket-level pipeline, S3 Event Notifications are enabled for each new bucket to capture specific events, such as object Put, Post, and Delete, including delete markers. These notifications are configured via a Lambda function to ensure only relevant events are processed.<br><br>
+          imgs:
+            - /assets/project-images/event-images/event5_1.png
+        - content: |
+            The Event Notifications publish events to an SQS queue, enabling asynchronous processing by downstream Lambda functions. This logical separation ensures efficient handling of object-level events, independent of the bucket-level events.
+          imgs:
+            - /assets/project-images/event-images/event5_1.png
+    - title: SQS Event Queue for Object Events
+      tabTitle: SQS - Objects
+      subsections:
+        - content: |
+            Again, SQS is used here to handle asynchronous event processing from S3 notifications, ensuring scalability and fault tolerance for downstream Lambda functions.<br><br>
+            The SQS queue is configured with key settings such as visibility timeout, message retention, encryption, and access permissions. These configurations ensure secure, reliable, and efficient handling of event messages generated by S3.
+          imgs:
+            - /assets/project-images/event-images/event6_2.png
+        - content: |
+            Once configured, the SQS queue is integrated with a Lambda function target. This setup enables the Lambda function to process messages from the queue, triggering event-driven workflows to handle object-level events efficiently.
+          imgs:
+            - /assets/project-images/event-images/event6_1.png
+            - /assets/project-images/event-images/event6_3.png
+        - content: |
+            To enhance reliability, a dead-letter queue (DLQ) is configured to capture any messages that fail to process, which I can capture and process separately or log for analytics. Additionally, an example payload demonstrates the structure of the messages sent to the SQS queue, highlighting the details provided for each event.
+          imgs:
+            - /assets/project-images/event-images/event6_4.png
+        - content: |
+          imgs:
+            - /assets/project-images/event-images/event6_5.png
+        - content: |
+            The asynchronous nature of SQS decouples the event source (S3) from the processing logic (Lambda), allowing the system to handle high-throughput events without being constrained by downstream processing capacity.<br><br>
+          imgs:
+
+    - title: Lambda Object Manager Function
+      tabTitle: Lambda - Objects
+      subsections:
+        - content: |
+            This section highlights the object-level Lambda function, which is triggered by SQS messages from the event queue. This is the main data handler for this architecture. Since most operations will be object-level events, this is doing most of the heavy lifting. The function is configured with an SQS trigger, as shown in the image, and both function in this architecture are deployed using Jenkins and Terraform, with the deployment details covered in the next section.
+          imgs:
+            - /assets/project-images/event-images/event7_1.png
+
+        - content: |
+            The provided code demonstrates how the function processes the events described earlier in this project. The function parses the SQS message to extract the event details, including the event name, bucket name, and object key. Based on the event type, it performs the following actions:
+          listItems:
+            - "<span style='color: blue;'>Add/Remove/Modify Object</span>"
+            - "<span style='color: blue;'>Calculate and Add/Update Metrics for the Object</span>"
+            - "<span style='color: blue;'>Calculate and Update Metrics for the Bucket</span>"
+          imgs:
+            - /assets/project-images/event-images/event7_2.png
+        - content: |
+            The function calculates the size of the object in kilobytes (KB), megabytes (MB), and gigabytes (GB).<br><br>
+            It computes the total cost for the object and updates the corresponding metrics in the database.<br><br>
+            Additionally, it updates the cumulative totals for these metrics for the bucket.<br><br>
+            This Lambda function serves as the core processing component of the event-driven architecture, ensuring accurate database updates based on bucket and object-level events.
+          imgs:
+
+    - title: Deploying Lambdas with Jenkins and Terraform
+      tabTitle: Deploy
+      subsections:
+        - content: |
+            To deploy the Lambda functions efficiently, I am using a combination of Jenkins and Terraform. Jenkins handles the automation of the deployment pipeline, while Terraform provisions the required infrastructure, ensuring a streamlined and repeatable process.
+            <br><br>
+            The following Jenkins pipelines show the overview of the deployment process, orchestrating the packaging, provisioning and deployment steps.
+          imgs:
+            - /assets/project-images/event-images/event8_1.png
+            - /assets/project-images/event-images/event8_2.png
+        - content: |
+            Terraform is used to manage the Lambda infrastructure and employs code hashing to detect changes, ensuring only updated functions are deployed. A bash script packages the Lambda functions, preparing them for deployment.
+          imgs:
+
+        - content: |
+
+          imgs:
+            - /assets/project-images/event-images/event8_3.png
+            - /assets/project-images/event-images/event8_4.png
+        - content: |
+            The Jenkinsfile defines and executes the pipeline's stages, coordinating infrastructure provisioning and Lambda deployment for a streamlined workflow.
+          imgs:
+            - /assets/project-images/event-images/event8_5.png
+
+    - title: Summary
+      tabTitle: Summary
+      subsections:
+        - content: |
+            This project was a valuable learning experience that brought together multiple AWS services into a cohesive event-driven architecture. It began with the challenge of automating the enrollment of S3 buckets and evolved into a full-scale pipeline capable of processing both bucket-level and object-level events efficiently. From setting up CloudTrail and EventBridge to leveraging SQS and Lambda functions, every step of the pipeline presented opportunities to deepen my understanding of event-driven design and AWS integration.
+
+            <br><br>
+
+            One of the most rewarding aspects of the project was working with Lambda functions to process and enrich event data. This included calculating storage metrics and costs for S3 objects and enrolling buckets for additional event notifications. Integrating PostgreSQL to store the processed data added a layer of persistence and visibility to the workflow, allowing for more meaningful insights into bucket usage and object-level changes.
+
+            <br><br>
+
+            Deploying the entire architecture with Jenkins and Terraform was another critical milestone. Building a CI/CD pipeline not only streamlined the deployment process but also ensured infrastructure consistency and reliability. Incorporating a bash script to package Lambda functions and leveraging Terraform’s state management and hashing features to track changes further emphasized the importance of automation and reproducibility.
+
+            <br><br>
+
+            Reflecting on the project, I gained significant experience in designing and deploying event-driven architectures. I also learned the importance of careful planning when integrating multiple AWS services to ensure seamless communication and error handling. This project demonstrated the potential for scalability and highlighted areas for future exploration, such as optimizing notification workflows or adding advanced monitoring capabilities.
+
+            <br><br>
+
+            Overall, this project was not only a technical accomplishment but also a major step forward in understanding how to build efficient, scalable, and cost-effective serverless solutions. It has laid the groundwork for future enhancements and provided a solid foundation for tackling more complex event-driven systems.
+          imgs:
+
 - id: event
   title: AWS Serverless Event-Driven Architecture
   subtitle: Event-driven architecture in AWS with EventBridge, Lambda, SQS, and S3.
@@ -372,7 +966,7 @@
             The main server block is defined here for the Angular container. In this block, I configure the server to use the SSL certificates created and validated in the previous step. The server listens on port 443, and under the location block, all traffic directed to the root path (/) is routed to the Angular application. Additionally, I define SSL protocols and ciphers, configure the session cache, and set the session timeout to ensure secure and efficient communication.<br><br>
 
           code: |
-            <strong><span style="color: blue;">
+            <span style="color: rgb(0, 255, 0);">
             server {
                 listen 443 ssl;
                 server_name digitalsteve.net;
@@ -392,7 +986,7 @@
                     index index.html;
                     try_files $uri $uri/ /index.html;
                 }
-              </span></strong>
+              </span>
 
 
                 location /api {
@@ -429,7 +1023,7 @@
                     index index.html;
                     try_files $uri $uri/ /index.html;
                 }
-            <strong><span style="color: blue;">
+            <span style="color: rgb(0, 255, 0);">
 
                 location /api {
                     proxy_pass http://api-service:8000;
@@ -441,7 +1035,7 @@
                 }
 
             }
-            </span></strong>
+            </span>
 
           imgs:
 

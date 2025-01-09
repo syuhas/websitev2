@@ -35,8 +35,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
     ResumeComponent,
     NavComponent,
     ProjectListComponent,
-    ProjectDetailComponent,
-    
+    ProjectDetailComponent
   ],
   imports: [
     BrowserModule,

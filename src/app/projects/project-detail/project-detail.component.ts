@@ -72,11 +72,23 @@ export class ProjectDetailComponent implements OnInit {
           if (subsection.code) {
             subsection.code = this.sanitizer.bypassSecurityTrustHtml(subsection.code as string);
           }
+
           if (subsection.listItems) {
-            subsection.listItems = subsection.listItems.map((item) =>
-              this.sanitizer.bypassSecurityTrustHtml(item as string)
-            );
-          }
+            subsection.listItems.forEach((listItem) => {
+              listItem.text = this.sanitizer.bypassSecurityTrustHtml(listItem.text as string);
+              if (listItem.subList) {
+                listItem.subList = listItem.subList.map((subListItem) => 
+                  this.sanitizer.bypassSecurityTrustHtml(subListItem as string)
+                )
+              }
+            });
+          }         
+
+          // if (subsection.listItems) {
+          //   subsection.listItems = subsection.listItems.map((item) =>
+          //     this.sanitizer.bypassSecurityTrustHtml(item as string)
+          //   );
+          // }
         });
       });
     }

@@ -21,38 +21,46 @@
         </div>
         <div class="sections" *ngFor="let section of project.sections">
             <div *ngIf="activeSection === section.tabTitle">
-                <h2 class="card-title"><strong>{{ section.title }}</strong></h2>
+                <h2 class="card-title sectionTitle"><strong>{{ section.title }}</strong></h2>
 
                 <div class="row" *ngFor="let subsection of section.subsections">
                     <div class="col-xxl-7 col-lg-8">
+
                         <div *ngIf="subsection.content != ''">
                             <p *ngIf="subsection.content != ''" class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'" [innerHTML]="subsection.content"></p>
                         </div>
+
                         <div *ngIf="subsection.listItems">
                             <ul>
-                                <li class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-base' : 'lh-lg'" *ngFor="let item of subsection.listItems" [innerHtml]="item"></li>
+                                <li class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-base' : 'lh-lg'" *ngFor="let item of subsection.listItems">
+                                    <span [innerHtml]="item.text"></span>
+                                    <ul *ngIf="item.subList">
+                                        <li class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-base' : 'lh-lg'" *ngFor="let subItem of item.subList" [innerHtml]="subItem"></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </div>
+
                         <div *ngIf="subsection.code">
                             <pre class="text-break" [innerHTML]="subsection.code">                             
                             </pre>
                         </div>
                     </div>
 
-                    <div class="col-md-10">
+                    <div class="col-md-7">
                         <div class="row">
                             <div class="col-xxl-6"  *ngFor="let image of subsection.imgs">
                                 <img  src="{{ image }}" 
                                     *ngIf="(section.tabTitle == 'Overview') || (section.tabTitle == 'Summary');" 
                                     alt="" class="img-fluid" 
                                     (click)="openPreview(image)" 
-                                    [ngClass]="{'introSummaryImg': ((section.tabTitle == 'Overview') || (section.tabTitle == 'Summary'))}"
+                                    class="img-fluid introSummaryImg"
                                 >
                                 <img  
                                     src="{{ image }}" 
                                     *ngIf="(section.tabTitle != 'Overview') && (section.tabTitle != 'Summary');" 
                                     alt="" 
-                                    class="img-fluid" 
+                                    class="img-fluid detailImg" 
                                     (click)="openDetailPreview(image)"
                                 >
 
@@ -63,7 +71,7 @@
                                 <div class="detailImg";>
                                     <img src="{{ image }}" alt="" class="img-fluid" (click)="openDetailPreview(image)">
                                 </div> -->
-                                <p class="expand">Click to Expand</p>
+                                <!-- <p class="expand">Click to Expand</p> -->
                             </div>
                         </div>
                     </div>
@@ -76,11 +84,16 @@
 
 
 <div class="image-preview-modal" *ngIf="showPreview" (click)="closePreview()">
-    <img [src]="previewImage" alt="Preview Image" />
+    <!-- <div class="img-container"> -->
+        <img [src]="previewImage" alt="Preview Image" />
+    <!-- </div> -->
 </div>
 
 <div class="image-detail-preview-modal" *ngIf="showDetailPreview" (click)="closePreview()">
-    <img [src]="detailPreviewImage" alt="Preview Image" />
+    <!-- <div class="img-container"> -->
+        <img [src]="detailPreviewImage" alt="Preview Image" />
+    <!-- </div> -->
+    
 </div>
 
 

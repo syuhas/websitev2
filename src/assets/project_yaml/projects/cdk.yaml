@@ -6,122 +6,122 @@
     Defining and provisioning AWS resources as code with the AWS Cloud Development Kit (CDK).
   listIcon: /assets/project-images/cdk-images/cdk_icon.png
   titleIcons:
-    - /assets/project-images/cdk-images/cdk_icon.png
-    - /assets/project-images/cdk-images/cdk_icon2.png
+  - /assets/project-images/cdk-images/cdk_icon.png
+  - /assets/project-images/cdk-images/cdk_icon2.png
   sections:
-    - title: Overview
-      tabTitle: Overview
-      subsections:
-        - content: |
+  - title: Overview
+    tabTitle: Overview
+    subsections:
+    - content: ""
+      imgs:
+      - /assets/project-images/cdk-images/CDKDemo.png
+    - content: |
+        This project illustrates the installation and operation of the AWS CDK(Cloud Development Kit), an IDE-based framework that lets you define infrastructure as code (IaC) using CloudFormation to provision the resources. An alternative to using the CloudFormation templates themselves, the CDK actually auto-generates the templates based on the code you define in one of many supported lanuages. This is a great solution for those who prefer to use a programming language of their choice to define and provision AWS infrastructure. For the following exercise, I will go over utilizing the CDK to provision a simple VPC with 3 public facing subnets, in 3 separate availability zones.
+      imgs:
 
-          imgs:
-            - /assets/project-images/cdk-images/CDKDemo.png
-        - content: |
-            This project illustrates the installation and operation of the AWS CDK(Cloud Development Kit), an IDE-based framework that lets you define infrastructure as code (IaC) using CloudFormation to provision the resources. An alternative to using the CloudFormation templates themselves, the CDK actually auto-generates the templates based on the code you define in one of many supported lanuages. This is a great solution for those who prefer to use a programming language of their choice to define and provision AWS infrastructure. For the following exercise, I will go over utilizing the CDK to provision a simple VPC with 3 public facing subnets, in 3 separate availability zones.
-          imgs:
 
-    - title: Installing Typescript and the CDK
-      tabTitle: Installation
-      subsections:
-        - content: |
-            First, there are some prerequisties that need to be in place before actually installing the CDK. As a preliminary measure, the AWS CLI must be installed and configured with the account credentials for the IAM role being used. Node.js is also required to use the CDK, so that must be installed beforehand. Here I will be installing Typescript and the CDK itself. In addition to this, things like Javascript and any other preferred languages that we want to use (Python, C#, etc.) must be installed. However, for my purposes here, the minimum requirements are Node.js and Typescript.
-        - content: |
-            Using the Node Package Manager(npm) in global mode allows me to install Typescript which will be used for this project.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-1-typescript.png
-        - content: |
-            Now the Cloud Developement Kit can be installed. To verify the installation, I can run a 'cdk --version' check. Additionally, a pip dependencies overview let's us see exactly what the CDK has installed on top of our previously existing dependencies.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-2-checkinstall.png
+  - title: Installing Typescript and the CDK
+    tabTitle: Installation
+    subsections:
+    - content: |
+        First, there are some prerequisties that need to be in place before actually installing the CDK. As a preliminary measure, the AWS CLI must be installed and configured with the account credentials for the IAM role being used. Node.js is also required to use the CDK, so that must be installed beforehand. Here I will be installing Typescript and the CDK itself. In addition to this, things like Javascript and any other preferred languages that we want to use (Python, C#, etc.) must be installed. However, for my purposes here, the minimum requirements are Node.js and Typescript.
+    - content: |
+        Using the Node Package Manager(npm) in global mode allows me to install Typescript which will be used for this project.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-1-typescript.png
+    - content: |
+        Now the Cloud Developement Kit can be installed. To verify the installation, I can run a 'cdk --version' check. Additionally, a pip dependencies overview let's us see exactly what the CDK has installed on top of our previously existing dependencies.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-2-checkinstall.png
 
-    - title: Bootstrapping and Initialization
-      tabTitle: Bootstrap
-      subsections:
-        - content: |
-            Once the CDK is installed, one last step is required before I can initialize the project and start coding in some infrastructure. The account and region needs to be Bootstrapped to the CDK, which is essentially the process where containers are created behind the scenes that will contain the necessary assets and files that Cloudformation will use when at the deployment stage. Any additional accounts or regions I wish to use must be bootstrapped as well.<br><br>
+  - title: Bootstrapping and Initialization
+    tabTitle: Bootstrap
+    subsections:
+    - content: |
+        Once the CDK is installed, one last step is required before I can initialize the project and start coding in some infrastructure. The account and region needs to be Bootstrapped to the CDK, which is essentially the process where containers are created behind the scenes that will contain the necessary assets and files that Cloudformation will use when at the deployment stage. Any additional accounts or regions I wish to use must be bootstrapped as well.<br><br>
 
-            Once the bootstrapping stage is complete, I will be able to initialize a new project and start defining infrastructure.
-        - content: |
-            The bootstrap process is seen here using my role's account number and region. This may be done mulitple times for additional accounts and regions. Here, CloudFormation is creating the stack preliminary resources, policies and repository that will be used with my project.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-3-bootstrap.png
-        - content: |
-            Once completed, I am now ready to begin initializing the project. For my purposes, a simple blank typescript project is created. I am going to add resources directly from the IDE which will then trigger Cloudformation to add those resources to the stack.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-4-init.png
-        - content: |
-            This is the file structure that the initialization process created. The key elemements here are:
-          listItems:
-            - "<span style='color: blue;'>cdk-demo.ts</span>: This is where I am going to create and load all of the stacks that I define."
-            - "<span style='color: blue;'>cdk-demo-stack.ts</span>: This is where I actually define the stack, including reasources and properties."
-            - "<span style='color: blue;'>package.json</span>: Dependencies and build scripts are defined here (npm watch, npm build, npm test)."
-            - "<span style='color: blue;'>cdk.json</span>: Finally, this instructs the toolkit how to run your application."
-          imgs:
-            - /assets/project-images/cdk-images/cdk-5-file-structure.png
-        - content: |
-            We can now see confirmation that our cloudformation stack has been created by signing into the console. From here I can see everything that has been created from the CDK.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-6-init-cf.png
-        - content: |
-            In addition, I can go into the template designer to get a visual representation of what preliminary resources and roles were created in the stack.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-7-designer.png
+        Once the bootstrapping stage is complete, I will be able to initialize a new project and start defining infrastructure.
+    - content: |
+        The bootstrap process is seen here using my role's account number and region. This may be done mulitple times for additional accounts and regions. Here, CloudFormation is creating the stack preliminary resources, policies and repository that will be used with my project.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-3-bootstrap.png
+    - content: |
+        Once completed, I am now ready to begin initializing the project. For my purposes, a simple blank typescript project is created. I am going to add resources directly from the IDE which will then trigger Cloudformation to add those resources to the stack.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-4-init.png
+    - content: |
+        This is the file structure that the initialization process created. The key elemements here are:
+      listItems:
+      - text: "<span style='color: blue;'>cdk-demo.ts</span>: This is where I am going to create and load all of the stacks that I define."
+      - text: "<span style='color: blue;'>cdk-demo-stack.ts</span>: This is where I actually define the stack, including reasources and properties."
+      - text: "<span style='color: blue;'>package.json</span>: Dependencies and build scripts are defined here (npm watch, npm build, npm test)."
+      - text: "<span style='color: blue;'>cdk.json</span>: Finally, this instructs the toolkit how to run your application."
+      imgs:
+      - /assets/project-images/cdk-images/cdk-5-file-structure.png
+    - content: |
+        We can now see confirmation that our cloudformation stack has been created by signing into the console. From here I can see everything that has been created from the CDK.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-6-init-cf.png
+    - content: |
+        In addition, I can go into the template designer to get a visual representation of what preliminary resources and roles were created in the stack.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-7-designer.png
 
-    - title: Defining AWS Infrastructure as Code
-      tabTitle: IaC
-      subsections:
-        - content: |
-            At this point I have all of the local dependencies installed and the project stack has been initialized. Now I can begin to define the infrastructure as code using TypeScript which will later be compiled into JavaScript and verified. I then deploy the infrastructure that is defined in the final step. In this project, the created stack consists of a VPC with 3 public subnets.
-        - content: |
-            This preliminary measure, while optional, will define the environment for our stack using the account and region that the stack will be deployed to. If I skip this step, the stack will be considered environment-agnostic which will allow it to be deployed to any environment, but certain features and context lookups will be unavailable(eg. ec2.Vpc.fromLookup).
-          imgs:
-            - /assets/project-images/cdk-images/cdk-8-acct-reg.png
-        - content: |
-            In order to actually start defining the infrastructure, I must first install the EC2 construct library module.   A construct is essentially a dependency for the CDK that represents a single or multiple AWS resources. The EC2 construct module contains support for AWS VPCs. Using Node Package Manager(npm install @aws-cdk/aws-ec2), I can install the module that will allow me to define the VPC and subnets in the stack. I then import the module into the project.<br><br>
+  - title: Defining AWS Infrastructure as Code
+    tabTitle: IaC
+    subsections:
+    - content: |
+        At this point I have all of the local dependencies installed and the project stack has been initialized. Now I can begin to define the infrastructure as code using TypeScript which will later be compiled into JavaScript and verified. I then deploy the infrastructure that is defined in the final step. In this project, the created stack consists of a VPC with 3 public subnets.
+    - content: |
+        This preliminary measure, while optional, will define the environment for our stack using the account and region that the stack will be deployed to. If I skip this step, the stack will be considered environment-agnostic which will allow it to be deployed to any environment, but certain features and context lookups will be unavailable(eg. ec2.Vpc.fromLookup).
+      imgs:
+      - /assets/project-images/cdk-images/cdk-8-acct-reg.png
+    - content: |
+        In order to actually start defining the infrastructure, I must first install the EC2 construct library module.   A construct is essentially a dependency for the CDK that represents a single or multiple AWS resources. The EC2 construct module contains support for AWS VPCs. Using Node Package Manager(npm install @aws-cdk/aws-ec2), I can install the module that will allow me to define the VPC and subnets in the stack. I then import the module into the project.<br><br>
 
-            Now I essentially have a working skeleton for the stack definition. Were I to build and deploy the CDK now, no resources would be added. In the final step I will actually define the resources.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-9-skeleton.png
-        - content: |
-            As seen here, I define a VPC with a maximum of 3 Availability Zones. The 3 Availability Zones will each have a public subnet. In order for the subnets to be properly defined, they must be configured. The subnet mask is set to /24 which will give us 254 usable IP addresses for each subnet. Now that the VPC and subnets are defined, I can build and deploy the stack in the next step.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-10-vpc-config.png
+        Now I essentially have a working skeleton for the stack definition. Were I to build and deploy the CDK now, no resources would be added. In the final step I will actually define the resources.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-9-skeleton.png
+    - content: |
+        As seen here, I define a VPC with a maximum of 3 Availability Zones. The 3 Availability Zones will each have a public subnet. In order for the subnets to be properly defined, they must be configured. The subnet mask is set to /24 which will give us 254 usable IP addresses for each subnet. Now that the VPC and subnets are defined, I can build and deploy the stack in the next step.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-10-vpc-config.png
 
-    - title: Building and Deploying the Stack
-      tabTitle: Deploying
-      subsections:
-        - content: |
-            The configuration is now completed to deploy the stack. There is a lot going on behind the scenes and through simple defined infrastructure and one can really start to see the power of the Cloud Development Kit through . In this process I am also compiling the Typescript into JavaScript and then deploying the code as JavaScript. This will also verify that the infrastructure has been properly defined and that I haven't made any mistakes along the way.
-        - content: |
-            Using NPM, the code is compiled into JavaScript and checked for validity. After checking that no errors are present, I can use the CDK to deploy the stack. The change to the stack is seen here initializing and preparing to deploy.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-11-build-deploy.png
-        - content: |
-            Stack resources are being created during deployment.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-12-build-deploy-result.png
-        - content: |
-            In addition to viewing the change set progress in the IDE, I can log into the CloudFormation via the console and view the stack as the changes are in progress. I can confirm here that stack is successfully deployed.
-          imgs:
-            - /assets/project-images/cdk-images/cdk-13-build-deploy-in-progress.png
-        - content: |
-            As another visual aid, I logged into the console to check that all of the resources that I defined were properly deployed. Here I can also check that the VPC is available...
-          imgs:
-            - /assets/project-images/cdk-images/cdk-14-result-vpc.png
-            - /assets/project-images/cdk-images/cdk-15-result-subnets.png
-        - content: |
-            ...and the public subnets are properly deployed, one in each of the 3 Availability zones. Each has a subnet mask of /24 and the necessary route tables and internet gateways defined. The stack has now been successfully deployed and I can deploy more change sets to the stack via code to add or remove resources as needed.
+  - title: Building and Deploying the Stack
+    tabTitle: Deploying
+    subsections:
+    - content: |
+        The configuration is now completed to deploy the stack. There is a lot going on behind the scenes and through simple defined infrastructure and one can really start to see the power of the Cloud Development Kit through . In this process I am also compiling the Typescript into JavaScript and then deploying the code as JavaScript. This will also verify that the infrastructure has been properly defined and that I haven't made any mistakes along the way.
+    - content: |
+        Using NPM, the code is compiled into JavaScript and checked for validity. After checking that no errors are present, I can use the CDK to deploy the stack. The change to the stack is seen here initializing and preparing to deploy.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-11-build-deploy.png
+    - content: |
+        Stack resources are being created during deployment.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-12-build-deploy-result.png
+    - content: |
+        In addition to viewing the change set progress in the IDE, I can log into the CloudFormation via the console and view the stack as the changes are in progress. I can confirm here that stack is successfully deployed.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-13-build-deploy-in-progress.png
+    - content: |
+        As another visual aid, I logged into the console to check that all of the resources that I defined were properly deployed. Here I can also check that the VPC is available...
+      imgs:
+      - /assets/project-images/cdk-images/cdk-14-result-vpc.png
+      - /assets/project-images/cdk-images/cdk-15-result-subnets.png
+    - content: |
+        ...and the public subnets are properly deployed, one in each of the 3 Availability zones. Each has a subnet mask of /24 and the necessary route tables and internet gateways defined. The stack has now been successfully deployed and I can deploy more change sets to the stack via code to add or remove resources as needed.
 
-    - title: Summary
-      tabTitle: Summary
-      subsections:
-        - content: |
-            For me, this project really highlighted the power and utility of the Cloud Development Kit. It is an extremely powerful tool, being able to define and deploy entire stacks of CloudFormation-generated
-            infrastructure using some code and your favorite IDE. As an alternative to CloudFormation templates, some may prefer this as the infrastructure can be defined using a language that some feel either
-            more comfortable with or proficient in. 
-            <br><br>
-            The ease at which you can provision and destroy architectures could have great applications for copying entire infrastructures over to another region for higher availability and resiliency, 
-            and in a disaster recovery plan to automate recovery to reduce RPO and RTO for less downtime.
-            <br><br>
-            Overall, the CDK is a great tool, a great alternative to CloudFormation templating and a very useful weapon to have in one's cloud arsenal.
-          imgs:
+  - title: Summary
+    tabTitle: Summary
+    subsections:
+    - content: |
+        For me, this project really highlighted the power and utility of the Cloud Development Kit. It is an extremely powerful tool, being able to define and deploy entire stacks of CloudFormation-generated
+        infrastructure using some code and your favorite IDE. As an alternative to CloudFormation templates, some may prefer this as the infrastructure can be defined using a language that some feel either
+        more comfortable with or proficient in. 
+        <br><br>
+        The ease at which you can provision and destroy architectures could have great applications for copying entire infrastructures over to another region for higher availability and resiliency, 
+        and in a disaster recovery plan to automate recovery to reduce RPO and RTO for less downtime.
+        <br><br>
+        Overall, the CDK is a great tool, a great alternative to CloudFormation templating and a very useful weapon to have in one's cloud arsenal.
+      imgs:

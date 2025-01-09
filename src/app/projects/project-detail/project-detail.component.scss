@@ -1,5 +1,14 @@
+// .lh-lg, .lh.sm, .text-break {
+//     font-size: 6px;
+// }
+
+// body pre[class*="ngcontent"] {
+//     font-size: 7px !important;
+// }
+
 .container-fluid {
     padding-bottom: 3rem;
+    font-family: "Roboto Condensed", sans-serif;
 }
 .pageTitle {
     position: relative;
@@ -17,11 +26,19 @@
     }
 }
 
+.sectionTitle {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    letter-spacing: .08rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    opacity: 80%;
+}
+
 .container-fluid h1, .container-fluid h2, .container-fluid h3 {
     text-align: center;
 }
 .container-fluid h2 {
-    margin: .25rem;
+    // margin: .25rem;
     & a{
         letter-spacing: .15rem;
         text-decoration: none;
@@ -47,7 +64,7 @@
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
-    min-height: 60px;
+    min-height: 38px;
     white-space: nowrap;
     flex-wrap: nowrap;
     // -webkit-overflow-scrolling: touch;
@@ -100,17 +117,20 @@
 p {
     font-weight: 550;
     padding: 1rem;
-    font-family: "Roboto Condensed", sans-serif;
 }
-
-
 
 
 .sections {
     & img {
-        padding-right: 2rem;
-        padding-left: 2rem;
-        width: clamp(700px, 50vw, 800px);
+        // padding-right: 2rem;
+        // padding-left: 2rem;
+        // min-width: 300px;
+        // min-height: 300px;
+        // max-width: 100%; /* Constrain width to 90% of the viewport */
+        // max-height: 90%; /* Constrain height to 90% of the viewport */
+        // width: auto; /* Let the browser decide the width based on aspect ratio */
+        // height: auto; /* Let the browser decide the height based on aspect ratio */
+        // object-fit: contain; /* Ensures the entire image fits within the constraints */
     }
 
     & ul {
@@ -125,13 +145,9 @@ p {
 .expand {
     padding: .75rem;
     opacity: 50%;
-    padding-top: 0;
+    padding-top: 2rem;
 }
 
-.introSummaryImg {
-    // max-width: 600px;
-    max-width: clamp(400px, 50vw, 950px);
-}
 
 
 .row {
@@ -139,7 +155,7 @@ p {
     align-items: center;
 }
 
-.col-xxl-6, .col-lg-8 {
+.col-xxl-6, .col-lg-8, .col-xxl-3 {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -147,27 +163,55 @@ p {
 
 pre {
     // background-color: #e4e4e4;
+    font-size: unset;
     background-color: black;
     color: white;
     overflow: auto;
     // font-size: clamp(.1rem, .2vw, .3rem);
-    // font-family: 'Consolas','Monaco', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New';
+    font-family: 'Consolas','Monaco', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New';
+    font-size: 7px !important;
     padding: 0 1em;
     width: 50vw;
     font-weight: 400;
     max-height: 800px;
-    & code {
-        font-size: clamp(.1rem, .2vw, .3rem);
-    }
 }
 
-.image-preview-modal {
+
+
+.introSummaryImg {
+    min-width: clamp(500px, 40vw, 550px);
+    min-height: clamp(250px, 25vh, 550px);
+    max-width: 90%;
+    max-height: 90%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.detailImg {
+    margin: 2rem;
+    min-width: clamp(200px, 15vw, 1200px);
+    min-height: clamp(50px, 5vh, 1200px);
+    max-width: 100%;
+    max-height: 90%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.introSummaryImg:hover, .detailImg:hover {
+    opacity: 0.85;
+} 
+
+.image-preview-modal, .image-detail-preview-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.9);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -176,7 +220,7 @@ pre {
   }
   
   .image-preview-modal img {
-    width: clamp(600px, 50vw, 1000px);
+    width: clamp(600px, 50vw, 1400px);
     height: auto;
     background-color: #f5f5f5;
     padding: .5rem;
@@ -185,28 +229,30 @@ pre {
   }
 
 
-  .image-detail-preview-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    cursor: pointer;
-  }
+//   .image-detail-preview-modal {
+//     position: fixed;
+//     top: 0;
+//     left: 0;
+//     width: 100vw;
+//     height: 100vh;
+//     background-color: rgba(0, 0, 0, 0.9);
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     z-index: 1000;
+//     cursor: pointer;
+//   }
   
   .image-detail-preview-modal img {
-    width: clamp(300px, 50vw, 1200px);
-    height: auto;
-    // background-color: #f5f5f5;
-    background-color: white;
-    // padding: .5rem;
+    max-width: 65%; /* Constrain width to 90% of the viewport */
+    max-height: 98%; /* Constrain height to 90% of the viewport */
+    min-width: clamp(200px, 40vw, 1200px);
+    min-height: clamp(50px, 5vh, 1200px);
+    width: auto; /* Let the browser decide the width based on aspect ratio */
+    height: auto; /* Let the browser decide the height based on aspect ratio */
+    object-fit: contain; /* Ensures the entire image fits within the constraints */
+    background-color: #f5f5f5;
     border-radius: 5px;
-    padding: .2rem;
   }
 
 @media(max-width: 1400px) {
@@ -216,14 +262,15 @@ pre {
     }
 
     .image-preview-modal img {
-        width: 95vw;
-        height: auto;
+        max-width: 100%; /* Constrain width to 90% of the viewport */
+        max-height: 95%; /* Constrain height to 90% of the viewport */    
+        width: 100vw;
     }
 
     .image-detail-preview-modal img {
-        width: 95vw;
-        height: auto;
-
+        max-width: 100%; /* Constrain width to 90% of the viewport */
+        max-height: 95%; /* Constrain height to 90% of the viewport */    
+        width: 100vw;
     }
     
 }

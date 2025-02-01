@@ -25,6 +25,8 @@
     "@angular/ssr": "^17.0.5",
     "@ng-bootstrap/ng-bootstrap": "^16.0.0",
     "@popperjs/core": "^2.11.8",
+    "@syuhas22/prismjs": "^1.29.2",
+    "@types/prismjs": "^1.26.5",
     "bootstrap": "^5.3.3",
     "express": "^4.18.2",
     "jquery": "^3.7.1",

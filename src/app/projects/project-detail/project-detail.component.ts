@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import * as yaml from 'js-yaml';
 import { Project } from '../project-model.model';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +8,10 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, Observable, shareReplay, forkJoin } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { YamlService } from '../../services/yaml.service';
+import * as Prism from '@syuhas22/prismjs';
+import '@syuhas22/prismjs/components/prism-python';
+// import 'prismjs/plugins/line-numbers/prism-line-numbers';
+// import 'prismjs/plugins/custom-class/prism-custom-class';
 
 @Component({
   selector: 'app-project-detail',
@@ -24,13 +28,16 @@ export class ProjectDetailComponent implements OnInit {
   showDetailPreview: boolean = false;
   isSmallScreen$!: Observable<boolean>;
   private breakpointObserver = inject(BreakpointObserver);
+  isExpanded: boolean = false;
+  @ViewChild('codeBlock') codeBlock!: ElementRef<HTMLPreElement>;
+  showButton: boolean = false;
 
   constructor (
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
     private sanitizer: DomSanitizer,
-    private yamlService: YamlService
+    private yamlService: YamlService,
   ){}
 
   ngOnInit() {
@@ -84,15 +91,55 @@ export class ProjectDetailComponent implements OnInit {
             });
           }         
 
-          // if (subsection.listItems) {
-          //   subsection.listItems = subsection.listItems.map((item) =>
-          //     this.sanitizer.bypassSecurityTrustHtml(item as string)
-          //   );
-          // }
         });
       });
     }
   }
+
+  setTab(tab: string) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge'
+    }).then(() => {
+      if (typeof document !== 'undefined') {
+        const container = document.querySelector('.mat-sidenav-content');
+        if (container) {
+          container.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        }
+      }
+    });
+    this.activeSection = tab;
+    if (typeof document !== 'undefined') {
+      setTimeout(() => {
+        Prism.highlightAll();
+      }, 0);
+    }
+  }
+
+
+  openPreview(imageUrl: string): void {
+    this.previewImage = imageUrl;
+    this.showPreview = true;
+  }
+
+  openDetailPreview(imageUrl: string): void {
+    this.detailPreviewImage = imageUrl;
+    this.showDetailPreview = true;
+  }
+
+  closePreview(): void {
+    this.showPreview = false;
+    this.showDetailPreview = false;
+  }
+
+
+}
+
+
 
   // ngOnInit() {
   //   const projectId = String(this.route.snapshot.paramMap.get('id'));
@@ -132,30 +179,10 @@ export class ProjectDetailComponent implements OnInit {
   //   )
   // }
 
-  setTab(tab: string) {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab },
-      queryParamsHandling: 'merge'
-    });
-    this.activeSection = tab;
-  }
 
-
-  openPreview(imageUrl: string): void {
-    this.previewImage = imageUrl;
-    this.showPreview = true;
-  }
-
-  openDetailPreview(imageUrl: string): void {
-    this.detailPreviewImage = imageUrl;
-    this.showDetailPreview = true;
-  }
-
-  closePreview(): void {
-    this.showPreview = false;
-    this.showDetailPreview = false;
-  }
-
-
-}
+  
+          // if (subsection.listItems) {
+          //   subsection.listItems = subsection.listItems.map((item) =>
+          //     this.sanitizer.bypassSecurityTrustHtml(item as string)
+          //   );
+          // }

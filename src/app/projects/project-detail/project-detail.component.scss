@@ -1,11 +1,3 @@
-// .lh-lg, .lh.sm, .text-break {
-//     font-size: 6px;
-// }
-
-// body pre[class*="ngcontent"] {
-//     font-size: 7px !important;
-// }
-
 .container-fluid {
     padding-bottom: 3rem;
     font-family: "Roboto Condensed", sans-serif;
@@ -29,7 +21,7 @@
 .sectionTitle {
     font-size: clamp(1rem, 2vw, 1.5rem);
     letter-spacing: .08rem;
-    margin-top: 1rem;
+    margin-top: 2rem;
     margin-bottom: 2rem;
     opacity: 80%;
 }
@@ -70,7 +62,7 @@
     // -webkit-overflow-scrolling: touch;
 }
 
-.flipped {
+.stickybar {
     position: sticky;
     top: 100px;
     z-index: 1000;
@@ -115,6 +107,7 @@
     // min-height: calc(100vh - 500px);
 }
 p {
+    font-size: .9rem;
     font-weight: 550;
     padding: 1rem;
 }
@@ -161,26 +154,83 @@ p {
     align-items: center;
 }
 
+.showCode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    & button {
+        padding: .5rem;
+        border: 1px solid #00000044;
+        // background-color: #0d6efd;
+        cursor: pointer;
+        &:hover {
+            background-color: rgba(13, 109, 253, 0.75);
+        }
+    }
+}
+
 pre {
     // background-color: #e4e4e4;
     font-size: unset;
-    background-color: black;
-    color: white;
-    overflow: auto;
+    // background-color: rgb(0, 0, 0);
+    & code {
+        color: #9cdcfe !important;
+        text-shadow: none;
+    }
+
+    // overflow: auto;
     // font-size: clamp(.1rem, .2vw, .3rem);
     font-family: 'Consolas','Monaco', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New';
-    font-size: 7px !important;
-    padding: 0 1em;
+    font-size: 12px !important;
+    // padding: 0 1em;
     width: 50vw;
-    font-weight: 400;
+    font-weight: 800;
     max-height: 800px;
 }
 
+::ng-deep.token.string {
+    color: #CE9178;
+}
 
+::ng-deep.token.class-name {
+    color: #57ba77;
+}
+
+::ng-deep.token.innerparen, ::ng-deep.token.keyword {
+    color: #cd86ff;
+}
+
+::ng-deep.token.boolean {
+    color: #007ad8;
+}
+
+::ng-deep.token.number {
+    color: #b5cea8;
+}
+
+::ng-deep.token.quotebrackets {
+    color: #cd86ff;
+}
+
+::ng-deep.token.interpolation {
+    color: #9cdcfe;
+    & .token.punctuation {
+        color: #007ad8;
+    }
+}
+
+::ng-deep.token.functioncall, ::ng-deep.token.function {
+    color: #fff7ab;
+}
+
+::ng-deep.token.dbops {
+	color: #fff7ab;
+}
 
 .introSummaryImg {
-    min-width: clamp(500px, 40vw, 550px);
-    min-height: clamp(250px, 25vh, 550px);
+    min-width: clamp(500px, 40vw, 800px);
+    min-height: clamp(250px, 25vh, 800px);
     max-width: 90%;
     max-height: 90%;
     width: auto;
@@ -256,10 +306,6 @@ pre {
   }
 
 @media(max-width: 1400px) {
-    pre {
-        width: 90vw;
-        // font-size: .6rem;
-    }
 
     .image-preview-modal img {
         max-width: 100%; /* Constrain width to 90% of the viewport */
@@ -273,6 +319,13 @@ pre {
         width: 100vw;
     }
     
+}
+
+@media(max-width: 1280px) {
+    pre {
+        width: 90vw;
+        font-size: 10px !important;
+    }
 }
 
 @media(max-width: 1000px) {

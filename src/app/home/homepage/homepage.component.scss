@@ -52,7 +52,7 @@
     margin: 0;
     font-weight: 600;
     font-size: clamp(1.6rem, 2.75vw, 2.5rem);
-    animation: fadeInSpaceIn .5s ease-in-out;
+    animation: fadeInSpaceIn 1s ease-in-out;
   }
   & .title {
     font-style: italic;
@@ -61,7 +61,7 @@
     font-weight: 500;
     font-size: clamp(.9rem, 1.5vw, 1.5rem);
     padding-left: 6vw;
-    animation: fadeInSpaceOut .5s ease-in-out;
+    animation: fadeInSpaceOut 1s ease-in-out;
     margin-top: 1rem;
     text-shadow: 1px 1px 1px #1a1c4244;
   }
@@ -108,40 +108,114 @@ hr {
 .text {
   opacity: 0;
   display: inline-block;
-  animation: fadeIn .75s forwards;
+  animation: fadeIn .75s forwards, slideIn .75s forwards; 
+  animation-delay: 1.3s;
 }
 
-.text:nth-child(1) {
-  animation-delay: 0.6s; /* Delay for 'hi,' */
-}
+// .text:nth-child(1) {
+//   animation-delay: 0.6s; /* Delay for 'hi,' */
+// }
 
-.text:nth-child(2) {
-  animation-delay: 1.25s; /* Delay for 'my' */
-}
+// .text:nth-child(2) {
+//   animation-delay: 1.2s; /* Delay for 'my' */
+// }
 
-.text:nth-child(3) {
-  animation-delay: 1.5s; /* Delay for 'name' */
-}
+// .text:nth-child(3) {
+//   animation-delay: 1.4s; /* Delay for 'name' */
+// }
 
-.text:nth-child(4) {
-  animation-delay: 1.75s; /* Delay for 'is' */
-}
-.text:nth-child(5) {
-  animation-delay: 2.5s; /* Delay for 'name' */
-}
+// .text:nth-child(4) {
+//   animation-delay: 1.6s; /* Delay for 'is' */
+// }
+// .text:nth-child(5) {
+//   animation-delay: 2s; /* Delay for 'name' */
+// }
 
 #hi {
   // opacity: 1;
-  transform: translateY(-100px); /* Start from the right */
+  // transform: translateY(-100px); /* Start from the right */
   animation: dropIn .4s forwards, fadeIn .4s forwards;
-  animation-delay: .4s; /* Delay for 'Steve' */
+  animation-delay: .4s; /* Delay for 'hi' */
 }
 
-#steve {
-  // opacity: 1;
-  transform: translateX(100px); /* Start from the right */
-  animation: slideIn 1s forwards, fadeIn 1s forwards;
-  animation-delay: 2.5s; /* Delay for 'Steve' */
+// #steve {
+//   // opacity: 1;
+//   // transform: translateY(-100px);
+//   animation: bounce 1.25s forwards, fadeIn 1s forwards;
+//   // animation: fadeIn 1s forwards;
+//   animation-delay: 2s; /* Delay for 'Steve' */
+// }
+
+@keyframes bounce {
+  0%{
+    transform: translateY(-500px);
+  }
+  20%, 50%, 70%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-45px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+  // 75% {
+  //   transform: translateY(-7px);
+  // }
+}
+
+@keyframes fadeInSpaceIn {
+  from {
+    opacity: 0;
+    padding-left: 6vw;
+  }
+  to {
+    opacity: 1;
+    padding-left: 0;
+  }
+}
+
+@keyframes fadeInSpaceOut {
+  from {
+    opacity: 0;
+    padding-left: 0;
+  }
+  to {
+    opacity: 1;
+    padding-left: 6vw;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes slideIn {
+    0% {
+      transform: translateX(100px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+}
+@keyframes dropIn {
+  0% {
+    transform: translateY(-200px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .profile-container {
@@ -198,56 +272,4 @@ hr {
   
 }
 
-@keyframes fadeInSpaceIn {
-  from {
-    opacity: 0;
-    padding-left: 6vw;
-  }
-  to {
-    opacity: 1;
-    padding-left: 0;
-  }
-}
 
-@keyframes fadeInSpaceOut {
-  from {
-    opacity: 0;
-    padding-left: 0;
-  }
-  to {
-    opacity: 1;
-    padding-left: 6vw;
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes slideIn {
-    0% {
-      transform: translateX(100px);
-      opacity: 0;
-    }
-    100% {
-      transform: translateX(0);
-      opacity: 1;
-    }
-}
-@keyframes dropIn {
-  0% {
-    transform: translateY(-200px);
-    opacity: 0;
-  }
-  50% {
-    transform: translateY(10px);
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}

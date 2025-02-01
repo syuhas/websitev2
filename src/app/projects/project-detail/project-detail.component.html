@@ -1,4 +1,4 @@
-<div class="container-fluid mt-3" *ngIf="project">
+<div class="container-fluid mt-3" #scrollContainer *ngIf="project">
     <div class="pageTitle">
         <div class="titleImgs">
             <img *ngFor="let icon of project.titleIcons" src="{{ icon }}" alt="">
@@ -12,7 +12,7 @@
 
 
     <div class="card">
-        <div class="flipped">
+        <div class="stickybar">
             <ul class="nav nav-tabs nav-fill">
                 <li class="nav-item" *ngFor="let section of project.sections">
                     <a class="nav-link" [ngClass]="{'active': activeSection === section.tabTitle}" (click)="setTab(section.tabTitle)">{{ section.tabTitle }}</a>
@@ -22,7 +22,6 @@
         <div class="sections" *ngFor="let section of project.sections">
             <div *ngIf="activeSection === section.tabTitle">
                 <h2 class="card-title sectionTitle"><strong>{{ section.title }}</strong></h2>
-
                 <div class="row" *ngFor="let subsection of section.subsections">
                     <div class="col-xxl-7 col-lg-8">
 
@@ -42,7 +41,8 @@
                         </div>
 
                         <div *ngIf="subsection.code">
-                            <pre class="text-break" [innerHTML]="subsection.code">                             
+                            <pre class="text-break">
+                                <code class="language-python" [innerHTML]="subsection.code"></code>
                             </pre>
                         </div>
                     </div>

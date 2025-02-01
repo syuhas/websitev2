@@ -22,7 +22,7 @@
 
         When signing up for a new account, input validation is performed, the user's password is encrypted using a hashing algorithm and their data is stored in an AWS MySQL Database. The user is then required to validate the email provided by clicking a time-sensitive, personalized link that is generated with a URL compatible serializer token. Upon completion of the email validation process, the user is now able to log in and set up their profile information including a profile picture that is uploaded and saved to Amazon S3. If at any point the user forgets their password, the option is given to send a password reset link to the user's email. They are also able to update their existing email by carrying out an additional email validation process, and can also choose to delete their account.<br><br>
 
-        For the puropses of this project, the app is located in a different server environment. I will descibe all of the elements relevant to the user management system, while omitting the finer details of configuring an Elastic Beanstalk environment, setting up a pipeline, enabling SSL/TLS and enabling DNS routing. These steps can be found in my previous project found <a href="/projects/website" target="_blank">here</a>.
+        For the puropses of this project, the app is located in a different server environment. I will descibe all of the elements relevant to the user management system, while omitting the finer details of configuring an Elastic Beanstalk environment, setting up a pipeline, enabling SSL/TLS and enabling DNS routing. These steps can be found in my previous project found <a href="/projects/websitev1" target="_blank">here</a>.
       imgs:
 
 
@@ -30,7 +30,15 @@
     tabTitle: Design
     subsections:
     - content: |
-        The user management consists of 3 main elements: a signup page, a login page, and a user profile page. In addition to this, the user can logout or reset their password as well as delete their account within the user profile. I will go over the design and functionality of each of these elements in the following sections.
+        The user management consists of 3 main elements:
+      listItems:
+      - text: "<span style='color: blue'>User Signup Page</span>"
+      - text: "<span style='color: blue'>User Login Page</span>"
+        subList:
+        - "With input validation and a 'Forgot Password?' feature."
+      - text: "<span style='color: blue'>Profile Page</span>"
+    - content: |
+        In addition to this, the user can logout or reset their password as well as delete their account within the user profile. I will go over the design and functionality of each of these elements in the following sections.
       imgs:
       - /assets/project-images/usermgmt-images/design1.png
     - content: |

@@ -121,6 +121,7 @@
         The initial server block for port 80 is redundant in this setup because I define the SSL connection and container path locations in the configuration below. However, this block could serve as a fallback or facilitate HTTP communication between containers if needed in the future.<br><br>
 
       code: |
+        
         error_log /var/log/nginx/error.log notice;
 
         server {
@@ -146,7 +147,8 @@
         The main server block is defined here for the Angular container. In this block, I configure the server to use the SSL certificates created and validated in the previous step. The server listens on port 443, and under the location block, all traffic directed to the root path (/) is routed to the Angular application. Additionally, I define SSL protocols and ciphers, configure the session cache, and set the session timeout to ensure secure and efficient communication.<br><br>
 
       code: |
-        <span style="color: rgb(0, 255, 0);">
+        
+        <span style="color: rgb(0, 255, 0) !important;">
         server {
             listen 443 ssl;
             server_name digitalsteve.net;
@@ -167,42 +169,12 @@
                 try_files $uri $uri/ /index.html;
             }
           </span>
-
-
-            location /api {
-                proxy_pass http://api-service:8000;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection 'upgrade';
-                proxy_set_header Host $host;
-                proxy_cache_bypass $http_upgrade;
-            }
-
-        }
       imgs:
     - content: |
         The second location block is responsible for creating the reverse proxy. In this block, I define the /api path to route traffic to the API container. The <strong>proxy_pass</strong> directive specifies the container name and port where the API is running. Additional directives such as proxy_http_version, proxy_set_header, and proxy_cache_bypass are configured to ensure proper communication between the Nginx server and the API container. This block is the core of the reverse proxy setup, enabling me to serve both the Angular application and the API under the same domain.<br><br>
 
       code: |
-        server {
-            listen 443 ssl;
-            server_name digitalsteve.net;
-
-            ssl_certificate /etc/ssl/certs/fullchain.pem;
-            ssl_certificate_key /etc/ssl/private/privkey.pem;
-
-            ssl_session_cache shared:le_nginx_SSL:10m;
-            ssl_session_timeout 1440m;
-            ssl_session_tickets off;
-
-            ssl_protocols TLSv1.2 TLSv1.3;
-            ssl_prefer_server_ciphers off;
-
-            location / {
-                root /usr/share/nginx/html;
-                index index.html;
-                try_files $uri $uri/ /index.html;
-            }
+        
         <span style="color: rgb(0, 255, 0);">
 
             location /api {

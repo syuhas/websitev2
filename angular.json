@@ -39,13 +39,16 @@
             "styles": [
               "@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.scss",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css"
-              
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/@syuhas22/prismjs/themes/prism-okaidia.css",
+              "node_modules/@syuhas22/prismjs/plugins/line-numbers/prism-line-numbers.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/popper.js/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/@syuhas22/prismjs/prism.js",
+              "node_modules/@syuhas22/prismjs/components/prism-python.js"
             ],
             "server": "src/main.server.ts",
             "prerender": true,
@@ -70,7 +73,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "optimization": false,
+              "optimization": true,
               "extractLicenses": false,
               "sourceMap": true
             }
@@ -119,6 +122,9 @@
     }
   },
   "cli": {
-    "analytics": "f302915e-055e-491b-9896-10ae57f7aded"
+    "analytics": "f302915e-055e-491b-9896-10ae57f7aded",
+    "cache": {
+      "enabled": false
+    }
   }
 }

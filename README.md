@@ -36,9 +36,6 @@ ng version
 ```
 **Running the Development Server**
 Run for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-```sh 
-
-``` 
 ```sh
 npx ng serve
 ```
@@ -50,8 +47,6 @@ ng serve
 ### Building and Deploying
 - Before deploying to production server, this project is configured to be packaged locally before deployment.
 - After packaging, all files from the `/dist` directory can be used for deployment.
-
-```sh
 ```sh
 npx ng build --configuration production
 ```

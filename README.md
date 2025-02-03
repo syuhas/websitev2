@@ -1,3 +1,5 @@
+![Diagram](src/assets/project-images/rproxy-images/rproxy.png)
+
 # Portfolio Website v2.0
 This project uses [Angular CLI](https://github.com/angular/angular-cli).
 

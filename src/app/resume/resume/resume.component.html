@@ -16,8 +16,9 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <h2 class="card-title">Summary</h2>
-            <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">Adaptable and driven IT professional with experience in AWS and DevOps automation. Over the past two years I've developed skills and expertise in delivering automation solutions and managing technical projects, earned two AWS certifications, and am pursuing a BS in Computer Science.</p>
+            <h2 class="card-title">Career Profile</h2>
+            <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">Adaptable technologist specializing in DevOps and Release Engineering, with experience in healthcare and finance. Over 10 years of leadership in high-pressure culinary operations as an Executive Chef, transitioning into technology with a strong ability to optimize workflows and cloud-based solutions, lead cross-functional teams, and drive efficiency under demanding conditions. Passionate about clean, well-structured technology stacks, focusing on building a strong engineering foundation with the guardrails and safety measures in place to enable scalable, reliable, and efficient development.
+            </p>
         </div>
     </div>
 
@@ -25,13 +26,14 @@
         <div class="card-body">
             <h2 class="card-title">Skills</h2>
             <ul class="list-unstyled text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
-                <li><strong>AWS Services</strong></li>
-                <li><strong>CI/CD & Automation Scripting </strong>(Python, Bash, OOP)</li>
-                <li><strong>Web Applications and API's </strong>(Flask, FastAPI, Angular)</li>
-                <li><strong>Cloud Network Security</strong></li>
+                <li><strong>CI/CD Automation</strong></li>
+                <li><strong>Cloud Computing </strong></li>
+                <li><strong>Object-Oriented Programming</strong></li>
+                <li><strong>Web Applications & APIs</strong></li>
                 <li><strong>Strong Communication</strong></li>
-                <li><strong>Project Management</strong></li>
-                <li><strong>Critical Thinking</strong></li>
+                <li><strong>Team Management</strong></li>
+                <li><strong>Cross-Functional Collaboration</strong></li>
+                <li><strong>Critical Thinking and Problem Solving</strong></li>
             </ul>
         </div>
     </div>
@@ -67,13 +69,13 @@
         <div class="card-body">
             <h2 class="card-title">Technologies</h2>
             <ul class="list-unstyled text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
-                <li><strong>CI/CD/Automation:</strong> Jenkins, CodePipeline, Terraform, AWS CloudFormation, Rundeck</li>
-                <li><strong>Containerization:</strong> Docker, Kubernetes, AWS Elastic Container Service (ECS)</li>
+                <li><strong>Cloud Platforms:</strong> Amazon Web Services (AWS), Microsoft Azure</li>
+                <li><strong>Languages:</strong> Python, JavaScript/Typescript, PHP, Java, Bash, SQL, Groovy</li>
+                <li><strong>CI/CD/Automation:</strong> Jenkins, Terraform, CloudFormation, Rundeck</li>
+                <li><strong>Containerization:</strong> Docker, Kubernetes</li>
                 <li><strong>Collaboration:</strong> Jira, Confluence, Asana</li>
-                <li><strong>Database/Storage:</strong> PostgreSQL, GraphQL, DynamoDB, S3, AWS Athena</li>
-                <li><strong>Version Control:</strong> Bitbucket, GitHub</li>
+                <li><strong>Database/Storage:</strong> MySQL, PostgreSQL, DynamoDB, S3/Athena</li>
                 <li><strong>Monitoring/Logging:</strong> Splunk, Cribl, AWS CloudWatch, AWS CloudTrail</li>
-                <li><strong>Languages:</strong> Python, TypeScript, Bash, JavaScript, Groovy, SQL, HTML/CSS, C++, Java, PHP</li>
             </ul>
         </div>
     </div>
@@ -98,65 +100,66 @@
     <div class="card mb-4 experience">
         <div class="card-body">
             <h2 class="card-title">Professional Experience</h2>
-
-            <h3><strong>Tential Solutions</strong> - Release Engineer | Developer (sub-contractor)</h3>
-            <p><strong>Assignments:</strong></p>
             <div class="card-body">
-                <h3><strong>FINRA (Financial Industry Regulatory Authority)</strong></h3>
-                <p><strong>Location:</strong> Rockville, MD</p>
-                <p><strong>Duration:</strong> July 2023 – Oct. 2024</p>
+                <h3><strong>DevOps Release Engineer</strong></h3>
+                <h3>FINRA (Financial Industry Regulatory Authority)</h3>
+                <p>Rockville, MD</p>
+                <p>July 2023 – Oct. 2024</p>
                 <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
-                    <li>Developed and maintained applications for reporting, monitoring Jira, AWS, and Jenkins activities, and automating IAM role entitlements to reduce operational workload</li>
-                    <li>Scheduled daily production and development activities for the release team using Jira</li>
-                    <li>Managed daily Jenkins production deployments and diagnosed and remediated resource and access issues</li>
-                    <li>Configured IAM roles, policies, and users to ensure secure access to AWS resources</li>
-                    <li>Led the development of Version 2 of our internal deployments scheduling and application monitoring suite of tools</li>
-                    <li>Created automated reporting to monitor resource utilization and maintain security compliance</li>
-                    <li>Developed cross-region database replication automation for databases in over 100 AWS accounts</li>
-                    <li>Contributed Jira automation to an initiative aimed at streamlining our path to production for app teams</li>
-                    <li>Developed an automated solution using Athena to query S3 inventory across the organization, providing insights into bucket
-                        usage, user activity, data uploads, and storage size, including bucket and prefix-level analysis
-                    </li>
+                    <li>Oversaw and ensured successful daily production deployments for scheduled releases. Leveraged in-depth knowledge of deployment pipelines and AWS resources to identify and correct configuration or access issues.</li>
+                    <li>Coordinated with Operations and Application teams, utilizing Jira to organize weekly release schedules for 100’s of applications within the organization.</li>
+                    <li>Managed access to IAM roles and policies for application teams, creating custom roles and policies for specific use cases while ensuring adherence to the principle of least privilege.</li>
+                    <li>Created daily reporting tools, developed custom applications, and implemented automated solutions to streamline processes for monitoring resource utilization, security compliance, and S3 inventory analysis.</li>
+                    <li>Wrote and updated weekly Groovy scripts for Jenkins pipelines to ensure clean and efficient production releases.</li>
+                    <li><strong>Key Projects:</strong></li>
+                    <ul>
+                        <li><strong>Lambda Automation for Cross-Region Backups:</strong> Created AWS Lambda functions to automate the enrollment of app teams in cross-region backup solutions, ensuring improved data redundancy and availability.</li>
+                        <li><strong>Jira Automation for Deployment Scheduling:</strong> Developed Jira automation workflows to streamline deployment scheduling for multiple app teams, reducing administrative overhead</li>
+                        <li><strong>S3 Inventory Tracking:</strong> Designed and implemented an automated solution using Athena to track S3 inventory across 100’s of AWS accounts, providing insights into resource usage, storage size, and activity patterns.</li>
+                        <li><strong>Internal Deployment Scheduling and Monitoring Tools:</strong> Contributed to Version 2.0 of internal deployment scheduling and monitoring tools, including custom Jira dashboards, AWS Lambda Canary monitoring, and Jira ticket automation, to optimize deployment processes and improve visibility across teams.</li>
+                    </ul>
 
                 </ul>
             </div>
             
-            <h3><strong>Brightport Managed Solutions LLC.</strong> - Data Analyst | IT Project Manager (sub-contractor)</h3>
-            <p><strong>Assignments:</strong></p>
             <div class="card-body">
-                <h3><strong>Baltimore County School System</strong></h3>
-                <p><strong>Location:</strong> Towson, MD</p>
-                <p><strong>Duration:</strong> March 2023 – July 2023</p>
+            <h3><strong>Data Analyst</strong></h3>
+                <h3>Baltimore County School System</h3>
+                <p>Towson, MD</p>
+                <p>March 2023 – July 2023</p>
                 <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
-                    <li>Investigated data integrity and vulnerability issues after a malware attack causing significant data loss</li>
-                    <li>Reviewed and updated data entries, correcting outdated or incorrect health subscriber information</li>
-                    <li>Identified bugs in the new database implementation and collaborated with the database team to address them</li>
-                    <li>Recovered critical data, enabling users to regain access to job and retirement health benefits</li>
-                    <li>Automated data review processes, improving recovery efficiency and accuracy</li>
+                    <li>Investigated and remediated data integrity and vulnerability issues following a malware attack that caused significant data loss resulting in loss of health coverage for employees.</li>
+                    <li>Created automated data review processes to identify errors in data entries and correct outdated or erroneous health subscriber information.</li>
+                    <li>Identified bugs in the new database implementation and collaborated with the database team to address the root cause and prevent future data errors.</li>
+                    <li>Recovered critical data, enabling users to regain access to job and retirement health benefits.</li>
                 </ul>
             </div>
             <div class="card-body">
-                <h3><strong>Mental Health Association of Maryland</strong></h3>
-                <p><strong>Location:</strong> Lutherville, MD</p>
-                <p><strong>Duration:</strong> Jan 2023 – July 2023</p>
+                <h3><strong>IT Project Manager</strong></h3>
+                <h3>Mental Health Association of Maryland</h3>
+                <p>Lutherville, MD</p>
+                <p>Jan 2023 – July 2023</p>
                 <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
-                    <li>Gathered user story data for current company processes to analyze and extract pain points and requirements</li>
-                    <li>Collaborated with behavioral health teams to translate their needs into actionable IT solutions</li>
-                    <li>Coordinated with vendors to manage existing tools, resolve software issues, and assess new solutions for the organization</li>
+                    <li>Gathered user story data for current company processes to analyze and extract pain points and requirements to recommend software solutions.</li>
+                    <li>Collaborated with behavioral health teams to translate their needs into actionable IT solutions.</li>
+                    <li>Coordinated with vendors to manage existing tools, resolve software issues, and assess new solutions for the organization.</li>
                     <li>Led implementation of new scheduling software that optimized route planning and team organization for the site visit team</li>
-                    <li>Streamlined hospital and clinic contact data in the scheduling system to highlight key organizational points of contact</li>
                 </ul>
             </div>
 
-            <h3><strong>The Ale House</strong> - Executive Chef</h3>
-            <p><strong>Location:</strong> Columbia, MD</p>
-            <p><strong>Duration:</strong> 2019 - 2023</p>
-            <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
-                <li>Guided and mentored a team of professionals to execute efficiently and consistently</li>
-                <li>Developed unique menu items to deliver business value while keeping customer satisfaction at the forefront</li>
-                <li>Created and fostered relationships with key vendors/representatives</li>
-                <li>Utilized company software to manage and produce detailed reports on budget and variable cost controls</li>
-            </ul>
+            <div class="card-body">
+                <h3><strong>Executive Chef</strong></h3>
+                <h3>The Ale House Columbia</h3>
+                <p>Columbia, MD</p>
+                <p>2019 - 2023</p>
+                <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
+                    <li>Guided and mentored a team of professionals to execute efficiently and consistently.</li>
+                    <li>Utilized company systems to manage and produce detailed reports on budget and variable cost controls. Maintained a consistent weekly food cost of 29%.</li>
+                    <li>Scheduled and monitored staff shifts to keep labor costs below 30% while maintaining staffing requirements.</li>
+                    <li>Developed unique weekly and permanent menu items to deliver business value while keeping customer satisfaction at the forefront.</li>
+                    <li>Created and fostered relationships with key vendors/representatives to ensure access to consistent high-quality product at optimal cost.</li>
+                </ul>
+            </div>
             
         </div>
     </div>
@@ -164,7 +167,7 @@
     <div class="card mb-4">
         <div class="card-body">
             <h2 class="card-title">Education</h2>
-            <p><strong>Pursuing B.S. Computer Science</strong> (Est. completion 2026)</p>
+            <p><strong>Pursuing B.S. Computer Science</strong></p>
             <p><strong>Current:</strong> Howard Community College</p>
             <p><strong>Certificate:</strong> Culinary Arts - Anne Arundel Community College 2012</p>
         </div>

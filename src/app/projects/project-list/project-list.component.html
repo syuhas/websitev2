@@ -1,14 +1,27 @@
 <!-- src/app/project/project-list/project-list.component.html -->
 <div class="container mt-5">
     <div class="row">
-      <div class="col-md-4 mb-3">
-        <h1><strong>Projects</strong><img src="/assets/home-images/project-home3.png" alt=""></h1>
+      <div class="col-md-12">
+        <div class="header">
+          <img src="/assets/home-images/projects.png" alt="">
+          <h1>Project Portfolio</h1>
+        </div>
+        <div class="headerText">
+          <p>These projects reflect my passion for continuous learning and professional growth, showcasing my learning journey as I explore and apply new concepts. Each added project represents a step forward in my progression, incorporating improved design philosophies and technical expertise that enrich my skills and professional capabilities.</p>
+        </div>
+        <!-- <hr> -->
       </div>
-      <div class="col-md-4 mb-3" *ngFor="let project of projects">
-        <div class="card">
+    </div>
+    <div class="row">
+      <div class="col-xxl-4 col-xl-4 col-lg-6 col-md-6 col-sm-12 mb-3 px-auto hover" *ngFor="let project of projects | paginate: {itemsPerPage: pageSize, currentPage: page}">
+        <div class="thickbar"></div>
+
+        <div class="card cardItem" (click)="goToProject(project)">
           <div class="card-body">
             <div class="title">
-                <a [routerLink]="['/projects', project.id]"><h2 class="card-title"><strong>{{ project.title }}</strong></h2></a>
+                <img [src]="project.listIcon" class="img-fluid">
+                <!-- <span class="material-symbols-outlined">lists</span> -->
+                <a [routerLink]="['/projects', project.id]"><h3 class="card-title"><strong>{{ project.title }}</strong></h3></a>
             </div>
             <hr>
             <p class="card-text">{{ project.description }}</p>
@@ -17,3 +30,5 @@
       </div>
     </div>
   </div>
+  <div *ngIf="projects.length > pageSize" class="pagination"><pagination-controls (pageChange)="page = $event"></pagination-controls></div>
+

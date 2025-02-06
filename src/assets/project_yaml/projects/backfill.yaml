@@ -1,0 +1,1493 @@
+- id: backfill
+  title: Optimizing Database Backfill with Python Threads in AWS Lambda
+  subtitle: Designing an efficient and scalable backfill process for handling large historical datasets.
+  github: https://github.com/syuhas/awsdash-lambda
+  description: |
+    Developing an event-driven architecture in AWS with serverless microservices
+  listIcon: /assets/project-images/backfill-images/backfill_icon1.png
+  titleIcons:
+  - /assets/project-images/backfill-images/backfill_icon1.png
+  - /assets/project-images/backfill-images/backfill_icon2.png
+  - /assets/project-images/backfill-images/backfill_icon3.png
+  sections:
+  - title: Overview
+    tabTitle: Overview
+    subsections:
+    - content: ""
+      imgs:
+      - /assets/project-images/backfill-images/backfill_diagram1.png
+
+    - content: |
+        Recently, I have been exploring various aspects of backend automation for dashboards and reporting, with a focus on AWS services and Jenkins build data. For my dataset, I collected metadata for all buckets and objects across my accounts to develop a utilization and cost dashboard for my S3 resources. The dashboard I am making will be in <strong style='color: #006ab7;'>PHP using Laravel</strong> and will be a simple way to visualize the data I am collecting here.<br><br>
+
+        In my <a href="/projects/event">previous project</a>, I described the event-driven architecture I built to track future events for gathering my S3 data. This is great for new data but does not address the thousands of historical objects and buckets I already have in my accounts that have not yet been processed and stored in my <strong style="color: #006ab7">PostgreSQL</strong> database.<br><br>
+
+        This is where <strong style='color: #006ab7;'>backfilling</strong> becomes essential. Since my S3 buckets already contain extensive historical data, I needed a way to efficiently insert thousands of objects into the database to fill in the missing records. Given the potential size of these datasets and the processing time required, I focused on optimizing my script to handle the workload efficiently.<br><br>
+
+      imgs:
+      - /assets/project-images/backfill-images/backfill_diagram2.png
+
+    - content: |
+        While working on this, I was also researching the nuances of Python’s <strong style="color: #006ab7">Global Interpreter Lock (GIL)</strong> and how it interacts with threading and multiprocessing. The primary bottleneck in my workflow was database operations, making threading an ideal solution. By leveraging threading, I was able to handle multiple I/O-bound tasks concurrently, allowing write and delete operations to overlap. Although Python’s GIL prevents true concurrency, it releases the lock during I/O waits, enabling threading to significantly improve the efficiency of my backfill process.<br><br>
+
+        To further enhance performance, I combined <strong style='color: #006ab7;'>batch processing</strong> with Python’s <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">ThreadPoolExecutor</strong> to optimize database write and delete operations. Processing data in manageable chunks prevents database overload and minimizes resource contention (which occurs when multiple threads attempt to access the same resource simultaneously). Each batch is processed independently, ensuring stability and scalability, while errors are handled gracefully to maintain data integrity. This approach strikes a balance between performance and reliability, making it highly effective for processing large datasets. Additionally, for existing object comparisons, I implemented object hashing, which allows for faster update checks compared to individually comparing metadata.<br><br>
+
+        Given the dataset size and the optimizations I implemented, I was able to use <strong style="color: #006ab7">AWS Lambda</strong> as a serverless solution to run my script. For larger datasets, <strong style="color: #006ab7">AWS Batch</strong> is a better choice for processes that run for 24 hours or more. However, for my use case, AWS Lambda is sufficient since the average runtime is well within the 15-minute limit. In the following sections, I will walk through the code and discuss the key design decisions.
+
+      imgs:
+
+
+  - title: Why Backfilling Though?
+    tabTitle: The Why
+    subsections:
+    - content: ""
+      imgs:
+      - /assets/project-images/backfill-images/backfill_why.png
+
+    - content: |
+        Imagine you are opening a new library. <strong style='color: #006ab7;'>Before you can start lending out books, you need to stock the shelves with all the books you already have</strong>. This is one of those processes that you may likely only have to do once, unless you happen to move locations or an incident like a fire in the building takes place where all of the books wil need to be re-inventoried and a large number of the offering of books will have to be replaced.<br><br>
+
+        This is <strong style='color: #006ab7;'>backfilling</strong>—<strong style='color: #bb519e;'>the process of filling a database(the library) with existing or missing historical data(the books)</strong>.<br><br>
+
+        In real life, this is a tedious process that requires time and human intervention to sort out each book into it's respective category and place it on the correct shelf. In the world of computing, we have shortcuts to make the process considerably less headache-inducing, especially when you consider we are often dealing with millions and billions of records at a time.<br><br>
+
+        Once the library is open, new books will arrive over time. Instead of restocking the entire library again, you simply add new books as they come in. In this case, the process of adding new books(S3 data) is handled in my <a href="/projects/event">event-driven architecture project</a>, which efficiently processes and adds new data incrementally as it appears, rather than in bulk.<br><br>
+
+        In short, S3 holds all of the books I need to add to my new library that I am opening, and <strong style='color: #006ab7;'>backfilling ensures that all the books will be available from the start when I open my library(PostgreSQL database)</strong>. Without this process, the system would have huge gaps in historical data, making it incomplete for queries, reports, and analysis.<br><br>
+
+        Backfilling is essential in various applications where historical data needs to be migrated, processed, or analyzed. Some common reasons include:
+
+      listItems:
+      - text: "<strong style='color: blue;'> Quality Incidents: </strong> Reconstructing data after quality incidents or data corruption (e.g. if a fire destroyed part of the library’s collection, requiring a restock of the lost books)."
+      - text: "<strong style='color: blue;'> Data Migration: </strong> Moving data from an old system to a new one (e.g. the library is moving to a bigger location)."
+      - text: "<strong style='color: blue;'> Analytics & Reporting: </strong> Populating historical datasets to enable insights, trend analysis, and forecasting."
+      - text: "<strong style='color: blue;'> Machine Learning: </strong> Providing training datasets that require a complete history of past records."
+      - text: "<strong style='color: blue;'> Regulatory Compliance: </strong> Ensuring complete historical records are available for auditing purposes."
+    - content: |
+        While many backfill processes involve structured datasets like transaction logs or logs from APIs, my use case focuses on unstructured S3 storage, which requires additional processing to extract and organize the data. This makes the backfill process more complex and resource-intensive, necessitating careful optimization to ensure efficient and reliable data insertion. <strong style='color: #006ab7;'>Considering this additional layer of complexity, my decision to add optimizations like threading and batch processing was crucial to handle the data efficiently</strong>.<br><br>
+
+  - title: Code Introduction
+    tabTitle: Code
+    subsections:
+    - content: |
+        Below is the complete script, incorporating several optimizations to significantly enhance speed and efficiency:
+
+      listItems:
+      - text: "<strong style='color: blue'>Threading with <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong></strong> for concurrent database operations"
+      - text: "<strong style='color: blue'>Batch processing</strong> for database write and delete operations"
+      - text: "<strong style='color: blue'>Hash comparison</strong> for efficient object updates"
+
+      imgs:
+
+
+    - content: |
+        (<a href="https://github.com/syuhas/awsdash-lambda/blob/main/backfill/lambda_function.py" target="_blank">Link to the Lambda code in GitHub</a>)
+
+      code: |+
+        
+        from typing import List, Dict, Union
+        import boto3
+        import json
+        import boto3.session
+        from loguru import logger
+        from sqlalchemy import create_engine, select
+        from sqlalchemy.orm import sessionmaker, declarative_base, relationship, scoped_session
+        from sqlalchemy import Column, Integer, String, ForeignKey, DECIMAL, BigInteger
+        from botocore.exceptions import ClientError
+        from concurrent.futures import ThreadPoolExecutor
+        import time
+        from itertools import islice
+
+        ##################################### Account Lookup Dictionary #################################################
+
+        account_lookup = [
+            {
+                'sdlc': 'prod',
+                'account_id': '551796573889',
+                'region': 'us-east-1',
+                'role_arn': 'arn:aws:iam::551796573889:role/jenkinsAdminXacnt'
+            },
+            {
+                'sdlc': 'dev',
+                'account_id': '061039789243',
+                'region': 'us-east-1',
+                'role_arn': 'arn:aws:iam::061039789243:role/jenkinsAdminXacnt'
+            }
+        ]
+
+        ##################################### Database Class Definitions ################################################
+
+        Base = declarative_base()
+        class S3BUCKETS(Base):
+            __tablename__ = 's3'
+            id = Column(Integer, primary_key=True)
+            account_id = Column(String)
+            bucket = Column(String)
+            totalSizeBytes = Column(BigInteger)
+            totalSizeKb = Column(DECIMAL)
+            totalSizeMb = Column(DECIMAL)
+            totalSizeGb = Column(DECIMAL)
+            costPerMonth = Column(DECIMAL)
+            objects = relationship('S3BUCKETOBJECTS', backref='s3objects')
+            def __repr__(self):
+                return f'Bucket {self.bucket}'
+
+        class S3BUCKETOBJECTS(Base):
+            __tablename__ = 's3objects'
+            id = Column(Integer, primary_key=True)
+            bucket_id = Column(Integer, ForeignKey('s3.id'))
+            bucket = Column(String)
+            key = Column(String)
+            sizeBytes = Column(BigInteger)
+            sizeKb = Column(DECIMAL)
+            sizeMb = Column(DECIMAL)
+            sizeGb = Column(DECIMAL)
+            costPerMonth = Column(DECIMAL)
+
+        ##################################### Lambda Handler ############################################################
+
+        def lambda_handler(event, context):
+            logger.info("Starting backfill process...")
+            start_time = time.time()
+
+            for account in account_lookup:
+
+
+                logger.info("Retrieving existing buckets for {}...", account['account_id'])
+
+                session = getAccountSession(account)
+
+                buckets = getBucketsData(session)
+
+                logger.info("Backfilling database for {}...", account['account_id'])
+
+                backfillDatabase(buckets, account['account_id'])
+            
+            end_time = time.time()
+
+            logger.info(f"Execution time: {end_time - start_time} seconds")
+
+        ##################################### Main Backfill Function ####################################################
+
+        def backfillDatabase(buckets: List[dict], account_id: str) -> dict:
+            try:
+                current_keys = set()
+                objects_to_add = []
+                session = getDatabaseSession()
+                existing_db_buckets = getExistingDbBuckets(session, account_id)
+                existing_db_objects = getExistingDbObjects(session, account_id)
+
+                logger.info('Processing any new buckets and objects...')
+                with ThreadPoolExecutor() as executor:
+                    futures = [
+                        executor.submit(processBucket, bucket, existing_db_buckets, existing_db_objects, account_id, current_keys, objects_to_add) for bucket in buckets
+                    ]
+                    for future in futures:
+                        try:
+                            future.result()
+                        except Exception as e:
+                            logger.error(f'Error processing bucket: {str(e)}')
+
+                current_buckets = {bucket['bucket'] for bucket in buckets}
+
+                logger.info('Buckets processed.')
+
+                logger.info('Checking for objects to add...')
+
+                if objects_to_add:
+                    logger.info('Adding new objects')
+                    logger.info(f'Batching {len(objects_to_add)} objects to add to the database...')
+                    batch_size = 100
+                    logger.info(f'Batch size: {batch_size}')
+                    logger.info(f'Number of batches: {len(objects_to_add) // batch_size}')
+                    objects_to_add_batches = chunked_iterable([obj for obj in objects_to_add], batch_size)
+                    with ThreadPoolExecutor() as executor:
+                        futures = [
+                            executor.submit(addObjects, batch, count)
+                            for count, batch in enumerate(objects_to_add_batches)
+                        ]
+                        for future in futures:
+                            try:
+                                future.result()
+                            except Exception as e:
+                                logger.error(f'Error adding objects: {str(e)}')
+
+                logger.info('Checking for objects to delete...')
+                objects_to_delete = set(existing_db_objects.keys()) - current_keys
+
+                if objects_to_delete:
+                    logger.info(f'Batching {len(objects_to_delete)} objects for deletion')
+                    batch_size = 100
+                    logger.info(f'Batch size: {batch_size}')
+                    logger.info(f'Number of batches: {len(objects_to_delete) // batch_size}')
+                    objects_to_delete_batches = chunked_iterable([existing_db_objects[obj]['id'] for obj in objects_to_delete], batch_size)
+                    with ThreadPoolExecutor() as executor:
+                        futures = [
+                            executor.submit(deleteObjects, batch, count)
+                            for count, batch in enumerate(objects_to_delete_batches)
+                        ]
+                        for future in futures:
+                            try:
+                                future.result()
+                            except Exception as e:
+                                logger.error(f'Error deleting objects: {str(e)}')
+                
+                logger.info('Checking for buckets to delete...')
+                buckets_to_delete = set(existing_db_buckets.keys()) - current_buckets
+                if buckets_to_delete:
+                    for bucket in buckets_to_delete:
+                        try:
+                            logger.info(f'Deleting bucket from database {bucket}')
+                            deleteBucket(session, existing_db_buckets[bucket])
+                        except Exception as e:
+                            logger.error(f'Error deleting bucket: {str(e)}')
+
+            except Exception as e:
+                session.rollback()
+                return {
+                    'statusCode': 500,
+                    'body': json.dumps(f'An error occurred: {e}')
+                }
+            finally:
+                session.commit()
+                session.close()
+
+
+        ##################################### Bucket Processing Function ################################################
+
+        def processBucket(bucket: Dict, existing_db_buckets: Dict, existing_db_objects: Dict, account_id: str, current_keys: set, objects_to_add: list[S3BUCKETOBJECTS]) -> None:
+            bucket_id = existing_db_buckets.get(bucket['bucket'])
+
+            thread_session = getThreadsafeDatabaseSession()
+            if bucket_id:
+                if bucketNeedsUpdate(thread_session, bucket_id, bucket, account_id):
+                    modifyBucket(thread_session, bucket_id, bucket, account_id)
+                    logger.info(f'Bucket {bucket["bucket"]} updated.')
+            else:
+                logger.info(f'Adding bucket {bucket["bucket"]} to the database.')
+                bucket_id = addBucket(thread_session, bucket, account_id)
+            for obj in bucket['objects']:
+                object_key = (bucket_id, obj['key'])
+                if object_key in existing_db_objects:
+                    existing_object = existing_db_objects[object_key]
+                    if objectNeedsUpdate(existing_object, obj):
+                        modifyObject(thread_session, existing_object['id'], obj)
+                else:
+                    objects_to_add.append({
+                        'bucket_id': bucket_id,
+                        'obj': obj
+                    })
+
+                current_keys |= {object_key}
+
+            logger.info(f'Existing object hashes in {bucket["bucket"]} checked.')
+
+            thread_session.commit()
+            thread_session.remove()
+
+
+        #################################### Helper Functions for Buckets ##################################################
+
+        def bucketNeedsUpdate(session, bucket_id: int, bucket: Dict, account_id: str) -> bool:
+            existing_bucket = session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).one()
+            return (
+                existing_bucket.totalSizeBytes != bucket['totalSizeBytes']
+            )
+
+        def modifyBucket(session, bucket_id: int, bucket: Dict, account_id: str) -> None:
+            session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).update({
+                "account_id": account_id,
+                "totalSizeBytes": bucket["totalSizeBytes"],
+                "totalSizeKb": bucket["totalSizeKb"],
+                "totalSizeMb": bucket["totalSizeMb"],
+                "totalSizeGb": bucket["totalSizeGb"],
+                "costPerMonth": bucket["costPerMonth"],
+            })
+            session.commit()
+
+
+        def addBucket(session: sessionmaker, bucket: Dict, account_id: str) -> str:
+            new_bucket = S3BUCKETS(
+                account_id=account_id,
+                bucket=bucket['bucket'],
+                totalSizeBytes=bucket['totalSizeBytes'],
+                totalSizeKb=bucket['totalSizeKb'],
+                totalSizeMb=bucket['totalSizeMb'],
+                totalSizeGb=bucket['totalSizeGb'],
+                costPerMonth=bucket['costPerMonth']
+            )
+            session.add(new_bucket)
+            session.commit()
+            return new_bucket.id
+
+        def deleteBucket(session: sessionmaker, bucket_id: int) -> None:
+            session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.bucket_id == bucket_id).delete()
+            session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).delete()
+            session.commit()
+
+        ##################################### Helper Functions for Objects #################################################
+
+        def objectNeedsUpdate(existing_object, object: Dict) -> bool:
+            return (
+                existing_object['hash'] != object['hash']
+            )
+
+        def modifyObject(session: sessionmaker, object_id: int, object: Dict) -> None:
+            session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.id == object_id).update({
+                "sizeBytes": object["sizeBytes"],
+                "sizeKb": object["sizeKb"],
+                "sizeMb": object["sizeMb"],
+                "sizeGb": object["sizeGb"],
+                "costPerMonth": object["costPerMonth"]
+            })
+            session.commit()
+
+        def addObjects(batch: list[S3BUCKETOBJECTS], count: int) -> None:
+            thread_session = getThreadsafeDatabaseSession()
+            logger.info(f'Adding batch #{count} to the database...')
+            for obj in batch:
+                # logger.info(f'Adding object {obj["obj"]["key"]} to the database.')
+                new_object = S3BUCKETOBJECTS(
+                    bucket_id=obj['bucket_id'],
+                    bucket=obj['obj']['bucket'],
+                    key=obj['obj']['key'],
+                    sizeBytes=obj['obj']['sizeBytes'],
+                    sizeKb=obj['obj']['sizeKb'],
+                    sizeMb=obj['obj']['sizeMb'],
+                    sizeGb=obj['obj']['sizeGb'],
+                    costPerMonth=obj['obj']['costPerMonth']
+                )
+                thread_session.add(new_object)
+            thread_session.commit()
+            thread_session.remove()
+            logger.info(f'Batch #{count} added to the database.')
+
+        def deleteObjects(object_ids: list[int], count: int) -> None:
+            thread_session = getThreadsafeDatabaseSession()
+            logger.info(f'Deleting batch #{count}')
+            thread_session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.id.in_(object_ids)).delete(synchronize_session='fetch')
+            logger.info(f'Batch #{count} deleted.')
+            thread_session.commit()
+            thread_session.remove()
+
+        def chunked_iterable(iterable, size):
+            iterator = iter(iterable)
+            for first in iterator:
+                yield [first] + list(islice(iterator, size - 1))
+
+
+        ##################################### AWS Helper Functions #################################################
+
+        def getAccountSession(account: dict) -> boto3.session.Session:
+            session = boto3.Session()
+            sts = session.client('sts')
+            response = sts.assume_role(
+                RoleArn=account['role_arn'],
+                RoleSessionName='s3-backfill',
+                DurationSeconds=900
+            )
+            credentials = response['Credentials']
+            account_session = boto3.Session(
+                aws_access_key_id=credentials['AccessKeyId'],
+                aws_secret_access_key=credentials['SecretAccessKey'],
+                aws_session_token=credentials['SessionToken'],
+                region_name=account['region']
+            )
+            return account_session
+
+        def getBucketsData(session: boto3.session.Session) -> list:
+            logger.info('Retrieving S3 bucket data from AWS...')
+            bucket_list = []
+
+            s3 = session.client('s3')
+            buckets = s3.list_buckets()
+
+            with ThreadPoolExecutor() as executor:
+                futures = [executor.submit(getBucketData, s3, bucket['Name']) for bucket in buckets['Buckets']]
+                for future in futures:
+                    try:
+                        bucket_list.append(future.result())
+                    except Exception as e:
+                        logger.error(f'Error retrieving bucket data: {str(e)}')
+
+            logger.info('Current AWS bucket data retrieved.')
+            return bucket_list
+
+        def getBucketData(s3, bucket_name: str) -> dict:
+            logger.info(f'Retrieving data for bucket {bucket_name}...')
+            bucket_dict = {
+                'bucket': bucket_name,
+                'totalSizeBytes': 0,
+                'totalSizeKb': 0,
+                'totalSizeMb': 0,
+                'totalSizeGb': 0,
+                'costPerMonth': 0,
+                'objects': []
+            }
+
+            paginator = s3.get_paginator('list_objects_v2')
+            object_list = []
+            total_bucket_cost = 0
+
+            object_iterator = paginator.paginate(Bucket=bucket_name)
+            for page in object_iterator:
+                if 'Contents' in page:
+                    for obj in page['Contents']:
+                        object_dict = {
+                            'key': obj['Key'],
+                            'bucket': bucket_name,
+                            'sizeBytes': obj['Size'],
+                            'sizeKb': round(obj['Size'] / 1024, 2),
+                            'sizeMb': round(obj['Size'] / (1024 * 1024), 2),
+                            'sizeGb': round(obj['Size'] / (1024 * 1024 * 1024), 4),
+                        }
+                        object_dict['costPerMonth'] = object_dict['sizeGb'] * 0.023
+                        object_dict['hash'] = hash((object_dict['sizeBytes'], object_dict['costPerMonth']))
+                        total_bucket_cost += object_dict['costPerMonth']
+                        object_list.append(object_dict)
+
+            bucket_dict['totalSizeBytes'] = sum([obj['sizeBytes'] for obj in object_list])
+            bucket_dict['totalSizeKb'] = round(sum([obj['sizeKb'] for obj in object_list]), 4)
+            bucket_dict['totalSizeMb'] = round(sum([obj['sizeMb'] for obj in object_list]), 4)
+            bucket_dict['totalSizeGb'] = round(sum([obj['sizeGb'] for obj in object_list]), 4)
+            bucket_dict['costPerMonth'] = round(total_bucket_cost, 6)
+            bucket_dict['objects'] = object_list
+
+            return bucket_dict
+
+        def getDatabaseCredentials() -> dict:
+            secret_id = "arn:aws:secretsmanager:us-east-1:061039789243:secret:rds!db-555390f8-60f2-4d37-ad75-e63d8f0cbfa9-0s9oyX"
+            region = "us-east-1"
+            session = boto3.session.Session()
+            client = session.client('secretsmanager', region_name=region)
+
+            try:
+                secret_response = client.get_secret_value(SecretId=secret_id)
+                secret = secret_response['SecretString']
+                json_secret = json.loads(secret)
+                credentials = {
+                    'username': json_secret['username'],
+                    'password': json_secret['password']
+                }
+                return credentials
+            except ClientError as e:
+                raise e
+
+        ##################################### Database Helper Functions #################################################
+
+        def getEngine() -> create_engine:
+            credentials = getDatabaseCredentials()
+            engine = create_engine(
+                f'postgresql://{credentials["username"]}:{credentials["password"]}@resources.czmo2wqo0w7e.us-east-1.rds.amazonaws.com:5432'
+            )
+            return engine
+
+        def getDatabaseSession() -> sessionmaker:
+            engine = getEngine()
+            Session = sessionmaker(bind=engine)
+            session = Session()
+            return session
+
+        def getThreadsafeDatabaseSession() -> scoped_session:
+            engine = getEngine()
+            session_factory = sessionmaker(bind=engine)
+            session = scoped_session(session_factory)
+            return session
+
+        def getExistingDbBuckets(session: sessionmaker, account_id: str) -> set:
+            buckets = {b.bucket: b.id for b in session.query(S3BUCKETS).filter(S3BUCKETS.account_id == account_id).all()}
+            return buckets
+
+        def getExistingDbObjects(session: sessionmaker, account_id: int) -> set:
+            objects = {
+                (obj.bucket_id, obj.key): {
+                    "id": obj.id, 
+                    "hash": hash((obj.sizeBytes, obj.costPerMonth))
+                } 
+                for obj in session.query(S3BUCKETOBJECTS).join(S3BUCKETS, S3BUCKETS.id == S3BUCKETOBJECTS.bucket_id).filter(
+                    S3BUCKETS.account_id == account_id
+                ).all()
+            }
+            return objects
+
+    - content: |
+        I use a combination of <strong style="color: green;">boto3</strong> and <strong style="color: green;">sqlalchemy.orm</strong> (Object Relational Mapping) for database backfill operations. Python’s built-in threading library, along with <strong style="color: green;">itertools</strong>, is leveraged to manage batch sizes when processing object data chunks.<br><br>
+
+        For execution in <strong style="color: #006ab7;">AWS Lambda</strong>, AWS-specific <strong style="color: green;">psycopg</strong> libraries provide support for PostgreSQL within SQLAlchemy. Additionally, I use <strong style="color: green;">loguru</strong> for logging, so I need to package the following dependencies for my function.<br><br>
+
+      imgs:
+      - /assets/project-images/backfill-images/backfill1_1.png
+
+    - content: |
+        <strong style="opacity: 50%">(Note: boto3 is technically optional, as Lambda functions come with this library pre-installed. However, to ensure fine-grained control over dependencies and maintain completeness, I explicitly include it.)</strong>
+
+  - title: Structure of the Code
+    tabTitle: Structure
+    subsections:
+    - content: |
+        The code is structured into several key components that work together to comprise the backfill process:
+
+    - content:
+
+      listItems:
+      - text: "<strong style='color: blue'>Account Lookup Dictionary:</strong> Contains account information for role assumption and region selection."
+
+      code: |+
+        
+        ##################################### Account Lookup Dictionary #################################################
+
+        account_lookup = [
+          {
+              'sdlc': 'prod',
+              'account_id': '551796573889',
+              'region': 'us-east-1',
+              'role_arn': 'arn:aws:iam::551796573889:role/jenkinsAdminXacnt'
+          },
+          ...
+
+    - content:
+      listItems:
+      - text: "<strong style='color: blue'>Database Class Definitions:</strong> Defines the database schema for S3 buckets and objects."
+
+      code: |
+        
+        ##################################### Database Class Definitions ################################################
+
+        Base = declarative_base()
+        class S3BUCKETS(Base):
+            __tablename__ = 's3'
+            id = Column(Integer, primary_key=True)
+            account_id = Column(String)
+            bucket = Column(String)
+            totalSizeBytes = Column(BigInteger)
+            totalSizeKb = Column(DECIMAL)
+            totalSizeMb = Column(DECIMAL)
+        ...
+
+    - content:
+
+      listItems:
+      - text: "<strong style='color: blue'>Lambda Handler:</strong> Entry point for the Lambda function, retrieves account data and initiates the backfill process."
+
+      code: |
+        
+        ##################################### Lambda Handler ############################################################
+
+
+        def lambda_handler(event, context):
+            logger.info("Starting backfill process...")
+            start_time = time.time()
+
+            for account in account_lookup:
+
+
+                logger.info("Retrieving existing buckets for {}...", account['account_id'])
+
+                session = getAccountSession(account)
+        ...
+
+    - content:
+
+      listItems:
+      - text: "<strong style='color: blue'>Backfill Logic:</strong> Orchestrates the backfill process, including bucket and object processing."
+
+      code: |
+        
+        ##################################### Main Backfill Function ####################################################
+
+
+        def backfillDatabase(buckets: List[dict], account_id: str) -> dict:
+            try:
+                current_keys = set()
+                objects_to_add = []
+                session = getDatabaseSession()
+        ...
+
+    - content:
+
+      listItems:
+      - text: "<strong style='color: blue'>Bucket Processing Function:</strong> Handles bucket operations, including updates and deletions."
+
+      code: |
+        
+        ##################################### Bucket Processing Function ################################################
+
+
+        def processBucket(bucket: Dict, existing_db_buckets: Dict, existing_db_objects: Dict, account_id: str, current_keys: set, objects_to_add: list[S3BUCKETOBJECTS]) -> None:
+            bucket_id = existing_db_buckets.get(bucket['bucket'])
+            try:
+                thread_session = getThreadsafeDatabaseSession()
+                if bucket_id:
+                    if bucketNeedsUpdate(thread_session, bucket_id, bucket, account_id):
+        ...
+
+    - content:
+
+      listItems:
+      - text: "<strong style='color: blue'>Helper Functions:</strong> Provides additional functionality for database operations, object comparisons, and AWS interactions."
+
+      code: |
+        
+        #################################### Helper Functions for Buckets ##################################################
+
+
+        def bucketNeedsUpdate(session, bucket_id: int, bucket: Dict, account_id: str) -> bool:
+            existing_bucket = session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).one()
+        ...
+        def modifyBucket(session, bucket_id: int, bucket: Dict, account_id: str) -> None:
+            session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).update({
+        ...
+        def addBucket(session: sessionmaker, bucket: Dict, account_id: str) -> str:
+            new_bucket = S3BUCKETS(
+        ...
+        def deleteBucket(session: sessionmaker, bucket_id: int) -> None:
+            session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.bucket_id == bucket_id).delete()
+        ...
+
+        ##################################### Helper Functions for Objects #################################################
+
+        def objectNeedsUpdate(existing_object, object: Dict) -> bool:
+            return (
+        ...
+        def modifyObject(session: sessionmaker, object_id: int, object: Dict) -> None:
+            session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.id == object_id).update({
+        ...
+        def addObjects(batch: list[S3BUCKETOBJECTS], count: int) -> None:
+            thread_session = getThreadsafeDatabaseSession()
+        ...
+        def deleteObjects(object_ids: list[int], count: int) -> None:
+            thread_session = getThreadsafeDatabaseSession()
+        ...
+        def chunked_iterable(iterable, size):
+            iterator = iter(iterable)
+        ...
+
+        ##################################### AWS Helper Functions #################################################
+
+        def getAccountSession(account: dict) -> boto3.session.Session:
+            session = boto3.Session()
+        ...
+        def getBucketsData(session: boto3.session.Session) -> list:
+            logger.info('Retrieving S3 bucket data from AWS...')
+        ...
+        def getDatabaseCredentials() -> dict:
+            secret_id = "arn:aws:secretsmanager:us-east-1:061039789243:secret:rds!db-555390f8-60f2-4d37-ad75-e63d8f0cbfa9-0s9oyX"
+        ...
+
+        ##################################### Database Helper Functions #################################################
+
+        def getEngine() -> create_engine:
+            credentials = getDatabaseCredentials()
+        ...
+        def getDatabaseSession() -> sessionmaker:
+            engine = getEngine()
+        ...
+        def getThreadsafeDatabaseSession() -> scoped_session:
+            engine = getEngine()
+        ...
+        def getExistingDbBuckets(session: sessionmaker, account_id: str) -> set:
+            buckets = {b.bucket: b.id for b in session.query(S3BUCKETS).filter(S3BUCKETS.account_id == account_id).all()}
+        ...
+        def getExistingDbObjects(session: sessionmaker, account_id: int) -> set:
+            objects = {
+        ...
+
+  - title: Account Lookup and Database Schema
+    tabTitle: Acct/Schema
+    subsections:
+    - content: |
+        The account lookup dictionary stores essential details required to access each of my accounts, including:
+      listItems:
+      - text: "<strong style='color: blue;'>Environment</strong> (SDLC)"
+      - text: "<strong style='color: blue;'>Account ID</strong>"
+      - text: "<strong style='color: blue;'>Region</strong>"
+      - text: "<strong style='color: blue;'>Role ARN</strong> for authentication via Boto3"
+
+    - content: |
+        This dictionary is used to retrieve existing bucket data across all accounts. Additionally, new accounts can be added in the future by following the same schema. As long as the necessary permissions are configured on the assigned role, I can seamlessly access and process account data.
+      code: |
+        
+        account_lookup = [
+            {
+                'sdlc': 'prod', # Account Environment
+                'account_id': '551796573889',
+                'region': 'us-east-1',
+                'role_arn': 'arn:aws:iam::551796573889:role/jenkinsAdminXacnt'
+            },
+            {
+                'sdlc': 'dev',
+                'account_id': '061039789243',
+                'region': 'us-east-1',
+                'role_arn': 'arn:aws:iam::061039789243:role/jenkinsAdminXacnt'
+            }
+        ]
+
+    - content: |
+        The database schema classes are defined using SQLAlchemy ORM, simplifying the process of managing the PostgreSQL database structure. <strong style="color: #006ab7;">declarative_base()</strong> initializes a base class for SQLAlchemy models, providing the metadata and functionality needed to map Python classes to database tables.<br><br>
+
+        The <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETS</strong> schema represents S3 buckets and includes a <strong style="color: #006ab7;">backref relationship</strong> to the <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETOBJECTS</strong> schema, allowing seamless access to all objects within a specific bucket. The <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETOBJECTS</strong> schema represents individual objects inside buckets and contains a <strong style="color: #006ab7;">ForeignKey relationship</strong> linking each object to its corresponding bucket in the <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETS</strong> schema. This enables efficient queries for retrieving the bucket associated with any given object.<br><br>
+
+        Together, this schema structure efficiently stores and organizes bucket and object data retrieved from AWS accounts, enabling fast queries and streamlined updates.<br><br>
+
+      code: |
+        
+        Base = declarative_base()
+        class S3BUCKETS(Base):
+            __tablename__ = 's3'
+            id = Column(Integer, primary_key=True)
+            account_id = Column(String)
+            bucket = Column(String)
+            totalSizeBytes = Column(BigInteger)
+            totalSizeKb = Column(DECIMAL)
+            totalSizeMb = Column(DECIMAL)
+            totalSizeGb = Column(DECIMAL)
+            costPerMonth = Column(DECIMAL)
+            objects = relationship('S3BUCKETOBJECTS', backref='s3objects')
+            def __repr__(self):
+                return f'Bucket {self.bucket}'
+
+        class S3BUCKETOBJECTS(Base):
+            __tablename__ = 's3objects'
+            id = Column(Integer, primary_key=True)
+            bucket_id = Column(Integer, ForeignKey('s3.id'))
+            bucket = Column(String)
+            key = Column(String)
+            sizeBytes = Column(BigInteger)
+            sizeKb = Column(DECIMAL)
+            sizeMb = Column(DECIMAL)
+            sizeGb = Column(DECIMAL)
+            costPerMonth = Column(DECIMAL)
+
+  - title: Lambda Handler Function
+    tabTitle: Lambda Handler
+    subsections:
+    - content: |
+        The Lambda handler function serves as the entry point for the backfill process. It retrieves account data from the account lookup dictionary, initiates the backfill process for each account, and logs the execution time upon completion.<br><br>
+
+        Typically, a Lambda handler is triggered by an event, such as an SQS message or an EventBridge schedule. However, in this implementation, it is manually invoked or triggered via a cron job or another scheduling mechanism using an empty event payload.<br><br>
+
+        The handler function iterates over each account in the dictionary and performs the following steps:
+
+      listItems:
+      - text: "<strong style='color: blue;'>Retrieves a session</strong> for the account using the role ARN and region."
+      - text: "<strong style='color: blue;'>Fetches all bucket data</strong> for the account using the session."
+      - text: "<strong style='color: blue;'> Initiates the backfill process</strong> by passing the retrieved bucket data to the backfill function."
+
+      code: |
+        
+        def lambda_handler(event, context):
+            logger.info("Starting backfill process...")
+            start_time = time.time()
+
+            for account in account_lookup:
+
+
+                logger.info("Retrieving existing buckets for {}...", account['account_id'])
+
+                session = getAccountSession(account)
+
+                buckets = getBucketsData(session)
+
+                logger.info("Backfilling database for {}...", account['account_id'])
+
+                backfillDatabase(buckets, account['account_id'])
+
+            end_time = time.time()
+
+          logger.info(f"Execution time: {end_time - start_time} seconds")
+    - content: |
+        The execution time is logged to monitor the impact of various optimizations. Initially, the process took over an hour, but through the applied optimizations, execution time was reduced to just minutes. These optimizations will be detailed in the following sections.<br><br>
+
+  - title: AWS Helper Functions for Sessions and Data Retrieval
+    tabTitle: AWS Functions
+    subsections:
+    - content: |
+        Before performing comparisons and backfilling the database, I first retrieve the latest bucket data from all AWS accounts and store it in memory. The following AWS helper functions facilitate this process:
+      listItems:
+      - text: "<strong style='color: blue;'>getAccountSession</strong>"
+        subList:
+        - "Retrieves a Boto3 session for the specified account using the role ARN and region. It assumes the designated role and returns a session object that allows interaction with the account’s resources."
+      - text: "<strong style='color: blue;'>getBucketsData</strong>"
+        subList:
+        - "Retrieves all bucket data for the specified account using the provided session. This function utilizes <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong> to concurrently call another function that fetches data for each bucket."
+      - text: "<strong style='color: blue;'>getBucketData</strong>"
+        subList:
+        - "Retrieves the data for a specific bucket, including the total size, cost, and objects within the bucket. This function uses a paginator to iterate through all objects in the bucket, ensuring complete data retrieval, as a non-paginated request only returns the first 1,000 objects."
+      - text: "<strong style='color: blue;'>getDatabaseCredentials</strong>"
+        subList:
+        - "Retrieves database credentials from <strong style='color: blue;'>AWS Secrets Manager</strong>. These credentials are used to establish a PostgreSQL database connection via SQLAlchemy."
+    - content: |
+        <strong style="color: #006ab7;">getAccountSession</strong><br><br> 
+        This function creates a <strong style='color: #006ab7;'>boto3 session</strong> for interacting with AWS resources. The role (or user) executing the script must have the required permissions to assume the specified role in the account lookup dictionary.<br><br>
+
+        For this implementation, I am assuming a cross account role from another project. This role:
+
+      listItems:
+      - text: "Has permissions to be assumed by the role I am using"
+      - text: "Grants access to all AWS operations required in the script, including:"
+        subList:
+        - "Secret retrieval (AWS Secrets Manager)"
+        - "S3 bucket data retrieval"
+      code: |
+        
+        def getAccountSession(account: dict) -> boto3.session.Session:
+            session = boto3.Session()
+            sts = session.client('sts')
+            response = sts.assume_role(
+                RoleArn=account['role_arn'],
+                RoleSessionName='s3-backfill',
+                DurationSeconds=900
+            )
+            credentials = response['Credentials']
+            account_session = boto3.Session(
+                aws_access_key_id=credentials['AccessKeyId'],
+                aws_secret_access_key=credentials['SecretAccessKey'],
+                aws_session_token=credentials['SessionToken'],
+                region_name=account['region']
+            )
+            return account_session
+
+      imgs:
+      - /assets/project-images/backfill-images/backfill5_1.png
+      - /assets/project-images/backfill-images/backfill5_2.png
+    - content: |
+        For each account, two functions work together to concurrently retrieve all current AWS bucket data.<br><br>
+
+        <strong style='color: #006ab7;'>getBucketsData</strong><br><br> 
+        This lists the buckets in each account and calls the <strong style='color: #006ab7;'>getBucketData</strong> function in parallel for each bucket. This setup follows the common threading pattern I have been using where a parent function spawns threads to execute a worker function concurrently.
+
+      code: |
+        
+        def getBucketsData(session: boto3.session.Session) -> list:
+        logger.info('Retrieving S3 bucket data from AWS...')
+        bucket_list = []
+
+        s3 = session.client('s3')
+        buckets = s3.list_buckets()
+
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(getBucketData, s3, bucket['Name']) for bucket in buckets['Buckets']]
+            for future in futures:
+                try:
+                    bucket_list.append(future.result())
+                except Exception as e:
+                    logger.error(f'Error retrieving bucket data: {str(e)}')
+
+        logger.info('Current AWS bucket data retrieved.')
+        return bucket_list
+    - content: |
+        <strong style='color: #006ab7;'>getBucketData</strong><br><br> 
+        This function retrieves metadata for each specific bucket. This function uses a paginator to iterate through all objects in the bucket as a non-paginated response will only return the first 1000 objects in a bucket. It then stores the bucket data in a dictionary, which is returned to the calling function and compiled into a list.<br><br>
+
+        The following key fields are captured:
+      listItems:
+      - text: "<strong style='color: blue;'>Bucket Name</strong>"
+      - text: "<strong style='color: blue;'>Size (Bytes, KB, MB, GB)</strong>"
+      - text: "<strong style='color: blue;'>Estimated Monthly Cost</strong>"
+      - text: "<strong style='color: blue;'>Hashed Value</strong> for quick object comparison"
+
+      code: |
+        
+        def getBucketData(s3, bucket_name: str) -> dict:
+        logger.info(f'Retrieving data for bucket {bucket_name}...')
+        bucket_dict = {
+            'bucket': bucket_name,
+            'totalSizeBytes': 0,
+            'totalSizeKb': 0,
+            'totalSizeMb': 0,
+            'totalSizeGb': 0,
+            'costPerMonth': 0,
+            'objects': []
+        }
+
+        paginator = s3.get_paginator('list_objects_v2')
+        object_list = []
+        total_bucket_cost = 0
+
+        object_iterator = paginator.paginate(Bucket=bucket_name)
+        for page in object_iterator:
+            if 'Contents' in page:
+                for obj in page['Contents']:
+                    object_dict = {
+                        'key': obj['Key'],
+                        'bucket': bucket_name,
+                        'sizeBytes': obj['Size'],
+                        'sizeKb': round(obj['Size'] / 1024, 2),
+                        'sizeMb': round(obj['Size'] / (1024 * 1024), 2),
+                        'sizeGb': round(obj['Size'] / (1024 * 1024 * 1024), 4),
+                    }
+                    object_dict['costPerMonth'] = object_dict['sizeGb'] * 0.023
+                    object_dict['hash'] = hash((object_dict['sizeBytes'], object_dict['costPerMonth']))
+                    total_bucket_cost += object_dict['costPerMonth']
+                    object_list.append(object_dict)
+
+        bucket_dict['totalSizeBytes'] = sum([obj['sizeBytes'] for obj in object_list])
+        bucket_dict['totalSizeKb'] = round(sum([obj['sizeKb'] for obj in object_list]), 4)
+        bucket_dict['totalSizeMb'] = round(sum([obj['sizeMb'] for obj in object_list]), 4)
+        bucket_dict['totalSizeGb'] = round(sum([obj['sizeGb'] for obj in object_list]), 4)
+        bucket_dict['costPerMonth'] = round(total_bucket_cost, 6)
+        bucket_dict['objects'] = object_list
+
+        return bucket_dict
+
+    - content: |
+        <strong style='color: #006ab7;'>getDatabaseCredentials</strong><br><br>
+        The last function is simply a helper function to get credentials from <strong style='color: #006ab7;'>AWS Secrets Manager</strong> and returns them as a dictionary. The credentials will then be used to connect to my PostgreSQL database using SQLAlchemy ORM. Secrets Manager includes services like secrets encryption and managed secrets rotation, so it is a good choice for storing sensitive database credentials.
+      code: |
+        
+        def getDatabaseCredentials() -> dict:
+        secret_id = "arn:aws:secretsmanager:us-east-1:061039789243:secret:rds!db-555390f8-60f2-4d37-ad75-e63d8f0cbfa9-0s9oyX"
+        region = "us-east-1"
+        session = boto3.session.Session()
+        client = session.client('secretsmanager', region_name=region)
+
+        try:
+            secret_response = client.get_secret_value(SecretId=secret_id)
+            secret = secret_response['SecretString']
+            json_secret = json.loads(secret)
+            credentials = {
+                'username': json_secret['username'],
+                'password': json_secret['password']
+            }
+            return credentials
+        except ClientError as e:
+            raise e
+
+  - title: Backfill Main Function Logic
+    tabTitle: Backfilling
+    subsections:
+    - content: |
+        Now that all of the historical bucket data has been retrieved from AWS, the main backfill function is called and orchestrates the backfill process for each account. This acts as the central hub for processing the existing bucket data and managing any required database updates. At a high level, the backfill performs the following steps:
+      listItems:
+      - text: "Receives existing bucket data from AWS as a parameter."
+      - text: "Session is initialized and existing database buckets and objects are retrieved."
+      - text: "Buckets are processed in parallel using a <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong>. Processing includes:"
+        subList:
+        - "<strong style='color: blue;'>Adding</strong> new buckets to the database."
+        - "<strong style='color: blue;'>Modifying</strong> existing bucket metadata as needed."
+        - "<strong style='color: blue;'>Queueing</strong> objects to be added to the database."
+        - "<strong style='color: blue;'>Modifying</strong> existing objects metadata as needed."
+        - "<strong style='color: blue;'>Incrementing</strong> set of current object keys from AWS bucket data."
+      - text: "Adds queued new objects to the database in <strong style='color: blue;'>batches</strong> using a <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong>."
+      - text: "Checks for stale objects to be deleted from the database with a <strong style='color: blue;'>set comparison</strong>."
+      - text: "Deletes stale objects in <strong style='color: blue;'>batches</strong> using <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong>"
+      - text: "Checks for stale buckets in the database with a set comparison."
+      - text: "Deletes stale buckets from the database."
+      imgs:
+      - /assets/project-images/backfill-images/backfill_function_diagram.png
+    - content: |
+        The function first initializes several data objects to store information to be used in comparison with existing bucket data in AWS. The first of these is a set to store the keys of current objects in AWS as the buckets are processed. This is incrementally updated as each bucket is processed and using a Python set eliminates the need for duplcate checking.<br><br>
+
+        A list is then initialized that will be incrementally updated with objects that will need to be added to the database later in the process. This happens inside of the <strong style="color: green;">processBucket</strong> function. This list will then be broken up into batches and added to the database in parallel.<br><br>
+
+      #   A database session object is retrived using a helper function to retrieve the existing buckets and objects from the database, stored in the following format:
+
+      #   existing_db_buckets = {bucket_name: bucket_id}
+      #   existing_db_objects = {(bucket_id, object_key): {'id': object_id, 'hash': hash}}
+
+      #   There are several reasons for using this dictionary structure for the existing database objects. First, the bucket id and object id are used as a composite key to allow for fast lookups of objects unique to each bucket, avoiding the possibility of duplicate object names across buckets. More importantly, the object id and object hash values allow for extremely fast comparisons between objects in AWS and objects in the database as the current objects retrieved from AWS are also assigned a unique hash value that can be compared to the hash value of the existing object in the database. This results in a constant-time complexity (O(1)) for existing object comparison, which is crucial aspect for the performance of the overall process.
+      code: |+
+        
+        def backfillDatabase(buckets: List[dict], account_id: str) -> dict:
+            try:
+              current_keys = set()
+              objects_to_add = []
+              session = getDatabaseSession()
+              existing_db_buckets = getExistingDbBuckets(session, account_id)
+              existing_db_objects = getExistingDbObjects(session, account_id)
+
+    - content: |
+        Now that the existing data is stored, the function can now process the data and update the database as needed. The function iterates over each bucket in the list of buckets retrieved from AWS and processes them in parallel using the <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong>. I will go over this process in depth in the next section.<br><br>
+
+        The current buckets and objects in AWS are stored as seperate <strong style="color: #006ab7">sets</strong> for efficient comparison with the existing buckets in the database. This process is used for both object and bucket deletion. Using sets is highly efficient because Python's set data structure supports <strong style="color: #006ab7">constant-time membership checking</strong> and operations like <strong style="color: #006ab7">set subtraction</strong>.<br><br>
+
+        By comparing the two sets—one containing data from AWS and the other from the database—the differences between them represent the buckets or objects that need to be added to or removed from the database. This approach eliminates the need to iterate over large datasets manually and leverages Python's built-in set operations to save both time and computational resources.<br><br>
+
+        Using set operations in Python, rather than iterating through lists or dictionaries, is an effective way to optimize performance and streamline the process of reconciling AWS and database data.<br><br>
+      code: |
+        
+        logger.info('Processing any new buckets and objects...')
+
+        with ThreadPoolExecutor() as executor:
+            futures = [
+                executor.submit(processBucket, bucket, existing_db_buckets, existing_db_objects, account_id, current_keys, objects_to_add) for bucket in buckets
+            ]
+            for future in futures:
+                try:
+                    future.result()
+                except Exception as e:
+                    logger.error(f'Error processing bucket: {str(e)}')
+
+
+        current_buckets = {bucket['bucket'] for bucket in buckets}
+
+        logger.info('Buckets processed.')
+
+    - content: |
+        Now that I have queued up the list of new objects, they can now be batched and added to the database in parallel using the <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong>. 
+        <br><br>
+        Here, I am using a helper function to break the database objects into smaller, more manageable chunks for for batch processing. In a future section, I will go over the specifics of how the function returns each generator chunk and why this method is helpful. I have also <strong style="color: red">enumerated</strong> the batches to keep track the status of each batch as they are processed in parallel.<br><br>
+      code: |+
+        
+        logger.info('Checking for objects to add...')
+
+        if objects_to_add:
+            logger.info('Adding new objects')
+            logger.info(f'Batching {len(objects_to_add)} objects to add to the database...')
+            batch_size = 100
+            logger.info(f'Batch size: {batch_size}')
+            logger.info(f'Number of batches: {len(objects_to_add) // batch_size}')
+            objects_to_add_batches = chunked_iterable([obj for obj in objects_to_add], batch_size)
+
+            with ThreadPoolExecutor() as executor:
+                futures = [
+                    executor.submit(addObjects, batch, count)
+                    for count, batch in enumerate(objects_to_add_batches)
+                ]
+                for future in futures:
+                    try:
+                        future.result()
+                    except Exception as e:
+                        logger.error(f'Error adding objects: {str(e)}')
+
+    - content: |
+        After the new objects have been added to the database, I now do some cleanup on any stale objects that may exist in the database. As stated earlier, I am using a <strong style='color: #006ab7;'>set subtraction</strong> (or set difference) operation to find the objects that need to be deleted from the database. The objects are then similarly batched and processed in parallel using the <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong>.<br><br>
+      code: |+
+        
+        logger.info('Checking for objects to delete...')
+        objects_to_delete = set(existing_db_objects.keys()) - current_keys
+
+        if objects_to_delete:
+            logger.info(f'Batching {len(objects_to_delete)} objects for deletion')
+            batch_size = 100
+            logger.info(f'Batch size: {batch_size}')
+            logger.info(f'Number of batches: {len(objects_to_delete) // batch_size}')
+            
+            objects_to_delete_batches = chunked_iterable([existing_db_objects[obj]['id'] for obj in objects_to_delete], batch_size)
+            with ThreadPoolExecutor() as executor:
+                futures = [
+                    executor.submit(deleteObjects, batch, count)
+                    for count, batch in enumerate(objects_to_delete_batches)
+                ]
+                for future in futures:
+                    try:
+                        future.result()
+                    except Exception as e:
+                        logger.error(f'Error deleting objects: {str(e)}')
+            
+
+    - content: |
+        Finally, the buckets can be deleted one by one if there are any stale buckets in the database. The function to delete buckets will also empty all associated objects from the database. Given that this is a less likely scenario and there are far less buckets than objects, this can be done in a single thread without the need for batching. It is possible that there may be a large number of objects to delete from a stale bucket in the database, but typically this can be handled in one operation as these should have been picked up by the automation set up in <a href="/projects/event">my previous project</a>.<br><br>
+      code: |
+        
+        logger.info('Checking for buckets to delete...')
+        buckets_to_delete = set(existing_db_buckets.keys()) - current_buckets
+
+        if buckets_to_delete:
+            for bucket in buckets_to_delete:
+                logger.info(f'Deleting bucket from database {bucket}')
+                deleteBucket(session, existing_db_buckets[bucket])
+
+        except Exception as e:
+            session.rollback()
+            return {
+                'statusCode': 500,
+                'body': json.dumps(f'An error occurred: {e}')
+            }
+        finally:
+            session.commit()
+            session.close()
+
+  - title: Parallel Bucket Processing Function
+    tabTitle: Bucket Processing
+    subsections:
+    - content: |
+        The <strong style='color: green;'>processBucket</strong> function is called first from within the backfill function. This is the first step for the actual backfilling process and performs several operations on each bucket, including:
+      listItems:
+      - text: "Comparing AWS buckets with existing database buckets."
+        subList:
+        - "<strong style='color: blue'>Modifying</strong> existing bucket metadata."
+        - "<strong style='color: blue'>Adding</strong> new buckets to the database."
+      - text: "Comparing AWS objects with existing database objects (using <strong style='color: blue'>hashed metadata values</strong>)."
+        subList:
+        - "<strong style='color: blue'>Modifying</strong> existing object metadata as needed."
+        - "<strong style='color: blue'>Queuing</strong> objects to be added to the database."
+      - text: "<strong style='color: blue'>Incrementing</strong> the set of <strong style='color: blue'>current object keys</strong> from AWS bucket data."
+
+    - content: |
+        The function <strong style='color: #006ab7'>queues objects to be added to the database instead of adding them directly</strong>. This decoupled approach minimizes direct database writes and improves scalability by batching the additions, which are processed later in parallel for better performance.
+        <br><br>
+        In contrast, object modifications are handled immediately within the threaded context since they are infrequent and only occur when an object with the same name but different metadata is found. By comparing object hashes in memory, modifications can be quickly identified and applied without needing additional database lookups, ensuring efficient updates with minimal overhead.<br><br>
+      imgs:
+      - /assets/project-images/backfill-images/backfill_bucketprocess_diagram.png
+
+    - content: ""
+      listItems:
+      - text: "<strong style='color: blue;'>bucket</strong>:"
+        subList:
+        - "The current bucket being processed."
+      - text: "<strong style='color: blue;'>existing_db_buckets</strong>:"
+        subList:
+        - "A dictionary of existing database buckets."
+      - text: "<strong style='color: blue;'>existing_db_objects</strong>:"
+        subList:
+        - "A dictionary of existing database objects."
+      - text: "<strong style='color: blue;'>account_id</strong>:"
+        subList:
+        - "The account ID associated with the bucket."
+      - text: "<strong style='color: blue;'>current_keys</strong>:"
+        subList:
+        - "A set of current object keys from AWS."
+      - text: "<strong style='color: blue;'>objects_to_add</strong>:"
+        subList:
+        - "A list of objects to be added to the database."
+
+    - content: |
+        The function first checks the database for an existing corresponding bucket ID. Using a <strong style='color: #006ab7;'>thread-safe database session</strong>, I either update the bucket's metadata if changes are needed or add it as a new entry if it doesn’t exist. All actions are logged for monitoring and debugging.<br><br>
+
+        The <strong style='color: #006ab7;'>thread-safe database session</strong> ensures that multiple threads can access the database concurrently without conflicts or data corruption. This is crucial in a multi-threaded environment, such as when using <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong>, where multiple buckets might be processed simultaneously. By isolating each thread’s database operations, the session prevents race conditions (errors that occur when multiple threads access shared data), ensures data integrity, and maintains consistent performance across all threads.<br><br>
+
+      code: |
+        
+        def processBucket(bucket: Dict, existing_db_buckets: Dict, existing_db_objects: Dict, account_id: str, current_keys: set, objects_to_add: list[S3BUCKETOBJECTS]) -> None:
+            bucket_id = existing_db_buckets.get(bucket['bucket'])
+
+            thread_session = getThreadsafeDatabaseSession()
+            if bucket_id:
+                if bucketNeedsUpdate(thread_session, bucket_id, bucket, account_id):
+                    modifyBucket(thread_session, bucket_id, bucket, account_id)
+                    logger.info(f'Bucket {bucket["bucket"]} updated.')
+            else:
+                logger.info(f'Adding bucket {bucket["bucket"]} to the database.')
+                bucket_id = addBucket(thread_session, bucket, account_id)
+
+    - content: |
+        The function then iterates over all objects in the bucket, identifying each by a composite key (bucket ID and object key). Existing objects are compared using their <strong style='color: #006ab7;'>hash values</strong> for efficient comparisons. Modified objects are updated immediately, while new objects are queued for batch addition later.
+      code: |
+        
+        for obj in bucket['objects']:
+            object_key = (bucket_id, obj['key'])
+            if object_key in existing_db_objects:
+                existing_object = existing_db_objects[object_key]
+                if objectNeedsUpdate(existing_object, obj):
+                    modifyObject(thread_session, existing_object['id'], obj)
+            else:
+                objects_to_add.append({
+                    'bucket_id': bucket_id,
+                    'obj': obj
+                })
+
+    - content: |
+        Lastly, a set of current object keys that were previously retrieved from AWS is incremented using a <strong style='color: #006ab7;'>set union</strong> operation. This will be used with the object deletions similar to the object additions. After processing, the session commits changes and is removed.<br><br>
+      code: |
+        
+        current_keys |= ({object_key})
+
+        logger.info(f'Existing object hashes in {bucket["bucket"]} checked.')
+
+        thread_session.commit()
+        thread_session.remove()
+
+  - title: Functions for Processing Buckets
+    tabTitle: Bucket Functions
+    subsections:
+    - content: |
+        The operations to check and update buckets have been broken down into several differet helper functions. While these functions are NOT themselves called in parallel, they are called from the main <strong style='color: green;'>processBucket</strong> function that is threaded. This means a <strong style='color: #006ab7;'>thread-safe database session</strong> is used to ensure that multiple threads can access the database concurrently without conflicts or data corruption. This is neccessary in a multi-threaded environment where multiple buckets might be processed simultaneously. The functions and operations performed are:
+      listItems:
+      - text: "<strong style='color: blue;'>bucketNeedsUpdate</strong>:"
+        subList:
+        - "Checks if the bucket metadata needs to be updated."
+      - text: "<strong style='color: blue;'>modifyBucket</strong>:"
+        subList:
+        - "Updates the bucket metadata in the database."
+      - text: "<strong style='color: blue;'>addBucket</strong>:"
+        subList:
+        - "Adds a new bucket to the database."
+      - text: "<strong style='color: blue;'>deleteBucket</strong>:"
+        subList:
+        - "Deletes a bucket and all associated objects from the database."
+    - content: |
+        <strong style='color: #006ab7;'>bucketNeedsUpdate</strong><br><br> 
+        Existing bucket metadata in the database is compared against current AWS data. If a difference in overall size is detected—due to objects being added, removed, or modified—it returns <strong style='color: #006ab7;'>True</strong>, indicating that an update is needed. Instead of checking a hash value for this comparison, the total size of the bucket is used as a simple and effective metric for determining if the bucket needs updating.
+      code: |
+        
+        def bucketNeedsUpdate(session, bucket_id: int, bucket: Dict, account_id: str) -> bool:
+        existing_bucket = session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).one()
+        return (
+            existing_bucket.totalSizeBytes != bucket['totalSizeBytes']
+        )
+    - content: |
+        <strong style='color: #006ab7;'>modifyBucket</strong><br><br> 
+        When an update is required, the total sizes and cost of the bucket in the database are modified to reflect the latest AWS data. This process is triggered when a change is detected from the <strong style='color: #006ab7;'>bucketNeedsUpdate</strong> function. The function updates the total sizes and cost of the bucket in the database.
+
+      code: |
+        
+        def modifyBucket(session, bucket_id: int, bucket: Dict, account_id: str) -> None:
+        session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).update({
+            "account_id": account_id,
+            "totalSizeBytes": bucket["totalSizeBytes"],
+            "totalSizeKb": bucket["totalSizeKb"],
+            "totalSizeMb": bucket["totalSizeMb"],
+            "totalSizeGb": bucket["totalSizeGb"],
+            "costPerMonth": bucket["costPerMonth"],
+        })
+        session.commit()
+
+    - content: |
+        <strong style='color: #006ab7;'>addBucket</strong><br><br>
+        New buckets are added to the database when no matching bucket ID is found. A new <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETS</strong> database object is created with the retrieved data and added to the session for commit. This function is run synchronously and is not called in parallel due to buckets being far less numerous than objects.
+
+      code: |
+        
+        def addBucket(session: sessionmaker, bucket: Dict, account_id: str) -> str:
+        new_bucket = S3BUCKETS(
+            account_id=account_id,
+            bucket=bucket['bucket'],
+            totalSizeBytes=bucket['totalSizeBytes'],
+            totalSizeKb=bucket['totalSizeKb'],
+            totalSizeMb=bucket['totalSizeMb'],
+            totalSizeGb=bucket['totalSizeGb'],
+            costPerMonth=bucket['costPerMonth']
+        )
+        session.add(new_bucket)
+        session.commit()
+        return new_bucket.id
+
+    - content: |
+        <strong style='color: #006ab7;'>deleteBucket</strong><br><br> 
+        Stale buckets are removed along with any associated objects that may have been missed. When a bucket is flagged for deletion, all related objects are deleted first, followed by the bucket itself. This is going to be a much less likely scenario, but crucial for maintaining data integrity and ensuring that the database remains up-to-date with the latest AWS data.
+
+      code: |
+        
+        def deleteBucket(session: sessionmaker, bucket_id: int) -> None:
+        session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.bucket_id == bucket_id).delete()
+        session.query(S3BUCKETS).filter(S3BUCKETS.id == bucket_id).delete()
+        session.commit()
+
+  - title: Functions for Processing Objects
+    tabTitle: Object Functions
+    subsections:
+    - content: |
+        Similar to the helper functions for processing buckets, the operations to check and update objects have been broken down into the following functions. Contrary to the way process bucket is called in parallel from the main function, the <strong style='color: #006ab7;'>addition</strong> and <strong style='color: #006ab7;'>deletion functions are called in parallel</strong> from the main function after the objects have been queued up for addition or deletion from the bucket processing function. As stated previously, this is due to the fact that most of the operations will be object-level, and separating this out allows me to take advantage of the performance benefits of threading and batch processing to drastically reduce the overall backfill time. The functions and operations performed are:
+      listItems:
+      - text: "<strong style='color: blue;'>objectNeedsUpdate</strong>:"
+        subList:
+        - "Checks if the object metadata needs to be updated."
+      - text: "<strong style='color: blue;'>modifyObject</strong>:"
+        subList:
+        - "Updates the object metadata in the database."
+      - text: "<strong style='color: blue;'>addObjects</strong>:"
+        subList:
+        - "Adds new objects to the database in batches."
+      - text: "<strong style='color: blue;'>deleteObjects</strong>:"
+        subList:
+        - "Deletes objects from the database in batches."
+      - text: "<strong style='color: blue;'>chunked_iterable</strong>:"
+        subList:
+        - "Breaks a list of objects into smaller chunks for batch processing."
+    - content: |
+        <strong style='color: #006ab7;'>objectNeedsUpdate</strong><br><br>
+        The existing object metadata in the database is compared against current AWS object data. Unlike bucket-level comparisons, <strong style="color: #006ab7">the entire object metadata is hashed</strong> and matched to the stored hash, allowing for constant-time checks. If a size difference is detected, it returns <strong style='color: #006ab7;'>True</strong>, signaling the need for an update. This check runs in a threaded context within <strong style='color: green;'>processBucket</strong> function.
+
+      code: |
+        
+        def objectNeedsUpdate(existing_object, object: Dict) -> bool:
+        return (
+            existing_object['hash'] != object['hash']
+        )
+    - content: |
+        <strong style='color: #006ab7;'>modifyObject</strong><br><br> 
+        When an update is required, the existing database entry is modified with the latest size and cost details from AWS. It is triggered when a change is detected and also runs within <strong style='color: green;'>processBucket</strong>. This function, combined with the <strong style='color: #006ab7;'>objectNeedsUpdate</strong> function, ensures that only objects with altered metadata are updated in the database.
+      code: |
+        
+        def modifyObject(session: sessionmaker, object_id: int, object: Dict) -> None:
+        session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.id == object_id).update({
+            "sizeBytes": object["sizeBytes"],
+            "sizeKb": object["sizeKb"],
+            "sizeMb": object["sizeMb"],
+            "sizeGb": object["sizeGb"],
+            "costPerMonth": object["costPerMonth"]
+        })
+        session.commit()
+
+    - content: |
+        <strong style='color: #006ab7;'>addObjects</strong><br><br> 
+        New objects are added to the database in batches, leveraging threading and batch processing for efficiency. This runs in parallel and is called from the main function after <strong style='color: green;'>processBucket</strong> has identified new objects. A new <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETOBJECTS</strong> database object is created with the retrieved data and added to the session for commit.
+      code: |
+        
+        def addObjects(batch: list[S3BUCKETOBJECTS], count: int) -> None:
+        thread_session = getThreadsafeDatabaseSession()
+        logger.info(f'Adding batch #{count} to the database...')
+        for obj in batch:
+            new_object = S3BUCKETOBJECTS(
+                bucket_id=obj['bucket_id'],
+                bucket=obj['obj']['bucket'],
+                key=obj['obj']['key'],
+                sizeBytes=obj['obj']['sizeBytes'],
+                sizeKb=obj['obj']['sizeKb'],
+                sizeMb=obj['obj']['sizeMb'],
+                sizeGb=obj['obj']['sizeGb'],
+                costPerMonth=obj['obj']['costPerMonth']
+            )
+            thread_session.add(new_object)
+        thread_session.commit()
+        thread_session.remove()
+        logger.info(f'Batch #{count} added to the database.')
+
+    - content: |
+        <strong style='color: #006ab7;'>deleteObjects</strong><br><br> 
+        Deletions, though less common, are also handled in batches and run in parallel to optimize performance when a large number of objects need removal. This process begins after all new objects have been added.
+
+      code: |
+        
+        def deleteObjects(object_ids: list[int], count: int) -> None:
+        thread_session = getThreadsafeDatabaseSession()
+        logger.info(f'Deleting batch #{count}')
+        thread_session.query(S3BUCKETOBJECTS).filter(S3BUCKETOBJECTS.id.in_(object_ids)).delete(synchronize_session='fetch')
+        logger.info(f'Batch #{count} deleted.')
+        thread_session.commit()
+        thread_session.remove()
+    - content: |
+        <strong style='color: #006ab7;'>chunked_iterable</strong><br><br> 
+        To support batch operations, a helper function splits object lists into smaller, manageable chunks for parallel processing. It ensures efficient database transactions for both additions and deletions. This function is used in the <strong style='color: #006ab7;'>addObjects</strong> and <strong style='color: #006ab7;'>deleteObjects</strong> to create batches of objects for addition or deletion from the database.
+
+      code: |+
+        
+        def chunked_iterable(iterable, size):
+        iterator = iter(iterable)
+        for first in iterator:
+            yield [first] + list(islice(iterator, size - 1))
+
+  - title: Database Retrieval and Helper Functions
+    tabTitle: Database Functions
+    subsections:
+    - content: |
+        As a summary so far, I have covered the <strong style='color: #006ab7;'>overall structure</strong> of the script, the <strong style='color: #006ab7;'>object schema</strong> for our database ORM objects, the main <strong style='color: #006ab7;'>lambda_handler</strong> or entry point for the script, the main threaded <strong style='color: #006ab7;'>backfill "orchestrator"</strong> function, the functions for helping to retrieve of <strong style='color: #006ab7;'>S3 data from AWS</strong>, and the functions for <strong style='color: #006ab7;'>processing buckets and objects</strong>.<br><br>
+
+        The following functions serve as the foundational components for managing and retrieving data from the <strong style='color: #006ab7;'>PostgreSQL</strong> database. They facilitate secure connections, create sessions for querying data, and retrieve specific records related to S3 buckets and objects. Logically separating these operations into functions allows for better organization, maintainability, and reusability of the codebase. The functions and operations performed are:
+
+      listItems:
+      - text: "<strong style='color: blue;'>getEngine</strong>:"
+        subList:
+        - "Establishes a connection to the PostgreSQL database and returns a SQLAlchemy engine object for database interactions."
+      - text: "<strong style='color: blue;'>getDatabaseSession</strong>:"
+        subList:
+        - "Creates a standard database session and returns a SQLAlchemy session instance for executing queries."
+      - text: "<strong style='color: blue;'>getThreadsafeDatabaseSession</strong>:"
+        subList:
+        - "Generates a thread-safe session using scoped_session and returns a scoped session instance for concurrent access."
+      - text: "<strong style='color: blue;'>getExistingDbBuckets</strong>:"
+        subList:
+        - "Queries the S3BUCKETS table to retrieve all bucket IDs for a given AWS account and returns a set of bucket IDs (set[str])."
+      - text: "<strong style='color: blue;'>getExistingDbObjects</strong>:"
+        subList:
+        - "Retrieves S3 objects associated with an account, joins relevant tables, and returns a dictionary of object metadata (dict[tuple, dict])."
+
+    - content: |
+        <strong style='color: #006ab7;'>getEngine</strong><br><br> 
+        A connection is established to the PostgreSQL database by retrieving credentials and creating a SQLAlchemy engine. This function ensures that all database interactions use a centralized connection mechanism, preventing redundant credential retrieval and enabling efficient query execution.
+
+      code: |+
+        
+        def getEngine() -> create_engine:
+            credentials = getDatabaseCredentials()
+            engine = create_engine(
+                f'postgresql://{credentials["username"]}:{credentials["password"]}@resources.czmo2wqo0w7e.us-east-1.rds.amazonaws.com:5432'
+            )
+            return engine
+
+    - content: |
+        <strong style='color: #006ab7;'>getDatabaseSession</strong><br><br>
+        This creates a standard SQLAlchemy session that allows for database interactions. This function is crucial for executing queries and managing transactions while maintaining a clean and reusable session structure.
+
+      code: |+
+        
+        def getDatabaseSession() -> sessionmaker:
+            engine = getEngine()
+            Session = sessionmaker(bind=engine)
+            session = Session()
+            return session
+
+    - content: |
+        <strong style='color: #006ab7;'>getThreadsafeDatabaseSession</strong><br><br> 
+        This function, on the other hand, generates a thread-safe session using scoped_session, ensuring safe and concurrent database access in multi-threaded environments. This is particularly useful when handling high-volume operations that require database consistency across multiple threads. The scoped_session must be used in order to ensure that no conflicts arise when multiple threads access the database concurrently.
+
+      code: |+
+        
+        def getThreadsafeDatabaseSession() -> scoped_session:
+            engine = getEngine()
+            session_factory = sessionmaker(bind=engine)
+            session = scoped_session(session_factory)
+            return session
+
+    - content: |
+        <strong style='color: #006ab7;'>getExistingDbBuckets</strong><br><br>
+        The <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETS</strong> table is queried to retrieve all bucket IDs associated with a given AWS account. This function helps track existing S3 buckets within the system and ensures that only known and valid buckets are processed in subsequent operations.
+
+      code: |
+        
+        def getExistingDbBuckets(session: sessionmaker, account_id: str) -> set:
+            buckets = {b.bucket: b.id for b in session.query(S3BUCKETS).filter(S3BUCKETS.account_id == account_id).all()}
+            return buckets
+    - content: |
+        This buckets set is returned in the following format:
+      code: |
+        
+        existing_db_buckets = {bucket_name: bucket_id}
+
+    - content: |
+        This dictionary structure allows for quick lookups of bucket IDs based on bucket names, reducing the need for repeated database queries. By storing bucket names as keys, the function enables <strong style='color: #006ab7;'>O(1) retrieval</strong> when checking if a bucket already exists, which optimizes performance when processing large datasets.
+
+    - content: |
+        <strong style='color: #006ab7;'>getExistingDbObjects</strong><br><br>
+        This will then retrieve metadata for all objects stored in S3 that are linked to a specific AWS account from the <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETOBJECTS</strong> table. It joins the <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETOBJECTS</strong> and <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">S3BUCKETS</strong> tables to ensure objects are mapped correctly to their respective accounts. The function returns object details in a structured format, including hashed metadata for efficient change detection.
+
+      code: |+
+        
+        def getExistingDbObjects(session: sessionmaker, account_id: int) -> set:
+            objects = {
+                (obj.bucket_id, obj.key): {
+                    "id": obj.id, 
+                    "hash": hash((obj.sizeBytes, obj.costPerMonth))
+                } 
+                for obj in session.query(S3BUCKETOBJECTS).join(S3BUCKETS, S3BUCKETS.id == S3BUCKETOBJECTS.bucket_id).filter(
+                    S3BUCKETS.account_id == account_id
+                ).all()
+            }
+            return objects
+
+    - content: |
+        This objects set is returned in the following format:
+      code: |
+        
+        existing_db_objects = {(bucket_id, object_key): {"id": object_id, "hash": hash_value}}
+
+    - content: |
+        Using a <strong style='color: #006ab7;'>composite key (bucket_id, object_key)</strong> ensures that objects are uniquely identified within their respective buckets, preventing conflicts from duplicate object names across buckets. Additionally, storing a precomputed hash value for each object allows for <strong style='color: #006ab7;'>O(1) comparisons</strong> between AWS objects and database records, making it efficient to detect updates while minimizing computational overhead.
+
+  - title: Summary
+    tabTitle: Summary
+    subsections:
+
+    - content: |
+        Databases and large datasets have always fascinated me. I recently read an article called <a href="https://www.npr.org/2024/01/03/1198909057/brain-struggles-big-numbers-neuroscience" target="_blank" rel="noopener noreferrer">Why big numbers break our brains</a>, which explains how our minds struggle to comprehend massive numbers like millions and billions. We rely on analogies and visualizations to make sense of them, which resonates with me when working on backfill scripts. These projects involve handling enormous datasets, and the challenge of optimizing them as they scale is like solving an ever-evolving puzzle. That constant adaptation is what draws me to data work—it keeps me learning and refining my approach.
+      imgs:
+      - /assets/project-images/backfill-images/trillion-dollar-image.jpg
+    - content: |
+        Backfilling was something I had encountered professionally but never explored deeply. Whether it's syncing S3 object metadata with a database, restoring records after a migration, or ensuring analytics dashboards reflect complete data, backfilling efficiently is crucial. I wanted to push my skills further by making the process faster, scalable, and less resource-intensive. This led me into threading, batch processing, and database optimization. The deeper I went, the more I realized how many ways there are to improve efficiency, and this project was just the beginning.<br><br> 
+
+        The below logs are from one of the final test benchmarks and really shows how much these optimizations paid off. Initially, the script took nearly an hour to run—impractical for AWS Lambda’s time limits. That was my first realization that multi-threading could drastically improve performance by processing multiple buckets and objects concurrently. Python’s <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong> made it easy to spin up threads, but that introduced a new issue—database sessions. Sharing a session across threads caused conflicts, so I switched to scoped sessions to ensure each thread had its own connection, which cleaned up the errors instantly.
+      imgs:
+      - /assets/project-images/backfill-images/backfill_coderun.gif
+    - content: |
+        The biggest improvement came with batch processing. Processing one object at a time, even in parallel, was inefficient. Grouping additions and deletions into chunks dramatically reduced database transactions, speeding things up even further. Structured logging with Loguru was another game changer, allowing me to track execution flow, debug issues, and pinpoint bottlenecks in real-time.<br><br>
+
+        Seeing the transformation from a slow, single-threaded script to a multi-threaded, batch-optimized process that runs in minutes instead of an hour was incredibly rewarding. This project reinforced how small, thoughtful optimizations can have a massive impact, and I’ll be taking these lessons with me into future work.
+    # - content: |
+    #       <strong style="color: rgb(0, 255, 0);">greencode</strong>
+    #       <strong style="color: rgb(172, 172, 255);">blueishcode</strong>
+    #         <strong style="color: red;">redcode</strong>
+    #         <strong style="color: orange;">orangecode</strong>
+    #         <strong style='color: #006ab7;'>purptext</strong>
+    #         <strong style='color: blue;'>bluetext</strong>
+

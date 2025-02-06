@@ -1,0 +1,273 @@
+- id: usermgmt
+  title: User Management System
+  subtitle: A Scalable Account Creation, Authorization and Management System for Web Application Users.
+  github: https://github.com/syuhas/flaskdb
+  description: |
+    A functional user management system with registration, login authorization, database management and email validation.
+  listIcon: /assets/project-images/usermgmt-images/usermgmt_icon1.png
+  titleIcons:
+  - /assets/project-images/usermgmt-images/usermgmt_icon1.png
+  - /assets/project-images/usermgmt-images/usermgmt_icon2.png
+  - /assets/project-images/usermgmt-images/usermgmt_icon3.png
+  sections:
+  - title: Overview
+    tabTitle: Overview
+    subsections:
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/usermgmt.png
+
+    - content: |
+        The purpose of this project is to build upon the basics of designing a web application within the Python Flask Framework by creating my own user Authorization and Management system for visitors to the site. Achieving this requires features like session management, database connection and modeling, email smtp servers, password encryption, and cloud storage. When the user visits the site, they are presented with a welcome page and given the ability to sign up or log in with a previously created account.<br><br>
+
+        When signing up for a new account, input validation is performed, the user's password is encrypted using a hashing algorithm and their data is stored in an AWS MySQL Database. The user is then required to validate the email provided by clicking a time-sensitive, personalized link that is generated with a URL compatible serializer token. Upon completion of the email validation process, the user is now able to log in and set up their profile information including a profile picture that is uploaded and saved to Amazon S3. If at any point the user forgets their password, the option is given to send a password reset link to the user's email. They are also able to update their existing email by carrying out an additional email validation process, and can also choose to delete their account.<br><br>
+
+        For the puropses of this project, the app is located in a different server environment. I will descibe all of the elements relevant to the user management system, while omitting the finer details of configuring an Elastic Beanstalk environment, setting up a pipeline, enabling SSL/TLS and enabling DNS routing. These steps can be found in my previous project found <a href="/projects/websitev1" target="_blank">here</a>.
+      imgs:
+
+
+  - title: Design and Outline
+    tabTitle: Design
+    subsections:
+    - content: |
+        The user management consists of 3 main elements:
+      listItems:
+      - text: "<span style='color: blue'>User Signup Page</span>"
+      - text: "<span style='color: blue'>User Login Page</span>"
+        subList:
+        - "With input validation and a 'Forgot Password?' feature."
+      - text: "<span style='color: blue'>Profile Page</span>"
+    - content: |
+        In addition to this, the user can logout or reset their password as well as delete their account within the user profile. I will go over the design and functionality of each of these elements in the following sections.
+      imgs:
+      - /assets/project-images/usermgmt-images/design1.png
+    - content: |
+        All of the UX design for the user input pages have been designed with bootstrap for this project. The UX forms were made with the form-control bootstrap class.
+      imgs:
+      - /assets/project-images/usermgmt-images/design2.png
+      - /assets/project-images/usermgmt-images/design3.png
+
+  - title: Application Factory Context and Configuration
+    tabTitle: App Factory
+    subsections:
+    - content: |
+        An Application Factory structure is used for this project. This structure allows for more growth and complexity in the future. In order to make this work and avoid circular imports within the blueprints, the blueprints themselves are defined within an app context. The application creation function will then be imported and called to start the application.
+      imgs:
+      - /assets/project-images/usermgmt-images/app1.png
+    - content: |
+        Next, the application creation function is called which will initalize and run the application. During production operation, the debug feature will be disabled. For testing purposes it is useful to keep on to diagnose problems with the application.
+      imgs:
+      - /assets/project-images/usermgmt-images/app2.png
+    - content: |
+        The project structure is set up with a main app folder that contains the application factory, the blueprints, and the main application file. The blueprints are then imported into the application factory and the application is run. The templates  and static folders contatain the html and css files for the project and define how the application will look and feel.
+      imgs:
+      - /assets/project-images/usermgmt-images/app3.png
+
+  - title: The Development Pipeline Structure and Workflow
+    tabTitle: Pipeline
+    subsections:
+    - content: |
+        Using GitHub, CodePipeline and Elastic Beanstalk, the workflow is automated in a pipeline from the IDE to the server environment. As the code is synced into the main branch of GitHub, CodePipeline will pull the code and automatically load the changes into the environment.
+      imgs:
+      - /assets/project-images/usermgmt-images/pipe1.png
+      - /assets/project-images/usermgmt-images/pipe2.png
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/pipe3.png
+      - /assets/project-images/usermgmt-images/pipe4.png
+
+  - title: Environment Variables Configuration
+    tabTitle: Env Variables
+    subsections:
+    - content: |
+        Any sensitive information within the code such as private keys and database passwords needs to be masked through the use of environment variables since this code will be publicly visible on GitHub. Elastic Beanstalk allows for an easy way to store environment variables through the use of environment properties. In the local code base, a separate file is created to hold the values of the environment variables using the OS extension and are imported when needed.
+      imgs:
+      - /assets/project-images/usermgmt-images/env1.png
+      - /assets/project-images/usermgmt-images/env2.png
+
+  - title: Database Schema and Connection
+    tabTitle: Database
+    subsections:
+    - content: |
+        SQLAlchemy is used to define the database schema and communicate with the database for this project. I decided to use the SQLAlchemy ORM (Object Relational Mapper) to define the schema for the user class. The ORM is a library that facilitates communication between the database and Python. In simple terms, the ORM maps Python classes to tables within a relational database, in this case MySQL hosted on AWS. This way, I can use Python to communicate with the database and make SQL queries instead of using the SQL syntax, which simplifies things and makes for much cleaner code. The ORM will translate function calls into SQL statements and create a connection pool session each time I need to read from or write to the database.
+      imgs:
+      - /assets/project-images/usermgmt-images/db1.png
+    - content: |
+        Here the user schema is defined as a class with each column being defined along with it's data type. This is thanks to the use of the declarative base which is a metadata container that will map the class to the table. The ORM engine is first created using the dialect, credentials and location of the remote database. After the table is defined, the create all function is called during the initial configuration of the database. This will actually create the database table and all of the configuration defined using the engine. After the inital creation of the database is configured, the engine connection can now be called as a session each time changes need to be made or data needs to be retrieved.
+      imgs:
+      - /assets/project-images/usermgmt-images/db2.png
+    - content: |
+        Now that the database schema is defined and the database table is created, I can use the engine to connect to the database throughout the program. The function connect() will create a database session using sessionmaker which creates a new connection pool to the database. The function will then return that session which will be used to query the database. The session is a essentially an intermediary that holds the class object and must be bound to an engine. The session retains the object data until a transaction is commited to the database or the transaction is rolled back. Using this format allows for me to adapt the program to pass in different database tables as parameters to the connect() function. For this project, however, I only have one table and the bound engine will always be the user class.
+      imgs:
+      - /assets/project-images/usermgmt-images/db3.png
+    - content: |
+        Here is one example of the session being used to query the database. The connect() function is called and returns the session as the local_session variable. Arguments are passed to this function which creates a new unconfirmed user. The new user is defined using the User class. That new user is then added to the database session. Since the session is just a holding zone for the data, no changes will be made to the database until the session is actually commited. Once the session changes are commited to the database, the connection is automatically closed by the ORM and the session data is flushed.
+      imgs:
+
+
+  - title: Creating a New User
+    tabTitle: Create User
+    subsections:
+    - content: |
+        With all the pieces in place to connect to the database, users are now able to be created and added to the user table. In order to do this, I needed to program some logic to have the server recieve the POST request and then handle and validate the user input. Additionally, I need to have the program safely store the user's password and make sure that their email is valid. In later steps, I will show how the users email can be validated using tokens and how I am able to securely store passwords in the database using password hashing algoriothms.
+    - content: |
+        In the HTML for the signup page, the variables inside the form tags under the name attribute will be passed to the server as a POST request. The back end of the application will then recieve these variables to perform validation on them and pass them along to the next step to be processed and commited to the database.
+      imgs:
+      - /assets/project-images/usermgmt-images/createuser1.png
+    - content: |
+        Here, the application first checks if the request type is a POST or a GET request and will route the traffic accordingly. If the message recieved is a POST request, the application will extract the name attributes for each input, save them as Python variables, and perform input validation to make sure the email and passwords match and that the username and email are both unique. The username and email are checked by connecting to and querying the database, checking the email and username against each table row entry in the context of a 'for' loop, and then passing the data along to be confirmed by the user. Along the way, the password is also hashed, which I will go over in the next step.
+      imgs:
+      - /assets/project-images/usermgmt-images/createuser2.png
+
+  - title: Password Hashing
+    tabTitle: Hashing
+    subsections:
+    - content: |
+        During the user validation process, the user's password is hashed using an algorithm provided by the Flask-bcrypt extension. This will allow the user passwords to be stored safely in the database as the hashed value rather than plain text. In addition to hashing, flask-bcrypt adds a salt to the password which adds another layer of complexity to the hashing process and thus makes the password more secure.
+    - content: |
+        Here I have two functions that perform the hashing and validation process. The first function will hash the user's password then return it as a hashed value to store to the database. The second function will be able to check the hashed version against the plain text version to see if they match. The number of rounds specified in the hashing function is known as the cost factor, which basically defines the level of complexity of the salting process. A higher number means that it takes more time to hash the value, therefore making brute force attacks harder to perform.
+      imgs:
+      - /assets/project-images/usermgmt-images/hash1.png
+    - content: |
+        I can now call either of these functions when I need to hash a password for a new user or check an existing password against the user input when they are logging in. Note that the user's password is at no point being stored in plain text past the point that it is sent to the hashing function. I will not have access to it after this initial process which means I cannot retrieve the password either. This is due to the fact that hashing, as opposed to encryption, is a one way process, meaning that when the user inputs their password, the program will never have access to the plain text version again. For this reason, a system needs to be in place to have the user reset their password since I can never retrieve it for them. This is done in a later step through the password recovery email.
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/hash2.png
+      - /assets/project-images/usermgmt-images/hash3.png
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/hash4.png
+    - content: |
+        Now if I log into the database with a SQL editor tool, I can view the database entry that was created. The username is stored, a unique user ID is generated, and the password is stored as it's hashed value. One other entry is generated under the confirmed column which is initialized to 0. This is a bool value that will be used in the next step to track whether or not the account has been verified by the user via email.
+
+  - title: SMTP Mail Server Configuration
+    tabTitle: SMTP
+    subsections:
+    - content: |
+        In order to have users confirm emails and change passwords, I needed an SMTP mail server. Gmail provides this service for use cases such as mine. I first needed to create a unique application password to connect this application to my account. I am now able to have this application send out emails on my behalf. Some minor configuration must be done in the program in order to do this.
+    - content: |
+        Here I am using the FlaskMail extension which allows for an SMTP server to be defined and initialized to be used within the application. Within the inital function that defines the application, I initialize the SMTP server with the correct settings to allow the application to send emails.
+      imgs:
+      - /assets/project-images/usermgmt-images/mail1.png
+    - content: |
+        Once initialized, I can use the server to send out emails on my behalf with a defined template and reciever address. This configuration will be used to set up the initial email verification, the account password reset feature, and the ability to have the user set a new email with additional verification in the future as desired.
+      imgs:
+      - /assets/project-images/usermgmt-images/mail2.png
+
+  - title: Email Verification
+    tabTitle: Email Verify
+    subsections:
+    - content: |
+        At this point the I have set up the application to create a user, hash the user's password, and store the user and hashed password in the database to have the user log in. Now I need a way to make sure the user actually owns the email they signed up with. This way, if the user forgets their password, I can have the application perform a password reset via email because we both confirmed we know the user has access to the email on file. In order to due this I used a combination of the SMTP server I previously configured, and a flask extension called itsdangerous. In this extension I need a tool called the URLSafeTimedSerializer. This will allows me to generate a URL compatible token to create a link that the user can click on to confirm the password.
+    - content: |
+        Once the user signs up, the application will flash this message, alerting them that an email has been sent to the address they entered. They must click the link within the email to confirm their account, which sets the confirmed database column to 1. This signifies that the value is True, meaning the email has been confirmed. The user can now log in and set up their profile information.
+      imgs:
+      - /assets/project-images/usermgmt-images/validate1.png
+    - content: |
+        If the user tried to login before verifying their email, the application will flash a message indicating that they must confirm before proceeding. From this screen they may also send another email with a fresh link. Every link they recieve is actually on a time limit which is set to whatever value I choose (in this case 30 minutes), and after that the link will expire.
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/validate2.png
+      - /assets/project-images/usermgmt-images/validate3.png
+    - content: |
+        Once the link is clicked, the user is taken back to the login screen where they can continue to the site to fill out their user profile. In the next section I'll cover the logic and details behind how the program is able to achieve this.
+
+  - title: Verification Code Logic
+    tabTitle: Logic
+    subsections:
+    - content: |
+        In a previous section I covered how the user input is actually validated and how they are entered into the system. At the end of that route, a redirect is called to the mailer.send_confirm_email route in another file. This file handles all of the mail delivery for email verification and password resets, pictured in this section.
+      imgs:
+      - /assets/project-images/usermgmt-images/logic3.png
+      - /assets/project-images/usermgmt-images/logic2.png
+      - /assets/project-images/usermgmt-images/logic1.png
+
+    - content: |
+        At the beginning of this route, the configuration for the email that will be sent is defined. I have a simple HTML template that will display the email pictured above. The email needs to be combined with a token that is generated with the help of the URLSafeTimedSerializer extension from itsdangerous. The s.dumps will combine the email (and added salt for security) into a unique token that is a URL safe string. This is then attached to the link that will be sent to the user's email. The _external=True tag simply signifies that it is being sent as an absolute URL as opposed to a relative link within our web page. Basically, when the link is clicked it will redirect the user to the route mailer.confirm_email which contains the code that will actually change the database entry to confirmed=1, meaning they are now confirmed and ready to proceed with the login process.
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/logic4.png
+      - /assets/project-images/usermgmt-images/logic5.png
+    - content: |
+        Here in the mailer.confirm_email route we can see where the link is taking the user. In this route we can also see that the token is sent in as an argument and as part of the URL. By doing this, I have created a unique route for each new token that is generated which then can be used to move ahead and confirm the user, since the token contains the user's email. Using s.loads, the token can be loaded back into it's original form before it was tokenized, used to query the database to find the user, and change the confirmed flag in the database to True. The user is then redirected to the login screen where they can successfully log in to the site. Notice also that the max_age for the token is defined here in the s.loads function, which defines the lifetime of the token. In this case, the token will expire after 30 minutes.
+      imgs:
+      - /assets/project-images/usermgmt-images/logic6.png
+
+  - title: Login and Authorization
+    tabTitle: Login
+    subsections:
+    - content: |
+        So far, the application has taken in user input via a sign up table, validated the data, connected to a database where the new user is added, sent the user an email verification link to confirm their account. The user is then returned to the login screen with a message letting them know that the confirmation was a success. Now the user is able to log in since they have the confirmed flag set to 1 (True) in the database. Most of the heavy lifting is out of the way and I now simply need to verify the user exists in the system when they go to log in and that their password matches the stored value in the database by sending the password to the hash check function.
+
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/login1.png
+    - content: |
+        As a separate exercise within the project, I decided to test out the FlaskForm extension from flask-wtf to recreate one of the forms in this project. This extension is a more elegant way of creating forms in flask. I simply needed to define my form as a class and import that class to be used for the login form. This essentially produces the same result as manually creating forms and handling POST requests, but with the added benefits of cleaner code and built-in input validation. It is a great tool that can definitely simplify the form creation and coding process.
+      imgs:
+      - /assets/project-images/usermgmt-images/login2.png
+    - content: |
+        Now the application performs basic input validation via FlaskForm to make sure the user inputs some data. To actually check the data against the database, the program calls the user route.
+      imgs:
+      - /assets/project-images/usermgmt-images/login3.png
+    - content: |
+        At the user route, the application connects to the database to first check if the user actually exists and that the user has correctly entered their username. Once the username is verified, the user's password is sent to the hash check function. This will return either True or False to check for a valid password. Once the password is verified, the program will check that this is a confirmed user via email verification. If all of these checks pass, the user is logged in and can proceed to the final step of filling out a profile.
+      imgs:
+      - /assets/project-images/usermgmt-images/login4.png
+    - content: |
+        If at any point the user decides to log out, they are sent to the logout route which will remove them from the session and return them to the login screen yet again.
+      imgs:
+      - /assets/project-images/usermgmt-images/login5.png
+
+  - title: User Profile
+    tabTitle: Profile
+    subsections:
+    - content: |
+        For the final section, I wanted to have the user actually be able to do something now that they are logged in. I created a simple user profile where the user can fill out some basic contact information and use a delete feature if they wish to delete their account. As an added extra, the user can add a profile picture to their profile, made possible with the use of AWS S3 for hosting the pictures on the back end. All I needed to do was configure the proper permissions for the application to access my S3 bucket, which is served via HTTPS along with the rest of the site, as well as configuring some minor nginx file upload limits on the EC2 server for server to accept larger files for profile picture uploads.
+
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/prof1.png
+      - /assets/project-images/usermgmt-images/prof2.png
+    - content: |
+        When greeted at the profile screen, the user has the option of filling in any of their profile details or profile image and updating with one click. The changes will be reflected upon being redirected back to the page, and messages will flash on the screen confirming that their requested details were successfully updated.
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/prof3.png
+      - /assets/project-images/usermgmt-images/prof4.png
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/prof5.png
+    - content: |
+        The user also has the option of updating their password or updating their email. Updating the email will automatically set the user to unconfirmed and send the user another token link. They will follow the same validation process to validate the new email as when they initially created their account. If the user chooses to delete their account, a warning modal will pop up on the screen where some simple Javascript will require them to enter their username before the final option to delete is available.
+    - content: ""
+      imgs:
+      - /assets/project-images/usermgmt-images/prof6.png
+      - /assets/project-images/usermgmt-images/prof7.png
+    - content: |
+        The user details are placed into a 'context' for the user and sent to the user profile template as a keyword argument where they can be unloaded in the template and displayed in their applicable forms as placeholders. This is done simply to clean up the code a bit, and allow for only one argument to be sent to the template.
+      imgs:
+      - /assets/project-images/usermgmt-images/prof8.png
+    - content: |
+        The user details are placed into a 'context' for the user and sent to the user profile template as a keyword argument where they can be unloaded in the template and displayed in their applicable forms as placeholders. This is done simply to clean up the code a bit, and allow for only one argument to be sent to the template.
+      imgs:
+      - /assets/project-images/usermgmt-images/prof9.png
+      - /assets/project-images/usermgmt-images/prof10.png
+    - content: |
+        Now the only step left is to connect and upload the profile picture to AWS S3. This is done through the us of Boto3, the AWS SDK for python. I made a few configurations to load the file onto my S3 bucket as the name of the user followed by "_profile_img" so they are easier to track in the bucket and will be overriden in case the user changes their picture again. In addition, the bucket is also versioned so older versions of their profile pictures are kept for a given amount of time before they are permanently deleted.<br><br>
+
+        I also need a way to connect each user's picture to their profile beyond the naming scheme of the files. In order to acheieve this, I have the program save the URL location of the bucket object as an entry in the database for each user. That way, I can display the user's profile image by simply querying the database and loading the stored S3 URL, along with the rest of the user context, into the user profile template.
+      imgs:
+      - /assets/project-images/usermgmt-images/prof11.png
+      - /assets/project-images/usermgmt-images/prof12.png
+
+  - title: Summary
+    tabTitle: Summary
+    subsections:
+    - content: |
+        My biggest takeaway from this project was that looks are often deceiving. A simple looking web concept on the surface can have layers of complexity under the hood. There are many more moving parts going on here than I would have thought given a cursory glance. The great thing for me about coding and developing projects like this are the moments where a complex series of operations going on behind the scenes produces a simple and clean finished product. Projects like these require lots of new learning experiences and chances to try out new technologies while producing something people can interact with, making this a very enjoyable project to have undertaken.<br><br>
+
+        I picked up many useful skills progressing through this project. From database management to cloud services integration all the way to handling more complex POST requests. I enjoyed learning more about how session data works and how it is handled in different contexts ranging from server side temporary data to connection pooling with a relational database. Learning through mistakes made along the way was a great way to gaining insight about how these systems can be optimized and improved as I create more complex projects in the future.<br><br>
+
+        All around this was an invaluable project to me in my progression towards learning more about cloud and web infrastructure and I will use many of these tools in future projects moving forward. Thanks for taking the time to review this project and please reach out with any comments or suggestions.<br><br>
+      imgs:

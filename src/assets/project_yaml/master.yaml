@@ -1,0 +1,9 @@
+includes:
+# - assets/project_yaml/projects/jenkins-multi.yaml
+- assets/project_yaml/projects/backfill.yaml
+- assets/project_yaml/projects/event.yaml
+- assets/project_yaml/projects/rproxy.yaml
+- assets/project_yaml/projects/jenkins.yaml
+- assets/project_yaml/projects/usermgmt.yaml
+- assets/project_yaml/projects/websitev1.yaml
+- assets/project_yaml/projects/cdk.yaml

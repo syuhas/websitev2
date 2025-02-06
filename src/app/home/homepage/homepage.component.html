@@ -1,84 +1,60 @@
-<div class="container mt-4">
-
-
-    <!-- Hero Section -->
-    <div class="jumbotron text-center">
-        <h1 class="display-4"><strong>Stephen Yuhas</strong></h1>
-        <p class="lead"><strong>DevOps | AWS | Release Engineering</strong></p>
-        <hr class="my-4">
-        
-    </div>
-
-    <!-- Content Sections -->
-    <div class="row">
-
-        <!-- About Me Card -->
+<div class="wrapper">
+<div class="container top-banner">
+    <div class="row align-items-center">
         <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3 class="card-title"><strong>About Me</strong></h3>
-                    <p class="text-break lh-lg">
-                        With a strong passion for IT and cloud computing, I transitioned into the tech field after over a decade
-                        of dedication to my previous career. In the last two years, I have built a solid foundation in Amazon
-                        Web Services (AWS), DevOps, and software development, earning multiple AWS certifications and gaining
-                        hands-on experience in a variety of roles.
-                    </p>
+            <div class="row row-container">
+                <div class="col-12 name-container">
+                    <h2 class="text-muted name"><div class="bgimage"></div>Stephen Yuhas</h2>
+                    <h4 class="text-muted title">DevOps | AWS | Release Engineering</h4>
                 </div>
             </div>
-        </div>
-
-    </div>
-
-    <!-- Additional Info or Project Section -->
-    <div class="row">
-        <!-- Experience Card -->
-        <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3 class="card-title"><strong>Experience</strong></h3>
-                    <p class="text-break lh-lg">Most recently, I spent nearly a year and a half as a Release Engineer and Developer, where I was
-                        responsible for
-                    </p>
-        
-                    
-                    <ul class="text-break lh-lg">
-                        <li>Developing and maintaining applications for internal reporting, monitoring tools, and automated IAM
-                            role management to streamline operations.</li>
-                        <li>Managing Jenkins production deployments and troubleshooting issues to ensure smooth and reliable
-                            release cycles.</li>
-                        <li>Leading the development of key automation solutions, such as custom Jira dashboards, AWS Lambda
-                            Canary monitoring, and cross-region database replication across 100+ AWS accounts.</li>
-                        <li>Creating automated reporting to monitor resource utilization and maintain security compliance, as
-                            well as solutions using Athena for analyzing S3 usage data.</li>
-                    </ul>
-        
-                    <p class="text-break lh-lg">These experiences have deepened my expertise in automation, cloud resource management, and CI/CD
-                        processes. I am continually learning and pushing my skills further through additional studies and
-                        hands-on projects.
-                    </p>
-        
-                    <p class="text-break lh-lg">This website serves as a showcase of my journey, a catalog of my projects, and a space for new ideas and
-                        skills as they develop. Thank you for visiting, and I hope you enjoy exploring my work!</p>
-        
-                    <p style="text-shadow: .1px .1px .2px black; font-style: italic; text-align: center; opacity: 50%;">~&nbsp; Stephen Yuhas
-                    </p>
+            <div class="row">
+                <div class="col-12">
+                    <hr class="my-3">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 banner-container">
+                    <img src="/assets/home-images/bannerstraightsmall.png" alt="" class="img-fluid banner">
                 </div>
             </div>
         </div>
     </div>
-    <!-- Certifications Card -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h3 class="card-title"><strong>Certifications</strong></h3>
-                    <div class="certifications">
-                        <img src="/assets/home-images/certs2.png" alt="" class="img-fluid">
-                    </div>
-                </div>
-            </div>
+</div>
+
+<div class="container-xxl pageWrapper">
+    <div class="row profile-container">
+        <div class="col-md-4 face">
+            <img src="/assets/home-images/portrait23.png" alt="Profile Picture" class="img-fluid"/>
+        </div>
+        <div class="col-md-8 about">
+            <h3 style="text-align: center;" class="hi">
+                 <span class="text" id="hi">Hi,</span>&nbsp;<span class="text">my</span>&nbsp;<span class="text">name</span>&nbsp;<span class="text">is</span>&nbsp;<span class="text" id="steve"><strong style="font-style: italic;">Steve</strong></span>
+            </h3>
+            <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'" style="font-weight: 525;">
+
+                <!-- I have a passion for making the hard stuff seem easy. Where others might see chaos and complexity, I see opportunity. Whether it's creating fully automated deployment pipelines with tools like AWS and Jenkins, streamlining repeatable infrastructure management, or building tools for logging and reporting when things don't go your way, my focus is always on designing systems that are efficient, practical, and intuitive.
+                <br><br>
+                This site is a reflection of my enthusiasm for creating and learning as I grow as a professional in the field. It showcases my projects, concepts, and ideas — built in the spirit of exploration and creativity. I hope you enjoy exploring the things I create and find inspiration in the work I share. -->
+
+                <!-- Driven by a passion for technology, automation, and problem-solving, I transitioned into IT after over a decade of dedication to my prior career. Over the past three years, I’ve been on a journey to master cloud computing, DevOps, and automation, focusing heavily on Amazon Web Services (AWS). Along the way, I’ve earned two AWS certifications and gained hands-on experience designing innovative solutions in a variety of roles.
+                <br><br>
+                This site is a reflection of my enthusiasm for creating and learning while growing as a professional. It showcases the projects and concepts I learn and build in my spare time. I hope you enjoy exploring the things I create and find inspiration in the work I’ve shared. -->
+
+                I have a passion for making the hard stuff feel effortless. Where some might see chaos in complexity, I see a problem waiting to be solved and an opportunity to help others. I always try to approach every challenge with curiosity and a drive to craft solutions that empower people. Whether it's creating seamless automated deployment pipelines with tools like AWS and Jenkins or building tools for logging and reporting when the things go sideways, my goal is always the same: to use technology to solve problems and create meaningful solutions that make life easier.
+                <br><br>
+                This site is my passion project. It is a space to showcase the tools I've built, the problems I've solved, and the lessons learned along the way. I hope you enjoy exploring the ideas I've shared and that my passion and excitement for solving problems with technology shines through.
+            </p>
         </div>
     </div>
 
-
+    <div class="row">
+        <div class="col-md-12 certs-container">
+            <div class="certs">
+                <img src="/assets/home-images/saa.png" alt="" class="img-fluid">
+                <img src="/assets/home-images/ccp.png" alt="" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
 </div>

@@ -1,0 +1,153 @@
+<div class="container mt-4" *ngIf="!(isSmallScreen$ | async); else mobile">
+    <div class="row align-items-center row-container">
+        <div class="col-md-3 text-center portrait-container">
+            <img src="/assets/home-images/portrait17.png" alt="Profile Picture" class="img-fluid rounded-circle"/>
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-12 name-container">
+                    <h2 class="fw-bold mb-0 name">Stephen Yuhas</h2>
+                    <h4 class="text-muted title">DevOps | AWS | Release Engineering</h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <hr class="my-4">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 banner-container">
+                    <img src="/assets/home-images/bannerstraightsmall.png" alt="" class="img-fluid banner">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #mobile>
+    <div class="container mt-4">
+        <div class="row align-items-center">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col text-center portrait-container-mobile">
+                        <img src="/assets/home-images/portrait17.png" alt="Profile Picture" class="img-fluid rounded-circle"/>
+                    </div>
+                    <div class="col name-container-mobile">
+                        <h2 class="fw-bold mb-0 name">Stephen Yuhas</h2>
+                        <h4 class="text-muted title">DevOps | AWS | Release Engineering</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <hr class="my-4">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 banner-container">
+                        <img src="/assets/home-images/bannerstraightsmall.png" alt="" class="img-fluid banner">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<div class="container mt-4 pageWrapper">
+    <!-- Content Sections -->
+    <div class="row">
+
+        <!-- About Me Card -->
+        <div class="col-md-12">
+            <!-- <div class="card mb-4"> -->
+                <div class="card-body">
+                    <h2 class="card-title"><strong>About Me</strong></h2>
+                    <h3 style="text-align: center;">Hi There! </h3>
+                    <h3 style="text-align: center;"> My Name is <strong style="font-style: italic;">Steve</strong>.</h3>
+                    <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'" style="font-weight: 525;">
+                        Driven by a passion for technology, automation, and problem-solving, I transitioned into IT after over a decade of dedication to my prior career. Over the past three years, I’ve been on a journey to master cloud computing, DevOps, and automation, focusing heavily on Amazon Web Services (AWS). Along the way, I’ve earned two AWS certifications and gained hands-on experience designing innovative solutions in a variety of roles.
+                        <br><br>
+                        Seeing tremendous value in the evolution of cloud computing and its role in shaping the future of IT, I have a focused interest in creating efficient workflows and developing tools that reduce toil and empower teams to achieve more using modern development and design concepts and philosophies. From designing automated systems to crafting focused, impactful applications, I remain committed to continuous learning and delivering solutions that drive meaningful outcomes.
+                        <br><br>
+                        This site is a reflection of my enthusiasm for creating and learning while growing as a professional. It showcases the projects and concepts I learn and build in my spare time. I hope you enjoy exploring the things I create and find inspiration in the work I’ve shared.
+                    </p>      
+                    <p style="text-shadow: .1px .1px .2px black; font-style: italic; text-align: center; opacity: 50%; padding-top: 1rem;">~&nbsp; Stephen Yuhas
+                    </p>
+                </div>
+            <!-- </div> -->
+        </div>
+
+    </div>
+
+
+    <!-- <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title"><strong>Experience</strong></h2>
+                    <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">Over nearly a year and a half as a Release Engineer and Developer, I gained hands-on experience in automation, cloud resource management, and CI/CD processes. My contributions include:
+                    </p>
+        
+                    
+                    <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
+                        <li>Delivering streamlined operations by developing and maintaining applications for internal reporting, monitoring tools, and automated IAM role management.</li>
+                        <li>Ensuring smooth and reliable release cycles by managing Jenkins production deployments and resolving complex issues.</li>
+                        <li>Driving efficiency across teams by developing key automation solutions, including custom Jira dashboards, AWS Lambda Canary monitoring, and cross-region database replication for over 100 AWS accounts.</li>
+                        <li>Enhancing security compliance and resource visibility by creating automated reporting solutions using Athena to analyze S3 usage data.
+                        </li>
+                    </ul>
+        
+                    <p class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">These contributions not only supported organizational goals but also deepened my expertise in designing scalable solutions, troubleshooting deployment pipelines, and leveraging cloud-based tools to optimize workflows. This experience continues to shape my approach to tackling challenges and creating impactful systems.</p>
+        
+                    <p class="text-break lh-lg">This website serves as a showcase of my journey, a catalog of my projects, and a space for new ideas and
+                        skills as they develop. Thank you for visiting, and I hope you enjoy exploring my work!</p>
+
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <!-- Certifications Card -->
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <div class="card mb-4"> -->
+                <div class="card-body">
+                    <h2 class="card-title"><strong>Certifications</strong></h2>
+                    <div class="certifications">
+                        <img src="/assets/home-images/saa.png" alt="" class="img-fluid">
+                        <img src="/assets/home-images/ccp.png" alt="" class="img-fluid">
+                    </div>
+                </div>
+            <!-- </div> -->
+        </div>
+    </div>
+
+
+</div>
+
+
+
+
+<!-- Old banner -->
+
+    <!-- <div class="desktop" *ngIf="!(isSmallScreen$ | async); else mobile">
+        <div class="name-container" *ngIf="!(isSmallScreen$ | async); else mobile">
+            <h2 class="name">Stephen Yuhas</h2>
+            <p class="title">DevOps | AWS | Release Engineering</p>
+        </div>
+        <div class="container mt-4 imgwrapper" *ngIf="!(isSmallScreen$ | async); else mobile">
+            <img src="/assets/home-images/bannerstraight15.png" alt="" class="img-fluid">
+        </div>
+    </div>
+
+    <ng-template #mobile>
+        <div class="name-container-mobile">
+            <h2 class="name">Stephen Yuhas</h2>
+            <p class="title">DevOps | AWS | Release Engineering</p>
+        </div>
+        <div class="container mt-4 imgwrapper-mobile">
+            <div class="banner-container">
+                <img src="/assets/home-images/portrait10.png" alt="" class="img-fluid face">
+                <img src="/assets/home-images/bannerstraightsmall.png" alt="" class="img-fluid banner">
+            
+            </div>
+        </div>
+    </ng-template> -->

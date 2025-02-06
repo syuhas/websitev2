@@ -1,22 +1,12 @@
-# FROM node:18.13.0 as build
-
-# WORKDIR /app
-
-# COPY package.json ./
-
-# RUN npm install -g @angular/cli --prefer-offline --no-audit
-
-# RUN npm install --prefer-offline --no-audit
-
-# COPY . .
-
-# RUN ng build --configuration production
-
 FROM nginx:latest
+
+
 COPY /websitev2/browser/ /usr/share/nginx/html
+
 COPY /docker/default.conf /etc/nginx/conf.d/default.conf
 
 COPY /docker/fullchain.pem /etc/ssl/certs/fullchain.pem
+
 COPY /docker/privkey.pem /etc/ssl/private/privkey.pem
 
 RUN chown 101:101 /etc/ssl/private/privkey.pem /etc/ssl/certs/fullchain.pem && \

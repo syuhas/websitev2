@@ -1,0 +1,215 @@
+- id: websitev1
+  title: Personal Portfolio Website (V1)
+  subtitle: How I Built My First Website Using various AWS Services and Python Flask.
+  github: https://github.com/syuhas/web_resume
+  description: |
+    The first version of my personal website. Built using Flask, HTML, and various AWS services, this project laid the foundation for showcasing my skills and projects, and has since been redesigned using Angular.
+  # listIcon: /assets/project-images/websitev1-images/site_icon2.png
+  listIcon: assets/home-images/flask.png
+  titleIcons:
+    - /assets/project-images/websitev1-images/site_icon.png
+    - /assets/project-images/websitev1-images/site_icon2.png
+    - /assets/project-images/websitev1-images/aws.png
+  sections:
+    - title: Overview
+      tabTitle: Overview
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/websitev1-images/WebsiteDiagram2.png
+        - content: |
+            I created this site as a first project when transitioning into the industry. This was the first version of the current version of this website, and it was built from the ground up using AWS for features like hosting, CI/CD aspects, DNS services, load balancing, caching and TLS authentication. I have coded all the Python, HTML and CSS via a Flask app which is lightweight and provides the flexibility to add features in the future as desired. This project was not only a great way to display all of the content and projects I have completed but also an effective way to highlight some of the many capabilities of AWS when it comes to building a website or web app.<br><br> 
+
+            In addition, this was a fantastic learning experience to pull together all of the things I have learned so far in AWS and coding. In this overview of the site, I will review all of the core pieces of its development. As I implement more features, I will document them as separate projects to track the evolution of the site.
+          imgs:
+
+    - title: Python Flask / HTML / CSS
+      tabTitle: Flask
+      subsections:
+        - content: |
+            Starting with a simple Python Flask app, I laid the necessary groundwork needed for the basic outline of the site to be built, including the blueprint that will link to all of the html templates to each route on the base HTML template.
+          imgs:
+            - /assets/project-images/websitev1-images/site-python.png
+        - content: |
+            This allowed me to write the base HTML template, which serves as the basic design of the site, including the navigation bar, footer and background design.<br><br>
+
+            Bootstrap was used for a navigation bar and the layout of the site was configured. This provided a working skeleton to which additional pages can be added. Jinja is used for the templating in Flask to extend the additional HTML from this base page.
+          imgs:
+            - /assets/project-images/websitev1-images/site-html.png
+        - content: |
+            Using an external CSS stylesheet, the look of the site can be completely controlled in one place. A combination of Grid template areas and FlexBox was used so the layout of the site can be further fine-tuned to allow for things like media queries for viewing on different devices. This is where the bulk of the design for the site takes place.
+          imgs:
+            - /assets/project-images/websitev1-images/site-css.png
+        - content: |
+            This is the basic concept for the front end portion of the site. In addition to using all of these elements, the site was developed using a local Virtual Environment so only the necessary dependencies are installed and utilized as needed. This makes things easier when creating and uploading a requirements text file to be used with Elastic Beanstalk in the future, and ensures that there are no unnecessary dependencies.
+
+    - title: Github
+      tabTitle: GitHub
+      subsections:
+        - content: |
+            In order to sync with to the build pipeline and to implement version control, I used GitHub for a git repository. After creation, the local files were connected and synced with the GitHub repository.
+          imgs:
+            - /assets/project-images/websitev1-images/site-git.png
+        - content: |
+            Now git commands can be used to upload changes to the repository. At the pipeline stage, these changes can then be sent to build, test and deploy stages after they are synced directly the AWS environment from the repository.
+          imgs:
+            - /assets/project-images/websitev1-images/site-gitcmnds.png
+
+    - title: Elastic Beanstalk
+      tabTitle: Beanstalk
+      subsections:
+        - content: |
+            Once the Github repository was set up, I needed a place to host the Flask application. Elastic Beanstalk is a one-view, code-centric way of hosting the site on AWS. Beanstalk makes use of templating via CloudFormation , and storing of code via S3 , so I am able to upload the code to the site manually or via a pipeline. In addition, it uses containerization on EC2, which supports many languages (Python in this case) and it also takes care of instance configuration, OS, health checks, and configuring load balancing behind the scenes. All that needs to be done is to make sure that the Elastic Beanstalk CLI is installed on the virtual environment I'm using so that the configuration can be added when syncing to the pipeline and that the proper dependencies are installed and added to a requirements.txt file, providing Beanstalk the information for what to deploy on the server.
+        - content: |
+            First the Elastic Beanstalk CLI and dependencies were manually installed to the virtual environment via pip.
+          imgs:
+            - /assets/project-images/websitev1-images/site-eb-1.png
+        - content: |
+            In addition, Beanstalk requires adding a Requirements.txt file to ensure that the proper dependencies are installed on the server. This will be uploaded with the code to the environment.
+          imgs:
+            - /assets/project-images/websitev1-images/site-eb-2.png
+        - content: |
+            At this point the Elastic Beanstalk environment could be configured. A web server environment was selected.
+          imgs:
+            - /assets/project-images/websitev1-images/site-eb-3.png
+        - content: |
+            Flask runs on Python which is the AWS managed platform being used for this application.
+          imgs:
+            - /assets/project-images/websitev1-images/site-eb-4.png
+        - content: |
+            Once the environment was configured and deployed, any changes made to the code via our git repository will flow through the pipeline to the environment and be reflected on the site.
+          imgs:
+            - /assets/project-images/websitev1-images/site-eb-5.png
+
+    - title: CodePipeline
+      tabTitle: Pipeline
+      subsections:
+        - content: |
+            For this step, the Codepipeline aspect of the site was configured. Codebuild and CodeDeploy steps will be added to the pipeline as the site evolves and more features are added. This will allow for more frequent changes to be made and tested without sending the changes directly to the production environment.
+        - content: |
+            For this step, the Codepipeline aspect of the site was configured. Codebuild and CodeDeploy steps will be added to the pipeline as the site evolves and more features are added. This will allow for more frequent changes to be made and tested without sending the changes directly to the production environment.
+          imgs:
+            - /assets/project-images/websitev1-images/site-pipelinesetup-1.png
+        - content: |
+            At the source configuration stage, a source of changes made to the code needs to be selected. Since the site uses GitHub for the repository, this will be the code source for the pipeline. Version 2 is the recommended version for this application.
+          imgs:
+            - /assets/project-images/websitev1-images/site-pipelinesetup-2.png
+        - content: |
+            At this point the GitHub repository was connected to the pipeline and ready to be synced to the desired provider.
+          imgs:
+            - /assets/project-images/websitev1-images/site-pipelinesetup-3.png
+        - content: |
+            In the deploy stage, a service is selected for where the code will sync to. Since Elastic Beanstalk is how I am deploying the site, it is selected as the provider. Now any changes made will go through the pipeline and deploy to the Elastic Beanstalk environment.
+          imgs:
+            - /assets/project-images/websitev1-images/site-pipelinesetup-4.png
+        - content: |
+            Once the pipeline is configured, I can see the source and deploy stages as they progress. The Elastic Beanstalk environment is now setup to receive changes through the pipeline.
+          imgs:
+            - /assets/project-images/websitev1-images/site-pipeline-deploy.png
+
+    - title: SSL/TLS Certificate
+      tabTitle: SSL/TLS
+      subsections:
+        - content: |
+            I chose to distribute and cache the content on this site via CloudFront. Before doing that, I wanted to needed to make the site secure using SSL/TLS authentication so the site can be connected to securely via HTTPS. To do this, I had to request a public certificate for DNS validation which can be done through the AWS Certificate Manager (ACM). The certificate can then be deployed to any relevant resource I choose.
+        - content: |
+            First, the certificate was requested for DNS validation with the fully qualified domain name.
+          imgs:
+            - /assets/project-images/websitev1-images/site-cm-1.png
+        - content: |
+            At this point, the certificate was ready to be deployed on CloudFront.
+          imgs:
+            - /assets/project-images/websitev1-images/site-cm-2.png
+        - content: |
+            Later when the certificate is deployed, it can be viewed on the site from the CloudFront domain.
+          imgs:
+            - /assets/project-images/websitev1-images/site-cm-3.png
+
+    - title: Web Application Firewall
+      tabTitle: WAF
+      subsections:
+        - content: |
+            Another optional component that can be added before the CloudFront distribution is created is a Web ACL, which is a stateless firewall for an added layer of protection for the site.
+        - content: |
+            To requisition an ACL using AWS WAF, I simply needed to choose a name and resource type. In this case a CloudFront distribution is the resource type.
+          imgs:
+            - /assets/project-images/websitev1-images/site-waf-1.png
+        - content: |
+            ACL rules can now be configured moving forward.
+          imgs:
+            - /assets/project-images/websitev1-images/site-waf-2.png
+        - content: |
+            Now the web ACL was available to be associated with the CloudFront distribution.
+          imgs:
+            - /assets/project-images/websitev1-images/site-waf-3.png
+
+    - title: CloudFront
+      tabTitle: CloudFront
+      subsections:
+        - content: |
+            With the WAF ACL and SSL/TLS certificates set up, the CloudFront distribution could be created. CloudFront is a way to cache content at AWS edge locations so the content is served from those edge locations which reduces the load on the origin server.
+        - content: |
+            To create a distribution, an origin domain must be selected, in this case it will be the previously configured Elastic Beanstalk domain.
+          imgs:
+            - /assets/project-images/websitev1-images/site-cf-1.png
+        - content: |
+            For the default cache behavior, the default path pattern was used meaning all files will be cached on the site. This cannot be changed after creation, but if required it could be determined which types of files or directories will be cached.<br><br>
+
+            For the viewer protocol policy, I want to direct HTTP to HTTPS since I've previously configured the SSL/TLS certificate for the site.<br><br>
+
+            The cache policy will be a caching optimized policy. This is set to a TTL of 86,400 seconds(one day) with a maximum of one year.
+          imgs:
+            - /assets/project-images/websitev1-images/site-cf-2.png
+        - content: |
+            Next, a price class was selected. I chose to use all edge locations but the option to limit to certain regions is available. This can lower costs for the service.<br><br>
+
+            Now the Web ACL that was previously confgured can be added to the distribution as well.
+          imgs:
+            - /assets/project-images/websitev1-images/site-cf-3.png
+        - content: |
+            Additionaly, the SSL/TLS certificate that we requested previously can now be deployed onto the distribution.
+          imgs:
+            - /assets/project-images/websitev1-images/site-cf-4.png
+        - content: |
+            The CloudFront distribution was then created. At this step, I now have a fully operational distribution with a firewall, which can be visited securely over HTTPS port 443 via the SSL/TLS certificate.
+          imgs:
+            - /assets/project-images/websitev1-images/site-cf-5.png
+
+    - title: Route53
+      tabTitle: Route53
+      subsections:
+        - content: |
+            The final aspect to the site was setting up the DNS services with Route53. With Route53, a domain name can be purchased, creating a hosted zone followed by records to route all traffic visiting the domain directly to the CloudFront distribution.
+        - content: |
+            To purchase a domain name through Route53 I simply needed to enter the desired name and check that it was available. In this case I chose www.DigitalSteve.net as an example for this project.
+          imgs:
+            - /assets/project-images/websitev1-images/site-r53-1.png
+        - content: |
+            The domain name will now show as available for use under registered domains.
+          imgs:
+            - /assets/project-images/websitev1-images/site-r53-2.png
+        - content: |
+            A hosted zone then had to be created for the domain name so records can be added to route traffic visiting the domain.
+          imgs:
+            - /assets/project-images/websitev1-images/site-r53-3.png
+        - content: |
+            Finally, records were able to be added to the hosted zone to route traffic from the domain names to a destination. Two records were added, one for the domain name without the subdomain and one for the fully qualified domain name. For the routing, an Alias A Record was used to route the domain directly to an AWS service, that service being the CloudFront distribution for both records.
+          imgs:
+            - /assets/project-images/websitev1-images/site-r53-4.png
+            - /assets/project-images/websitev1-images/site-r53-5.png
+
+    - title: Summary
+      tabTitle: Summary
+      subsections:
+        - content: |
+
+          imgs:
+            - /assets/project-images/websitev1-images/site-outro-1.png
+        - content: |
+            My biggest takeaway from this project was that looks are often deceiving. A simple looking web concept on the surface can have layers of complexity under the hood. There are many more moving parts going on here than I would have thought given a cursory glance. The great thing for me about coding and developing projects like this are the moments where a complex series of operations going on behind the scenes produces a simple and clean finished product. Projects like these require lots of new learning experiences and chances to try out new technologies while producing something people can interact with, making this a very enjoyable project to have undertaken.<br><br>
+
+            I picked up many useful skills progressing through this project. From database management to cloud services integration all the way to handling more complex POST requests. I enjoyed learning more about how session data works and how it is handled in different contexts ranging from server side temporary data to connection pooling with a relational database. Learning through mistakes made along the way was a great way to gaining insight about how these systems can be optimized and improved as I create more complex projects in the future.<br><br>
+
+            All around this was an invaluable project to me in my progression towards learning more about cloud and web infrastructure and I will use many of these tools in future projects moving forward. Thanks for taking the time to review this project and please reach out with any comments or suggestions.<br><br>
+          imgs:

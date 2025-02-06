@@ -1,55 +1,78 @@
-<div class="container-fluid mt-5" *ngIf="project">
-    <h1><strong>{{ project.title }}</strong></h1>
-    <h2>{{ project.subtitle }} [<a href="{{ project.github }}" target="_blank">Github</a>]</h2>
-    <hr class="my-4">
-    <ul class="nav nav-tabs nav-justified nav-fill">
-        <li class="nav-item">
-            <a class="nav-link" [ngClass]="{'active': activeSection === 'Overview'}"
-                (click)="setTab('Overview')">Overview</a>
-        </li>
-        <li class="nav-item" *ngFor="let section of project.sections">
-            <a class="nav-link" [ngClass]="{'active': activeSection === section.tabTitle}"
-                (click)="setTab(section.tabTitle)">
-                {{ section.tabTitle }}
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" [ngClass]="{'active': activeSection === 'Summary'}"
-                (click)="setTab('Summary')">Summary</a>
-        </li>
-    </ul>
-
-
-    <div class="overview" *ngIf="activeSection === 'Overview'">
-        <div class="card">
-            <h2 class="card-title"><strong>Overview</strong></h2>
-            <img src="{{ project.titleImage }}" alt="" class="img-fluid">
-            <div class="col-md-12">
-                <p [innerHTML]="project.overview"></p>
-            </div>
+<div class="container-fluid mt-3" #scrollContainer *ngIf="project">
+    <div class="pageTitle">
+        <div class="titleImgs">
+            <img *ngFor="let icon of project.titleIcons" src="{{ icon }}" alt="">
         </div>
+        <h1><strong>{{ project.title }}</strong></h1>
     </div>
+    <h2>{{ project.subtitle }} [ <img src="/assets/home-images/git.png" alt=""><a class="my-4" href="{{ project.github }}" target="_blank">Github</a> ]</h2>
+    <!-- <hr class="my-0"> -->
 
-    <div class="card" *ngIf="activeSection !== 'Overview' && activeSection !== 'Summary'">
+
+
+
+    <div class="card">
+        <div class="stickybar">
+            <ul class="nav nav-tabs nav-fill">
+                <li class="nav-item" *ngFor="let section of project.sections">
+                    <a class="nav-link" [ngClass]="{'active': activeSection === section.tabTitle}" (click)="setTab(section.tabTitle)">{{ section.tabTitle }}</a>
+                </li>
+            </ul>
+        </div>
         <div class="sections" *ngFor="let section of project.sections">
             <div *ngIf="activeSection === section.tabTitle">
-                <h2 class="card-title"><strong>{{ section.title }}</strong></h2>
-
+                <h2 class="card-title sectionTitle"><strong>{{ section.title }}</strong></h2>
                 <div class="row" *ngFor="let subsection of section.subsections">
-                    <div class="col-md-8">
-                        <div>
-                            <p class="text-break lh-lg" [innerHTML]="subsection.content"></p>
+                    <div class="col-xxl-7 col-lg-8">
+
+                        <div *ngIf="subsection.content != ''">
+                            <p *ngIf="subsection.content != ''" class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'" [innerHTML]="subsection.content"></p>
                         </div>
+
                         <div *ngIf="subsection.listItems">
                             <ul>
-                                <li class="text-break lh-lg" *ngFor="let item of subsection.listItems">{{ item }}</li>
+                                <li class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-base' : 'lh-lg'" *ngFor="let item of subsection.listItems">
+                                    <span [innerHtml]="item.text"></span>
+                                    <ul *ngIf="item.subList">
+                                        <li class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-base' : 'lh-lg'" *ngFor="let subItem of item.subList" [innerHtml]="subItem"></li>
+                                    </ul>
+                                </li>
                             </ul>
+                        </div>
+
+                        <div *ngIf="subsection.code">
+                            <pre class="text-break">
+                                <code class="language-python" [innerHTML]="subsection.code"></code>
+                            </pre>
                         </div>
                     </div>
 
-                    <div class="col-md-8" *ngIf="subsection.imgs && subsection.imgs.length > 0" class="imgs">
-                        <div *ngFor="let image of subsection.imgs">
-                            <img src="{{ image }}" alt="" class="img-fluid">
+                    <div class="col-md-7">
+                        <div class="row">
+                            <div class="col-xxl-6"  *ngFor="let image of subsection.imgs">
+                                <img  src="{{ image }}" 
+                                    *ngIf="(section.tabTitle == 'Overview') || (section.tabTitle == 'Summary');" 
+                                    alt="" class="img-fluid" 
+                                    (click)="openPreview(image)" 
+                                    class="img-fluid introSummaryImg"
+                                >
+                                <img  
+                                    src="{{ image }}" 
+                                    *ngIf="(section.tabTitle != 'Overview') && (section.tabTitle != 'Summary');" 
+                                    alt="" 
+                                    class="img-fluid detailImg" 
+                                    (click)="openDetailPreview(image)"
+                                >
+
+
+                                <!-- <div class="detailImg" *ngIf="(section.tabTitle == 'Overview') || (section.tabTitle == 'Summary');">
+                                    <img src="{{ image }}" alt="" class="img-fluid" (click)="openPreview(image)">
+                                </div>
+                                <div class="detailImg";>
+                                    <img src="{{ image }}" alt="" class="img-fluid" (click)="openDetailPreview(image)">
+                                </div> -->
+                                <!-- <p class="expand">Click to Expand</p> -->
+                            </div>
                         </div>
                     </div>
 
@@ -57,14 +80,81 @@
             </div>
         </div>
     </div>
-    <div class="overview" *ngIf="activeSection === 'Summary'">
-        <div class="card overview">
-            <h2 class="card-title"><strong>Summary</strong></h2>
-            <div class="col-md-12">
-                <p [innerHTML]="project.summary"></p>
-                <img src="{{ project.summaryImg }}" alt="" class="img-fluid">
-            </div>
+</div>
 
+
+<div class="image-preview-modal" *ngIf="showPreview" (click)="closePreview()">
+    <!-- <div class="img-container"> -->
+        <img [src]="previewImage" alt="Preview Image" />
+    <!-- </div> -->
+</div>
+
+<div class="image-detail-preview-modal" *ngIf="showDetailPreview" (click)="closePreview()">
+    <!-- <div class="img-container"> -->
+        <img [src]="detailPreviewImage" alt="Preview Image" />
+    <!-- </div> -->
+    
+</div>
+
+
+
+<!-- Old tabs for reference -->
+
+
+
+
+
+
+<!-- <mat-tab-group class="tabs" [selectedIndex]="activeTabIndex" (selectedIndexChange)="setActiveTab($event)">
+    <mat-tab color="secondary" *ngFor="let section of project.sections" [label]="section.tabTitle"></mat-tab>
+</mat-tab-group>
+
+
+<div class="tab-content">
+
+    <div *ngFor="let section of project.sections; let i = index" [hidden]="activeTabIndex !== i">
+
+        <div class="card">
+
+            <div class="sections">
+                <div>
+                    <h2 class="card-title"><strong>{{ section.title }}</strong></h2>
+                    <div class="row" *ngFor="let subsection of section.subsections">
+                        <div class="col-md-8">
+                            <div>
+                                <p class="text-break lh-lg" [innerHTML]="subsection.content"></p>
+                            </div>
+                            <div *ngIf="subsection.listItems">
+                                <ul>
+                                    <li class="text-break lh-lg" *ngFor="let item of subsection.listItems"
+                                        [innerHtml]="item"></li>
+                                </ul>
+                            </div>
+                            <div *ngIf="subsection.code">
+                                <pre class="text-break" [innerHTML]="subsection.code">
+                                </pre>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-8" *ngIf="subsection.imgs && subsection.imgs.length > 0"
+                            class="detailImgs">
+                            <div *ngFor="let image of subsection.imgs">
+                                <div
+                                    *ngIf="(section.tabTitle == 'Overview') || (section.tabTitle == 'Summary'); else detail">
+                                    <img src="{{ image }}" alt="" class="img-fluid" (click)="openPreview(image)">
+                                </div>
+                                <ng-template #detail>
+                                    <img src="{{ image }}" alt="" class="img-fluid"
+                                        (click)="openDetailPreview(image)">
+                                </ng-template>
+                                <p>Click to Expand</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</div> -->

@@ -1,24 +1,43 @@
 .mat-sidenav-container {
     height: 100vh;
+    background: linear-gradient(to top, #ffffff 10%, white 100%);
 }
 
+// Colors
+// #9e53e3 logo color mixed with a slight #1a1c42 gradient and a very slight #12ff00 green accent
+// #1a1c42 nav and header background ( with a slight gradient)
+// #12ff00 very slight green accent
+// #f5f5f5 card background
+
+
+
+// original 161e27
+
 .background {
-    background-image: url("/assets/home-images/techy2.png");
-    background-color: #3b4850;
+    // background-image: url("/assets/home-images/techy2.png");
+    background: linear-gradient(to top, #11132c 1%, #1a1c42 50%);
     background-repeat: no-repeat;
     background-size: 300%;
 }
 
 .background2 {
-    background-image: url("/assets/home-images/techy2.png");
-    background-color: #3b4850;
-    background-repeat: repeat;
-    background-size: 100%;
+    // background-image: url("/assets/home-images/techy2.png");
+    // background-color: #1a1c42;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background: linear-gradient(to bottom, #11132c 2%, #1a1c42 40%);
+
+
+}
+
+p {
+    font-family: "Roboto", serif;
+    font-weight: 400;
 }
 
 mat-sidenav {
+    background-color: #1a1c42;
     width: clamp(250px, 16vw, 300px);
-    background-color: #3b4850;
 }
 
 mat-sidenav-content {
@@ -31,8 +50,11 @@ mat-sidenav-content {
     object-position: top;
   }
 .mat-toolbar {
-    background-color: #3b4850;
-    height: clamp(100px, 10vh, 200px);
+    background-color: #1a1c42;
+    height: 100px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .header-desktop {
@@ -42,18 +64,18 @@ mat-sidenav-content {
     align-items: center;
     width: 95%;
     margin: 0 auto;
-    & p {
-        opacity: 75%;
-        padding-top: 1rem;
-        transform: skewX(-10deg);
-        font-style: italic;
-        letter-spacing: 8px;
-        font-family: Roboto;
-    }
+    // & p {
+    //     opacity: 75%;
+    //     padding-top: 1rem;
+    //     transform: skewX(-10deg);
+    //     font-style: italic;
+    //     letter-spacing: 8px;
+    //     font-family: Roboto;
+    // }
     & div {
         display: flex;
         align-items: center;
-        height: 10vh;
+        height: 100px;
     }
     & img {
         object-fit: contain;
@@ -65,29 +87,29 @@ mat-sidenav-content {
         border: black 3px solid;
     }
 }
-
 .header-handset {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: right;
-    align-items: flex-start;
-    width: 20%;
+    align-items: center;
+    width: 95%;
     margin: 0 auto;
-    & p {
-        padding-top: 2rem;
-        padding-right: 10rem;
-        opacity: 75%;
-        font-style: italic;
-        letter-spacing: 4px;
-        font-family: Roboto;
-    }
+    // & p {
+    //     opacity: 75%;
+    //     padding-top: 1rem;
+    //     transform: skewX(-10deg);
+    //     font-style: italic;
+    //     letter-spacing: 8px;
+    //     font-family: Roboto;
+    // }
     & div {
-        height: 75px;
-        align-items: flex-start;
+        display: flex;
+        align-items: center;
+        height: 10vh;
     }
     & img {
         object-fit: contain;
-        height: 50%;
+        height: clamp(40px, 1.15vh, 70px);
         width: auto;
         margin: 0 10px;
         background-color: white;
@@ -95,6 +117,35 @@ mat-sidenav-content {
         border: black 3px solid;
     }
 }
+// .header-handset {
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: right;
+//     align-items: flex-start;
+//     width: 20%;
+//     margin: 0 auto;
+//     & p {
+//         padding-top: 2rem;
+//         padding-right: 10rem;
+//         opacity: 75%;
+//         font-style: italic;
+//         letter-spacing: 4px;
+//         font-family: Roboto;
+//     }
+//     & div {
+//         height: 75px;
+//         align-items: flex-start;
+//     }
+//     & img {
+//         object-fit: contain;
+//         height: 40%;
+//         width: auto;
+//         margin: 0 10px;
+//         background-color: white;
+//         border-radius: 30%;
+//         border: black 3px solid;
+//     }
+// }
 
 mat-nav-list a {
     margin-top: 4vh;
@@ -104,10 +155,20 @@ mat-list-item {
     border: 1px solid black !important;
 }
 
+.active::before {
+    background-color: white !important;
+}
+
+::ng-deep.mat-mdc-list-item-interactive:hover::before a:hover {
+    
+    background-color: green !important;
+}
+
 .nav-link {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: flex-start;
+    gap: 1rem;
     align-items: center;
     width: 70%;
     margin: 0 auto;
@@ -115,20 +176,46 @@ mat-list-item {
         opacity: 60%;
         padding-top: 1rem;
         color: white !important;
-        font-size: clamp(1rem, 1vw, 1.5rem);
+        // font-size: clamp(1rem, .8vw, 1.25rem);
         margin-left: 1rem;
     }
 }
 
 .active {
     background-color: white;
-    border-radius: 0% !important;
+    border-radius: 2% !important;
     & p {
-      color: black !important;
-      opacity: inherit;
+        color: black !important;
+        opacity: inherit;
+        // transform: matrix3d(
+        //     1, 0, 0, 0, 
+        //     0, 1, 0, 0, 
+        //     0, 0, 1, 0, 
+        //     0, 0, 0, 1
+        // );
+        animation: pulse 0.4s ease-out;
     }
     .custom-size-mat-icon {
         color: black !important;
+    }
+    
+}
+
+@keyframes pulse {
+    0% {
+      transform: scale(1.3); /* Normal size */
+    }
+    25% {
+      transform: scale(1.2); /* Scales out */
+    }
+    50% {
+      transform: scale(1.1); /* Scales out */
+    }
+    75% {
+      transform: scale(1.05); /* Scales out */
+    }
+    100% {
+      transform: scale(1); /* Back to normal size */
     }
 }
 
@@ -141,6 +228,23 @@ mat-list-item {
     }
 }
 
+.inactive:hover::before {
+    background-color: green;
+}
+
+.inactive:hover {
+    background-color: rgba(198, 225, 255, 0.25);
+    border-radius: 2% !important;
+    & p {
+      color: white !important;
+      opacity: 100%;
+    }
+    .custom-size-mat-icon {
+        color: white !important;
+    }
+    // transform: scale(1.01);
+}
+
 .custom-size-mat-icon {
     color: white !important;
     transform: scale(1.4);
@@ -148,4 +252,13 @@ mat-list-item {
 
 .custom-icon {
     transform: scale(1);
+}
+
+@media (max-width: 1280px) {
+    .active {
+        & p {
+            animation: none;
+        }
+    }
+    
 }

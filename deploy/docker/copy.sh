@@ -22,6 +22,7 @@ echo "Copying project files to remote server..."
 scp -o StrictHostKeyChecking=no -r ./dist "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/home/ec2-user/app"
 scp -o StrictHostKeyChecking=no -r ./deploy/docker "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/home/ec2-user/app"
 scp -o StrictHostKeyChecking=no Dockerfile "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/home/ec2-user/app"
+scp -o StrictHostKeyChecking=no -r ./api "$REMOTE_USER@$INSTANCE_PUBLIC_DNS:/home/ec2-user/app/api"
 
 echo "Connecting to remote server via SSH..."
 

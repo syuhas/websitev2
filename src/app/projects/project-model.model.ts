@@ -1,14 +1,18 @@
+import { SafeHtml } from "@angular/platform-browser";
+
 export interface Project {
     id: string;
     title: string;
     subtitle: string;
     github: string;
     description: string;
-    overview: string;
-    titleImage: string;
+    // overview: string;
+    listIcon?: string[];
+    titleIcons?: string[];
+    // titleImage: string;
     sections: ProjectSections[];
-    summary: string;
-    summaryImg?: string;
+    // summary: string;
+    // summaryImg?: string;
 }
 
 export interface ProjectSections {
@@ -18,7 +22,13 @@ export interface ProjectSections {
 }
 
 export interface ProjectSubSection {
-    content: string;
-    listItems? : string[];
+    content: SafeHtml;
+    listItems? : ListItem[];
     imgs?: string[];
+    code?: SafeHtml;
+}
+
+export interface ListItem {
+    text: SafeHtml;
+    subList?: SafeHtml[];
 }

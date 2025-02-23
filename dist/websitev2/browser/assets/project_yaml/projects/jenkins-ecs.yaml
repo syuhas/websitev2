@@ -1,0 +1,71 @@
+- id: jenkins-ecs
+  title: "Terraform-Powered Plug-and-Play ECS Deployments with Jenkins"
+  subtitle: "Rapidly deploy any application to ECS with minimal setup using Terraform and Jenkins, with DSL job generators, configuration script compatibility, and dynamic repository and branch selection."
+  github: https://github.com/syuhas/cdk-demo-vpc
+  description: |
+    Defining and provisioning AWS resources as code with the AWS Cloud Development Kit (CDK).
+  listIcon: /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon.png
+  titleIcons:
+  - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon1.png
+  - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon2.png
+  - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon3.png
+  - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon4.png
+  sections:
+  - title: Overview
+    tabTitle: Overview
+    subsections:
+    - content: |
+        <strong style='color: blue;'>One of the things that draws me to DevOps and Platform Engineering is automation</strong>—I love everything about it. There’s something deeply satisfying about writing a few lines of text or code, pressing a button, and watching everything fall into place. Whether it's a simple bootstrap script to automate dependency installation, writing cloud infrastructure as code with tools like Terraform or CloudFormation, writing ansible playbooks to configure servers, or setting up CI/CD pipelines, I find it all deeply fascinating.
+
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins.gif
+      # - /assets/project-images/jenkins-ecs-images/jenkins_ecs_workflow.png
+
+    - content: |
+        
+        # In particular, I am fascinated about automating the process of deploying applications to the cloud. This is also known as ... . Provisioning and deploying to infrastructure that is available on-demand is a powerful new paradigm in software development. It is something I have spent a great deal of time exploring and experimenting with.<br><br> 
+
+        # My goal with this project initially was to incorporate Terraform into a project that deploys across multiple accounts in AWS. It started out as a simple EC2 deployment that could be deployed to any account I own. This then quickly evolved and expanded to the idea of deploying any type of framework as well. That sparked the idea of a <strong style='color: blue;'>universal application deployer</strong>. A way to take any application, and with minimal configuration, get an application deployed without having to rewrite pipeline steps, write infrastructure code, and create new jobs for every application. Obviously, this is not possible for every single type of application and configuration, but I realized I could get started to deploy test applications quickly using a repeatable framework using.   was to streamline that process as much as possible for my own projects in order to make a universal framework that could be used to deploy any kind of application with minimal up-front configuration.<br><br>
+
+        In particular, I am fascinated by the automation of deploying applications to the cloud. This process is often referred to as <strong style='color: blue;'>Continuous Deployment (CD)</strong>, the deployment phase of the CI/CD pipeline. By automating the deployment of code directly to production, CD ensures rapid delivery of features and fixes, significantly reducing manual intervention and error. It’s a transformative approach in modern software development that streamlines the entire lifecycle of applications, and provisioning and deploying to infrastructure that is available on-demand is a powerful new paradigm.
+
+        My initial goal with this project was to integrate Terraform into a framework that could deploy applications across multiple AWS accounts. What started as a simple EC2 deployment across accounts soon evolved into a broader solution for deploying various types of frameworks. This sparked the idea of creating a <strong style='color: blue;'>universal application deployment system</strong>—one that allows any application to be deployed with minimal configuration, without needing to rewrite pipeline steps or infrastructure code to get a new application up and running. While not every application may fit this approach, I realized I could quickly deploy test applications using this framework, and later adapt it to work with any type of application, with little upfront configuration.
+
+      imgs:
+
+
+  - title: Installing Typescript and the CDK
+    tabTitle: Installation
+    subsections:
+    - content: |
+        First, there are some prerequisties that need to be in place before actually installing the CDK. As a preliminary measure, the AWS CLI must be installed and configured with the account credentials for the IAM role being used. Node.js is also required to use the CDK, so that must be installed beforehand. Here I will be installing Typescript and the CDK itself. In addition to this, things like Javascript and any other preferred languages that we want to use (Python, C#, etc.) must be installed. However, for my purposes here, the minimum requirements are Node.js and Typescript.
+    - content: |
+        Using the Node Package Manager(npm) in global mode allows me to install Typescript which will be used for this project.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-1-typescript.png
+    - content: |
+        Now the Cloud Developement Kit can be installed. To verify the installation, I can run a 'cdk --version' check. Additionally, a pip dependencies overview let's us see exactly what the CDK has installed on top of our previously existing dependencies.
+      imgs:
+      - /assets/project-images/cdk-images/cdk-2-checkinstall.png
+
+  - title: Summary
+    tabTitle: Summary
+    subsections:
+    - content: |
+        For me, this project really highlighted the power and utility of the Cloud Development Kit. It is an extremely powerful tool, being able to define and deploy entire stacks of CloudFormation-generated
+        infrastructure using some code and your favorite IDE. As an alternative to CloudFormation templates, some may prefer this as the infrastructure can be defined using a language that some feel either
+        more comfortable with or proficient in. 
+        <br><br>
+        The ease at which you can provision and destroy architectures could have great applications for copying entire infrastructures over to another region for higher availability and resiliency, 
+        and in a disaster recovery plan to automate recovery to reduce RPO and RTO for less downtime.
+        <br><br>
+        Overall, the CDK is a great tool, a great alternative to CloudFormation templating and a very useful weapon to have in one's cloud arsenal.
+      imgs:
+
+        # - content: |
+        #       <strong style="color: rgb(0, 255, 0);">greencode</strong>
+        #       <strong style="color: rgb(172, 172, 255);">blueishcode</strong>
+        #         <strong style="color: red;">redcode</strong>
+        #         <strong style="color: orange;">orangecode</strong>
+        #         <strong style='color: #006ab7;'>purptext</strong>
+        #         <strong style='color: blue;'>bluetext</strong>

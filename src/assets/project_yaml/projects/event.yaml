@@ -3,8 +3,8 @@
   subtitle: Event-driven architecture in AWS with EventBridge, Lambda, SQS, and S3.
   github: https://github.com/syuhas/awsdash-lambda
   description: |
-      Developing an event-driven architecture in AWS with serverless microservices
-  listIcon: /assets/project-images/event-images/event_icon3.png
+      Developing an event-driven architecture in AWS with serverless microservices.
+  listIcon: /assets/project-images/event-images/serverless.png
   titleIcons:
     - /assets/project-images/event-images/event_icon.png
     - /assets/project-images/event-images/event_icon2.png

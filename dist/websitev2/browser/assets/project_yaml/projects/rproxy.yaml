@@ -4,7 +4,7 @@
   github: https://github.com/syuhas/websitev2
   description: |
     Configuring a reverse proxy to serve a FastAPI backend and Angular frontend on the same EC2 instance and domain.
-  listIcon: /assets/project-images/rproxy-images/rproxy_icon2.png
+  listIcon: /assets/project-images/rproxy-images/ngdocker.png
   titleIcons:
   - /assets/project-images/rproxy-images/rproxy_icon2.png
   - /assets/project-images/rproxy-images/rproxy_icon.png

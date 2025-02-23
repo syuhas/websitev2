@@ -3,7 +3,7 @@
   subtitle: A Scalable Account Creation, Authorization and Management System for Web Application Users.
   github: https://github.com/syuhas/flaskdb
   description: |
-    A functional user management system with registration, login authorization, database management and email validation.
+    Creating my first functional user management system with registration, login authorization, database management and email validation.
   listIcon: /assets/project-images/usermgmt-images/usermgmt_icon1.png
   titleIcons:
   - /assets/project-images/usermgmt-images/usermgmt_icon1.png

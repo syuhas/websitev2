@@ -3,1309 +3,1323 @@
   subtitle: "Application-agnostic, multi-account ECS deployment solution built with Jenkins and Teraform."
   github: https://github.com/syuhas/ecs_deployer
   description: |
-      Building an application-agnostic solution using Terraform and Jenkins to deploy any Dockerized app to ECS across multiple AWS accounts.
+    Building an application-agnostic solution using Terraform and Jenkins to deploy any Dockerized app to ECS across multiple AWS accounts.
   listIcon: /assets/project-images/jenkins-ecs-images/jenkinsterra.png
   titleIcons:
-    - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon2.png
-    - /assets/project-images/jenkins-ecs-images/jenkinsterra.png
-    # - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon3.png
-    - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon4.png
+  - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon2.png
+  - /assets/project-images/jenkins-ecs-images/jenkinsterra.png
+  # - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon3.png
+  - /assets/project-images/jenkins-ecs-images/jenkins_ecs_icon4.png
   sections:
-    - title: Overview
-      tabTitle: Overview
-      subsections:
-        - content: ""
+  - title: Overview
+    tabTitle: Overview
+    subsections:
+    - content: ""
 
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkinsworkflow.gif
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkinsworkflow.gif
 
-        - content: |
-              <span style='color: #006ab7; font-family: EmberHeavy;'>Automation has always fascinated me</span>—there’s something incredibly satisfying about writing code, pressing a button, and watching an entire system come to life. I’ve always been drawn to Rube Goldberg machines—intricate, over-engineered contraptions where one action triggers another in a fascinating (but ultimately impractical) chain reaction. Unlike Rube Goldbergs, automation isn’t just for spectacle—it’s about efficiency, repeatability, and eliminating unnecessary complexity. But it is a spectacle nonetheless. Whether it's automating infrastructure with Terraform, orchestrating deployments with Jenkins, or configuring servers with Ansible, I love streamlining complex processes to make them efficient, scalable, and repeatable.<br><br>
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/rb.gif
-        - content: |
-              My initial goal with this project was to integrate Terraform into a framework that could deploy applications across multiple AWS accounts. Over time, I recognized an opportunity to expand beyond simply deploying a single application to any account—I wanted to create a system that could deploy any containerized application to ECS with minimal configuration. This led to the idea for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> — <span style='color: #006ab7; font-family: EmberHeavy;'>a universal ECS deployment system designed to handle any containerized application with minimal upfront configuration</span>.<br><br>
-              <span style='text-align: center;display: block;'>The system is built around two core requirements:</span>
-          listItems:
-            - text: "A valid working <strong style='color: blue;'>Dockerfile</strong> to build the application."
-            - text: "A <strong style='color: blue;'>Configuration File</strong> that can be generated with the provided CLI tool to define the infrastructure."
-        - content: |
-              Currently, AutoPilot serves as a proof of concept, enabling the deployment of simple web applications to ECS using Jenkins and Terraform. It automates provisioning, builds container images, deploys them to ECS, and manages networking, logging, and execution—all while <span style='color: #006ab7; font-family: EmberHeavy;'>eliminating the need to manually define deployment pipelines or infrastructure for every new application</strong>.
+    - content: |
+        <span style='color: #006ab7; font-family: EmberHeavy;'>Automation has always fascinated me</span>—there’s something incredibly satisfying about writing code, pressing a button, and watching an entire system come to life. I’ve always been drawn to <span style='color: #006ab7; font-family: EmberHeavy;'>Rube Goldberg machines</span>—intricate, over-engineered contraptions where one action triggers another in a fascinating (but ultimately impractical) chain reaction. Unlike Rube Goldbergs, automation isn’t just for spectacle—it’s about efficiency, repeatability, and eliminating unnecessary complexity. But it is a spectacle nonetheless. Whether it's automating infrastructure with Terraform, orchestrating deployments with Jenkins, or configuring servers with Ansible, I love streamlining complex processes to make them efficient, scalable, and repeatable.<br><br>
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/rb.gif
+    - content: |
+        My initial goal with this project was to integrate Terraform into a framework that could deploy applications across multiple AWS accounts. Over time, I recognized an opportunity to expand beyond simply deploying a single application to any account—I wanted to create a system that could deploy any containerized application to ECS with minimal configuration. This led to the idea for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> — <span style='color: #006ab7; font-family: EmberHeavy;'>a universal ECS deployment system designed to handle any containerized application with minimal upfront configuration</span>.<br><br>
 
-        - content: ""
-          pageSection: "Key Features:"
-          listItems:
-            - text: "<strong style='color: blue;'>Jenkins-driven automation</strong> for seamless pipeline execution."
-            - text: "<strong style='color: blue;'>Multi-account Support</strong> for deploying across multiple AWS accounts."
-            - text: "<strong style='color: blue;'>Terraform-based AWS provisioning</strong>, dynamically creating the required infrastructure."
-            - text: "<strong style='color: blue;'>GitHub API integration</strong> for dynamic repository and branch selection."
-            - text: "<strong style='color: blue;'>Route 53 subdomain management</strong>, ensuring conflict-free domain assignments."
-            - text: "<strong style='color: blue;'>Custom script support</strong> for additional application-specific configuration."
-            - text: "<strong style='color: blue;'>AWS CloudWatch logging setup</strong>, enabling detailed monitoring and troubleshooting."
-            - text: "<strong style='color: blue;'>ECS Exec support</strong>, allowing direct container access for debugging and live management."
-        - content: |
-              While AutoPilot provides a simple and efficient ECS deployment workflow, there are some key constraints and future opportunities to consider. The deployment flow is relatively basic, lacking advanced rollout strategies such as progressive delivery, blue-green deployments, or rollback mechanisms. While it can deploy any containerized application, it is primarily optimized for stateless applications, and does not yet support persistent storage, complex networking, or stateful workloads. Scaling limitations exist in the current implementation, as it primarily focuses on single-service deployments per job execution, without native orchestration for multi-service deployments within a single run. Security and configuration flexibility are also areas for improvement—secrets management is limited to environment variables injected via Terraform, and a more advanced integration with AWS Secrets Manager or Vault could enhance security.<br><br>
+    - content: ""
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins.gif
+    - content: |
+        <span style='text-align: center;display: block;'>The system is built around two core requirements:</span>
+      listItems:
+      - text: "A valid working <strong style='color: blue;'>Dockerfile</strong> to build the application."
+      - text: "A <strong style='color: blue;'>Configuration File</strong> that can be generated with the provided CLI tool to define the infrastructure."
+    - content: |
+        Currently, AutoPilot serves as a proof of concept, enabling the deployment of simple web applications to ECS using Jenkins and Terraform. It automates provisioning, builds container images, deploys them to ECS, and manages networking, logging, and execution—all while <span style='color: #006ab7; font-family: EmberHeavy;'>eliminating the need to manually define deployment pipelines or infrastructure for every new application</strong>.
 
-        - content: |
-              AutoPilot is fully functional in its current state for deploying simple web applications, but there are many exciting opportunities to expand its capabilities within the ECS ecosystem. Future iterations could introduce features such as:
-          pageSection: "Looking Ahead:"
-          listItems:
-            - text: "<strong style='color: blue;'>Multi-Service Deployments</strong> – Deploying and orchestrating multiple interdependent services within an ECS cluster."
-            - text: "<strong style='color: blue;'>Automated Blue-Green & Canary Deployments</strong> – Enabling seamless updates with minimal downtime and reduced risk."
-            - text: "<strong style='color: blue;'>Centralized Secrets & Config Management</strong> – Enhancing integration with AWS Systems Manager Parameter Store, Secrets Manager, or environment variable injection."
-            - text: "<strong style='color: blue;'>More Robust Logging & Monitoring</strong> – Enhancing observability with deeper integrations into AWS CloudWatch, Prometheus, or third-party logging services."
-            - text: "<strong style='color: blue;'>Multi-Cluster & Multi-Region Support</strong> – Expanding deployment options to multiple ECS clusters across different AWS regions."
+    - content: ""
+      pageSection: "Key Features:"
+      listItems:
+      - text: "<strong style='color: blue;'>Jenkins-driven automation</strong> for seamless pipeline execution."
+      - text: "<strong style='color: blue;'>Multi-account Support</strong> for deploying across multiple AWS accounts."
+      - text: "<strong style='color: blue;'>Terraform-based AWS provisioning</strong>, dynamically creating the required infrastructure."
+      - text: "<strong style='color: blue;'>GitHub API integration</strong> for dynamic repository and branch selection."
+      - text: "<strong style='color: blue;'>Route 53 subdomain management</strong>, ensuring conflict-free domain assignments."
+      - text: "<strong style='color: blue;'>Custom script support</strong> for additional application-specific configuration."
+      - text: "<strong style='color: blue;'>AWS CloudWatch logging setup</strong>, enabling detailed monitoring and troubleshooting."
+      - text: "<strong style='color: blue;'>ECS Exec support</strong>, allowing direct container access for debugging and live management."
+    - content: |
+        While AutoPilot provides a simple and efficient ECS deployment workflow, there are some key constraints and future opportunities to consider. The deployment flow is relatively basic, lacking advanced rollout strategies such as progressive delivery, blue-green deployments, or rollback mechanisms. While it can deploy any containerized application, it is primarily optimized for stateless applications, and does not yet support persistent storage, complex networking, or stateful workloads. Scaling limitations exist in the current implementation, as it primarily focuses on single-service deployments per job execution, without native orchestration for multi-service deployments within a single run. Security and configuration flexibility are also areas for improvement—secrets management is limited to environment variables injected via Terraform, and a more advanced integration with AWS Secrets Manager or Vault could enhance security.<br><br>
 
-        - content: |
-              The long-term vision for AutoPilot is to become a fully-featured ECS deployment framework, capable of handling any type of containerized application within the ECS ecosystem. The focus will remain on simplifying deployments, improving automation, and expanding infrastructure capabilities while maintaining the core principles of minimal configuration and flexibility.<br><br>
+    - content: |
+        AutoPilot is fully functional in its current state for deploying simple web applications, but there are many exciting opportunities to expand its capabilities within the ECS ecosystem. Future iterations could introduce features such as:
+      pageSection: "Looking Ahead:"
+      listItems:
+      - text: "<strong style='color: blue;'>Multi-Service Deployments</strong> – Deploying and orchestrating multiple interdependent services within an ECS cluster."
+      - text: "<strong style='color: blue;'>Automated Blue-Green & Canary Deployments</strong> – Enabling seamless updates with minimal downtime and reduced risk."
+      - text: "<strong style='color: blue;'>Centralized Secrets & Config Management</strong> – Enhancing integration with AWS Systems Manager Parameter Store, Secrets Manager, or environment variable injection."
+      - text: "<strong style='color: blue;'>More Robust Logging & Monitoring</strong> – Enhancing observability with deeper integrations into AWS CloudWatch, Prometheus, or third-party logging services."
+      - text: "<strong style='color: blue;'>Multi-Cluster & Multi-Region Support</strong> – Expanding deployment options to multiple ECS clusters across different AWS regions."
 
-              This project is just the beginning, and I’m excited to refine, optimize, and extend its functionality to create a powerful and extensible deployment system for ECS.
+    - content: |
+        The long-term vision for AutoPilot is to become a fully-featured ECS deployment framework, capable of handling any type of containerized application within the ECS ecosystem. The focus will remain on simplifying deployments, improving automation, and expanding infrastructure capabilities while maintaining the core principles of minimal configuration and flexibility.<br><br>
 
-    - title: Prerequisites
-      tabTitle: Prerequisites
-      subsections:
-        - content: |
-              This project is designed to be very flexible and repeatable, but it does require some prerequisites to get started. Namely some existing infrastructure and knowledge of AWS services are required. That being said, once these prerequisites are met and configured, no additional configuration is is required for all future application deployments!! The prerequisites for this project are as follows:
-          listItems:
-            - text: "<strong style='color: blue;'>Configured IAM Roles:</strong>."
-              subList:
-                - "<strong style='color: #bb519e;'>Build Agent IMDSv2 Role</strong>: This role should have the necessary permissions to assume each role in each target account."
-                - "<strong style='color: #bb519e;'>Cross Account Roles</strong>: A role in each account that is assumed by the build agent. This role should have the necessary permissions to deploy the application infrastructure."
-                - "<strong style='color: #bb519e;'>Task Execution Role</strong>: A role that the ECS task will assume to access other AWS services."
-                - "<strong style='color: #bb519e;'>Task Role for ECSExec</strong>: A role that the ECSExec service will assume to access the ECS task."
-            - text: "<strong style='color: blue;'>Jenkins server with the following plugins installed</strong>:"
-              subList:
-                - "<strong style='color: #bb519e;'>Active Choices, Pipeline: Groovy, Git, Job DSL, Credentials Binding, Pipeline Utility</strong>"
-                # - "<strong style='color: #bb519e;'></strong>"
-                # - "<strong style='color: #bb519e;'></strong>"
-                # - "<strong style='color: #bb519e;'></strong>"
-                # - "<strong style='color: #bb519e;'></strong>"
-                # - "<strong style='color: #bb519e;'></strong>"
+        This project is just the beginning, and I’m excited to refine, optimize, and extend its functionality to create a powerful and extensible deployment system for ECS.
 
-            - text: "<strong style='color: blue;'>Route 53 domain with a hosted zone</strong>. This domain will be used to route the application to a subdomain."
-            - text: "<strong style='color: blue;'>SSL Certificate for the domain</strong>. This certificate will be used to secure the application and should be requested through ACM."
-            - text: "<strong style='color: blue;'>GitHub account with repositories</strong>. The repositories will be used to deploy the application. Also a personal access token is required to fetch the repositories."
-              subList:
-                - "Note: The personal access token should be saved on the Jenkins server as 'GITHUB_TOKEN'."
-            - text: "<strong style='color: blue;'>Configured VPC, Subnets and Security Group</strong> in each account. The VPC should have a public subnet with an internet gateway attached if the application needs to be accessed from the internet."
-            - text: "<strong style='color: blue;'>An S3 bucket and DynamoDB table</strong> in each account. These will be used to store the Terraform state file and lock the state file respectively."
-        - content: |
-              If these requirements are met, all that is required is to enter the information into the provided <span style='color: #006ab7; font-family: EmberHeavy;'>configuration yaml</span>. For each deployment, the user will only need to input the job parameters and have a valid Dockerfile in their Application repository. The configuration will be used for all future deployments and will only need to be updated if the infrastructure changes or if new accounts are added.
+  - title: Prerequisites
+    tabTitle: Prerequisites
+    subsections:
+    - content: |
+        This project is designed to be very flexible and repeatable, but it does require some prerequisites to get started. Namely some existing infrastructure and knowledge of AWS services are required. That being said, once these prerequisites are met and configured, no additional configuration is is required for all future application deployments!! The prerequisites for this project are as follows:
+      listItems:
+      - text: "<strong style='color: blue;'>Configured IAM Roles:</strong>."
+        subList:
+        - "<strong style='color: #bb519e;'>Build Agent IMDSv2 Role</strong>: This role should have the necessary permissions to assume each role in each target account."
+        - "<strong style='color: #bb519e;'>Cross Account Roles</strong>: A role in each account that is assumed by the build agent. This role should have the necessary permissions to deploy the application infrastructure."
+        - "<strong style='color: #bb519e;'>Task Execution Role</strong>: A role that the ECS task will assume to access other AWS services."
+        - "<strong style='color: #bb519e;'>Task Role for ECSExec</strong>: A role that the ECSExec service will assume to access the ECS task."
+      - text: "<strong style='color: blue;'>Jenkins server with the following plugins installed</strong>:"
+        subList:
+        - "<strong style='color: #bb519e;'>Active Choices, Pipeline: Groovy, Git, Job DSL, Credentials Binding, Pipeline Utility</strong>"
+        # - "<strong style='color: #bb519e;'></strong>"
+        # - "<strong style='color: #bb519e;'></strong>"
+        # - "<strong style='color: #bb519e;'></strong>"
+        # - "<strong style='color: #bb519e;'></strong>"
+        # - "<strong style='color: #bb519e;'></strong>"
 
-    - title: "Deployment Workflow"
-      tabTitle: Workflow
-      subsections:
-        - content: ""
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins.gif
-        - content: |
-              The above diagram illustrates the deployment of an application across accounts into my development account. AutoPilot acts as the orchestrator for the application, handling the deployment process from start to finish. <span style='color: #006ab7; font-family: EmberHeavy;'>All the application needs is a valid Dockerfile and a configuration yaml in the application Github repository</span>. AutoPilot then kicks off the orchestrated pipeline, reading from the defined configuration in the target repository, deploying the application to the specified account, and registering the application with the defined subdomain.<br><br>
+      - text: "<strong style='color: blue;'>Route 53 domain with a hosted zone</strong>. This domain will be used to route the application to a subdomain."
+      - text: "<strong style='color: blue;'>SSL Certificate for the domain</strong>. This certificate will be used to secure the application and should be requested through ACM."
+      - text: "<strong style='color: blue;'>GitHub account with repositories</strong>. The repositories will be used to deploy the application. Also a personal access token is required to fetch the repositories."
+        subList:
+        - "Note: The personal access token should be saved on the Jenkins server as 'GITHUB_TOKEN'."
+      - text: "<strong style='color: blue;'>Configured VPC, Subnets and Security Group</strong> in each account. The VPC should have a public subnet with an internet gateway attached if the application needs to be accessed from the internet."
+      - text: "<strong style='color: blue;'>An S3 bucket and DynamoDB table</strong> in each account. These will be used to store the Terraform state file and lock the state file respectively."
+    - content: |
+        If these requirements are met, all that is required is to enter the information into the provided <span style='color: #006ab7; font-family: EmberHeavy;'>configuration yaml</span>. For each deployment, the user will only need to input the job parameters and have a valid Dockerfile in their Application repository. The configuration will be used for all future deployments and will only need to be updated if the infrastructure changes or if new accounts are added.
 
-              The workflow proceeds depending on the deployment option. For an update, some of the existing infrastructure is stored in a state file and locked in DynamoDB. For a fresh deployment, the existing infrastructure is torn down and rebuilt, including any ECR repository associated with the application. 
-        - content: ""
-          pageSection: "Workflow Steps:"
+  - title: "Deployment Workflow"
+    tabTitle: Workflow
+    subsections:
+    - content: ""
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins.gif
+    - content: |
+        The above diagram illustrates the deployment of an application across accounts into my development account. AutoPilot acts as the orchestrator for the application, handling the deployment process from start to finish. <span style='color: #006ab7; font-family: EmberHeavy;'>All the application needs is a valid Dockerfile and a configuration yaml in the application Github repository</span>. AutoPilot then kicks off the orchestrated pipeline, reading from the defined configuration in the target repository, deploying the application to the specified account, and registering the application with the defined subdomain.<br><br>
 
-          listItems:
-            - text: "<strong style='color: blue; font-size: 1.25em;'>1) Trigger Jenkins Job</strong>"
-              subList:
-                - "The Jenkins job is triggered after parameters are input into the Jenkins job."
-                - "The parameters are the repository, branch, deployment option, account, and subdomain."
+        The workflow proceeds depending on the deployment option. For an update, some of the existing infrastructure is stored in a state file and locked in DynamoDB. For a fresh deployment, the existing infrastructure is torn down and rebuilt, including any ECR repository associated with the application. 
+    - content: ""
+      pageSection: "Workflow Steps:"
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>2) Provision Build Agent</strong>"
-              subList:
-                - "The Jenkins job provisions a build agent to run the pipeline."
-                - "The build agent is provisioned in the main account and has an IMDSv2 role attached with the necessary permissions to assume the target account role."
+      listItems:
+      - text: "<strong style='color: blue; font-size: 1.25em;'>1) Trigger Jenkins Job</strong>"
+        subList:
+        - "The Jenkins job is triggered after parameters are input into the Jenkins job."
+        - "The parameters are the repository, branch, deployment option, account, and subdomain."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>3) Clone <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> Repository</strong>"
-              subList:
-                - "The AutoPilot repository is cloned into the build agent."
-                - "This repository contains a Terraform file and a Jenkinsfile with all of the instructions to deploy the application and infrastructure."
-                - "The Jenkinsfile is loaded in and kicks off the pipeline."
-                - "The input parameters are also passed into the pipeline."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>2) Provision Build Agent</strong>"
+        subList:
+        - "The Jenkins job provisions a build agent to run the pipeline."
+        - "The build agent is provisioned in the main account and has an IMDSv2 role attached with the necessary permissions to assume the target account role."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>4) Clone Application Repository</strong>"
-              subList:
-                - "The application repository is cloned into the build agent."
-                - "AutoPilot looks for a Dockerfile, configuration yaml and any additional configuration scripts to load into the pipeline."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>3) Clone <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> Repository</strong>"
+        subList:
+        - "The AutoPilot repository is cloned into the build agent."
+        - "This repository contains a Terraform file and a Jenkinsfile with all of the instructions to deploy the application and infrastructure."
+        - "The Jenkinsfile is loaded in and kicks off the pipeline."
+        - "The input parameters are also passed into the pipeline."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>5) Initialize Terraform Backend</strong>"
-              subList:
-                - "Terraform is configured to use an S3 bucket to store the state file and DynamoDB to lock the state file."
-                - "This enables the state of existing infrastructure to be stored and locked to prevent concurrent deployments."
-                - "This assumes you have an existing bucket and table setup in each of the deployment accounts with necessary permissions to access them."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>4) Clone Application Repository</strong>"
+        subList:
+        - "The application repository is cloned into the build agent."
+        - "AutoPilot looks for a Dockerfile, configuration yaml and any additional configuration scripts to load into the pipeline."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>6) Injecting Environment Variables</strong>"
-              subList:
-                - "The configuration yaml is loaded in and the environment variables are injected into the Terraform infrastructure file."
-                - "The variables are then passed as TF_VAR variables so Terraform can use them to deploy the infrastructure."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>5) Initialize Terraform Backend</strong>"
+        subList:
+        - "Terraform is configured to use an S3 bucket to store the state file and DynamoDB to lock the state file."
+        - "This enables the state of existing infrastructure to be stored and locked to prevent concurrent deployments."
+        - "This assumes you have an existing bucket and table setup in each of the deployment accounts with necessary permissions to access them."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>7) Assume Cross Account Role</strong>"
-              subList:
-                - "The build agent assumes the cross-account role in the target account, as defined in the configuration file for each account."
-                - "Both the Jenkins build role should have the permissions to assume the target account role, which in turn should have the necessary permissions to deploy the application infrastructure."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>6) Injecting Environment Variables</strong>"
+        subList:
+        - "The configuration yaml is loaded in and the environment variables are injected into the Terraform infrastructure file."
+        - "The variables are then passed as TF_VAR variables so Terraform can use them to deploy the infrastructure."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>8) Destroy Infrastructure <span style='color: red;'>(conditional)</span></strong>"
-              subList:
-                - "If a fresh deployment is chosen, or the user wants to tear down an existing application, this step runs first."
-                - "If an update is chosen, this step is skipped."
-                - "This is useful for cleaning up any existing infrastructure that may be in place, or if there are any issues with the deployed infrastructure."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>7) Assume Cross Account Role</strong>"
+        subList:
+        - "The build agent assumes the cross-account role in the target account, as defined in the configuration file for each account."
+        - "Both the Jenkins build role should have the permissions to assume the target account role, which in turn should have the necessary permissions to deploy the application infrastructure."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>9) Terraform - Deploy ECR Repository <span style='color: red;'>(conditional)</span></strong>"
-              subList:
-                - "Terraform will check for an existing repository associated with the application and create one if it does not exist."
-                - "If the application is being updated, the pipeline will take note of the repository being used and output it for later steps."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>8) Destroy Infrastructure <span style='color: red;'>(conditional)</span></strong>"
+        subList:
+        - "If a fresh deployment is chosen, or the user wants to tear down an existing application, this step runs first."
+        - "If an update is chosen, this step is skipped."
+        - "This is useful for cleaning up any existing infrastructure that may be in place, or if there are any issues with the deployed infrastructure."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>10) Run Application Configuration Scripts <span style='color: red;'>(optional)</span></strong>"
-              subList:
-                - "The pipeline will check the target application repository files for any additional scripts present in the deployment folder."
-                - "If present, these scripts will be run to configure the application."
-                - "These scripts can be either Bash or Python scripts. (for Python, additional dependencies must be included with a requirements.txt file)."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>9) Terraform - Deploy ECR Repository <span style='color: red;'>(conditional)</span></strong>"
+        subList:
+        - "Terraform will check for an existing repository associated with the application and create one if it does not exist."
+        - "If the application is being updated, the pipeline will take note of the repository being used and output it for later steps."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>11) Build and Push Docker Image to ECR</strong>"
-              subList:
-                - "Jenkins will log in to the ECR repository and build the Docker image."
-                - "A unique image tag based on the commit hash for the application repository is generated."
-                - "This let's Terraform know that a new image has been pushed and to update the ECS task definition with the new image."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>10) Run Application Configuration Scripts <span style='color: red;'>(optional)</span></strong>"
+        subList:
+        - "The pipeline will check the target application repository files for any additional scripts present in the deployment folder."
+        - "If present, these scripts will be run to configure the application."
+        - "These scripts can be either Bash or Python scripts. (for Python, additional dependencies must be included with a requirements.txt file)."
 
-            - text: "<strong style='color: blue; font-size: 1.25em;'>12) Terraform - Deploy ECS and Remaining Infrastructure</strong>"
-              subList:
-                - "Terraform will deploy the ECS cluster, task definition, service, and any other infrastructure required for the application."
-                - "A new ECS service will be deployed or the existing ECS service will be updated with the new task definition and the application will be deployed."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>11) Build and Push Docker Image to ECR</strong>"
+        subList:
+        - "Jenkins will log in to the ECR repository and build the Docker image."
+        - "A unique image tag based on the commit hash for the application repository is generated."
+        - "This let's Terraform know that a new image has been pushed and to update the ECS task definition with the new image."
 
-    - title: Triggering the Pipeline and Job Parameters
-      tabTitle: Job Parameters
-      subsections:
-        - content: ""
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs1_1.png
-        - content: |
-              <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> is set up to be triggered with both job parameters from the user upon deploying the application, and with the configuration yaml file. The configuration file will only need to be set up once upon initial setup, or when changing the infrastructure configuration or adding or removing accounts.<br><br>
-        - content: ""
-          pageSection: "Input Parameters:"
-        - content: ""
-          listItems:
-            - text: "<strong style='color: blue;'>Repository</strong> - The repository to deploy from. These are fetched and loaded in dynamically via an additional job to fetch repositories from the user's Github account."
-            - text: "<strong style='color: blue;'>Branch</strong> - The branch to deploy from. This is also fetched and loaded in dynamically as part of the repository fetch job."
-            - text: "<strong style='color: blue;'>Options</strong> - Defining the deployment options for the application. These are:"
-              subList:
-                - "<strong style='color: #bb519e;'>Deploy</strong> - A fresh deployment. All infrastructure will be torn down and rebuilt."
-                - "<strong style='color: #bb519e;'>Update</strong> - An update to the existing deployment. Only and changes to the app configuration will be propagated and an updated image will be pushed and deployed."
-                - "<strong style='color: #bb519e;'>Destroy</strong> - Destroy the deployment. All infrastructure will be torn down."
-                - "<strong style='color: #bb519e;'>Test</strong> - Tests that the environment variables are being injected correctly and the configuration for Terraform is correct."
-            - text: "<strong style='color: blue;'>Account</strong> - The account to deploy to. The accounts and infrastructure for each are defined in the configuration yaml."
-            - text: "<strong style='color: blue;'>Subdomain</strong> - The application will deploy to the provided subdomain on the domain defined in the configuration yaml."
+      - text: "<strong style='color: blue; font-size: 1.25em;'>12) Terraform - Deploy ECS and Remaining Infrastructure</strong>"
+        subList:
+        - "Terraform will deploy the ECS cluster, task definition, service, and any other infrastructure required for the application."
+        - "A new ECS service will be deployed or the existing ECS service will be updated with the new task definition and the application will be deployed."
 
-        - content: |
-              Once triggered, these parameters are passed to the pipeline and then injected into the Terraform infrastructure file or used in the pipeline itself.
+  - title: Triggering the Pipeline and Job Parameters
+    tabTitle: Job Parameters
+    subsections:
+    - content: ""
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs1_1.png
+    - content: |
+        <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> is set up to be triggered with both job parameters from the user upon deploying the application, and with the configuration yaml file. The configuration file will only need to be set up once upon initial setup, or when changing the infrastructure configuration or adding or removing accounts.<br><br>
+    - content: ""
+      pageSection: "Input Parameters:"
+    - content: ""
+      listItems:
+      - text: "<strong style='color: blue;'>Repository</strong> - The repository to deploy from. These are fetched and loaded in dynamically via an additional job to fetch repositories from the user's Github account."
+      - text: "<strong style='color: blue;'>Branch</strong> - The branch to deploy from. This is also fetched and loaded in dynamically as part of the repository fetch job."
+      - text: "<strong style='color: blue;'>Options</strong> - Defining the deployment options for the application. These are:"
+        subList:
+        - "<strong style='color: #bb519e;'>Deploy</strong> - A fresh deployment. All infrastructure will be torn down and rebuilt."
+        - "<strong style='color: #bb519e;'>Update</strong> - An update to the existing deployment. Only and changes to the app configuration will be propagated and an updated image will be pushed and deployed."
+        - "<strong style='color: #bb519e;'>Destroy</strong> - Destroy the deployment. All infrastructure will be torn down."
+        - "<strong style='color: #bb519e;'>Test</strong> - Tests that the environment variables are being injected correctly and the configuration for Terraform is correct."
+      - text: "<strong style='color: blue;'>Account</strong> - The account to deploy to. The accounts and infrastructure for each are defined in the configuration yaml."
+      - text: "<strong style='color: blue;'>Subdomain</strong> - The application will deploy to the provided subdomain on the domain defined in the configuration yaml."
 
-    - title: Configuration Yaml File
-      tabTitle: "Config Yaml"
-      subsections:
-        - content: |
-              One of the key strengths of <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> is its flexibility to handle multiple environments, such as development, staging, and production, simply by defining them in the configuration YAML. This means <span style='color: #006ab7; font-family: EmberHeavy;'>deployments can be tailored per environment while using the same underlying framework, avoiding duplicate pipeline definitions and maintaining consistency across accounts</span>.<br><br>
+    - content: |
+        Once triggered, these parameters are passed to the pipeline and then injected into the Terraform infrastructure file or used in the pipeline itself.
 
-              The following is an example of a <span style='color: #006ab7; font-family: EmberHeavy;'>configuration YAML</span> file that defines how AutoPilot deploys applications to <span style='color: #006ab7; font-family: EmberHeavy;'>multiple AWS accounts</span>. This configuration file determines the infrastructure setup per account, including the domain to deploy to, subnets, security groups, and other necessary infrastructure. This ensures that <span style='color: #006ab7; font-family: EmberHeavy;'>every account is pre-configured for future deployments</span> without requiring additional setup.<br><br>
+  - title: Configuration Yaml File
+    tabTitle: "Config Yaml"
+    subsections:
+    - content: |
+        One of the key strengths of <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> is its flexibility to handle multiple environments, such as development, staging, and production, simply by defining them in the configuration YAML. This means <span style='color: #006ab7; font-family: EmberHeavy;'>deployments can be tailored per environment while using the same underlying framework, avoiding duplicate pipeline definitions and maintaining consistency across accounts</span>.<br><br>
 
-              Once defined, the user only needs to have a valid <span style='color: #006ab7; font-family: EmberHeavy;'>Dockerfile</span> in their application repository and any <span style='color: #006ab7; font-family: EmberHeavy;'>custom scripts</span> necessary for application setup. <span style='color: #006ab7; font-family: EmberHeavy;'>This configuration is set up once per account and can be reused for all future deployments</span>, making it possible to deploy any application to <span style='color: #006ab7; font-family: EmberHeavy;'>any AWS environment, regardless of language or framework</span>.
+        The following is an example of a <span style='color: #006ab7; font-family: EmberHeavy;'>configuration YAML</span> file that defines how AutoPilot deploys applications to <span style='color: #006ab7; font-family: EmberHeavy;'>multiple AWS accounts</span>. This configuration file determines the infrastructure setup per account, including the domain to deploy to, subnets, security groups, and other necessary infrastructure. This ensures that <span style='color: #006ab7; font-family: EmberHeavy;'>every account is pre-configured for future deployments</span> without requiring additional setup.<br><br>
 
-          yaml: |
-              
-              app_name: myapp
-              autopilot_repo: https://github.com/syuhas/ecs_autopilot
-              region: us-east-1
-              aws_accounts:
-                "555555555555": 
-                  cross_account_role: jenkinsCrossAccountRole
-                  domain: dev.digitalsteve.net
-                  execution_role: ecsTaskExecutionRole
-                  route53_zone_id: Z999999999AAAAAAAAA
-                  security_group: sg-a9999999999999999
-                  ssl_certificate_arn: arn:aws:acm:us-east-1:555555555555:certificate/0a0a0a0a-0000-0000-0000-aaaaaaaaaaaa
-                  subnet_ids:
-                  - subnet-0a0a0a0a0a0a0a0a0
-                  - subnet-0b0b0b0b0b0b0b0b0
-                  task_role: ecsExecRole
-                  tf_bucket: terraform-lock-bucket-dev
-                  tf_table: terraform-lock-table
-                  vpc_id: vpc-0a0a0a0a0a0a0a0a0a0
-                "666666666666":
-                  cross_account_role: jenkinsCrossAccountRole
-                  domain: digitalsteve.net
-                  execution_role: ecsTaskExecutionRole
-                  route53_zone_id: Z999999999BBBBBBBBB
-                  security_group: sg-a9999999999999999
-                  ssl_certificate_arn: arn:aws:acm:us-east-1:666666666666:certificate/0b0b0b0b-0000-0000-0000-bbbbbbbbbbbb
-                  subnet_ids:
-                  - subnet-0c0c0c0c0c0c0c0c0
-                  - subnet-0d0d0d0d0d0d0d0d0
-                  task_role: ecsExecRole
-                  tf_bucket: terraform-lock-bucket
-                  tf_table: terraform-lock-table
-                  vpc_id: vpc-0b0b0b0b0b0b0b0b0
+        Once defined, the user only needs to have a valid <span style='color: #006ab7; font-family: EmberHeavy;'>Dockerfile</span> in their application repository and any <span style='color: #006ab7; font-family: EmberHeavy;'>custom scripts</span> necessary for application setup. <span style='color: #006ab7; font-family: EmberHeavy;'>This configuration is set up once per account and can be reused for all future deployments</span>, making it possible to deploy any application to <span style='color: #006ab7; font-family: EmberHeavy;'>any AWS environment, regardless of language or framework</span>.
 
-        - content: |
-              For added convenience (and also just for fun), <span style='color: #006ab7; font-family: EmberHeavy;'>both a UI and CLI tool is provided to generate these configuration files</span>. The UI tool is a <span style='color: #006ab7; font-family: EmberHeavy;'>Textual application that runs in the command line</span>. Textual is a interesting little Python library that allows you to create simple applications directly in the command line. The CLI tool, also written in Python, will also allow the user to generate the same yaml file. Either can be used, or the user can just enter their own details in the yaml file directly.
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs4_1.png
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs4_2.png
+      yaml: |
+        
+        app_name: myapp
+        autopilot_repo: https://github.com/syuhas/ecs_autopilot
+        region: us-east-1
+        aws_accounts:
+          "555555555555": 
+            cross_account_role: jenkinsCrossAccountRole
+            domain: dev.digitalsteve.net
+            execution_role: ecsTaskExecutionRole
+            route53_zone_id: Z999999999AAAAAAAAA
+            security_group: sg-a9999999999999999
+            ssl_certificate_arn: arn:aws:acm:us-east-1:555555555555:certificate/0a0a0a0a-0000-0000-0000-aaaaaaaaaaaa
+            subnet_ids:
+            - subnet-0a0a0a0a0a0a0a0a0
+            - subnet-0b0b0b0b0b0b0b0b0
+            task_role: ecsExecRole
+            tf_bucket: terraform-lock-bucket-dev
+            tf_table: terraform-lock-table
+            vpc_id: vpc-0a0a0a0a0a0a0a0a0a0
+          "666666666666":
+            cross_account_role: jenkinsCrossAccountRole
+            domain: digitalsteve.net
+            execution_role: ecsTaskExecutionRole
+            route53_zone_id: Z999999999BBBBBBBBB
+            security_group: sg-a9999999999999999
+            ssl_certificate_arn: arn:aws:acm:us-east-1:666666666666:certificate/0b0b0b0b-0000-0000-0000-bbbbbbbbbbbb
+            subnet_ids:
+            - subnet-0c0c0c0c0c0c0c0c0
+            - subnet-0d0d0d0d0d0d0d0d0
+            task_role: ecsExecRole
+            tf_bucket: terraform-lock-bucket
+            tf_table: terraform-lock-table
+            vpc_id: vpc-0b0b0b0b0b0b0b0b0
 
-    - title: DSL Seed Jobs
-      tabTitle: "Seed Jobs"
-      subsections:
-        - content: |
-              Included with <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> are dynamically generated <span style='color: #006ab7; font-family: EmberHeavy;'>DSL (Domain Specific Language) seed job scripts</span>, which automate the setup of Jenkins jobs based on an initial configuration. These scripts are generated using <span style='color: #006ab7; font-family: EmberHeavy;'>Jinja2 templating</span>, allowing them to be customized dynamically for each deployment. By leveraging this approach, the system eliminates the need for manually defining Jenkins job configurations, ensuring consistency and reducing setup complexity.<br><br>
+    - content: |
+        For added convenience (and also just for fun), <span style='color: #006ab7; font-family: EmberHeavy;'>both a UI and CLI tool is provided to generate these configuration files</span>. The UI tool is a <span style='color: #006ab7; font-family: EmberHeavy;'>Textual application that runs in the command line</span>. Textual is a interesting little Python library that allows you to create simple applications directly in the command line. The CLI tool, also written in Python, will also allow the user to generate the same yaml file. Either can be used, or the user can just enter their own details in the yaml file directly.
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs4_1.png
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs4_2.png
 
-              A Python script processes the configuration YAML file and generates three key seed jobs: <span style='color: #006ab7; font-family: EmberHeavy;'>one for deploying applications</span>, <span style='color: #006ab7; font-family: EmberHeavy;'>one for fetching available repositories and branches</span>, and <span style='color: #006ab7; font-family: EmberHeavy;'>another for retrieving subdomains from AWS Route 53</span>. These seed jobs serve as the foundation for setting up the Jenkins pipeline, dynamically adjusting repository and account values to match the configuration file. This approach ensures that Jenkins jobs are always aligned with the latest infrastructure requirements without manual intervention.
+  - title: DSL Seed Jobs
+    tabTitle: "Seed Jobs"
+    subsections:
+    - content: |
+        Included with <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> are dynamically generated <span style='color: #006ab7; font-family: EmberHeavy;'>DSL (Domain Specific Language) seed job scripts</span>, which automate the setup of Jenkins jobs based on an initial configuration. These scripts are generated using <span style='color: #006ab7; font-family: EmberHeavy;'>Jinja2 templating</span>, allowing them to be customized dynamically for each deployment. By leveraging this approach, the system eliminates the need for manually defining Jenkins job configurations, ensuring consistency and reducing setup complexity.<br><br>
 
-          code: |+
-              
-              import yaml
-              from jinja2 import Environment, FileSystemLoader
+        A Python script processes the configuration YAML file and generates three key seed jobs: <span style='color: #006ab7; font-family: EmberHeavy;'>one for deploying applications</span>, <span style='color: #006ab7; font-family: EmberHeavy;'>one for fetching available repositories and branches</span>, and <span style='color: #006ab7; font-family: EmberHeavy;'>another for retrieving subdomains from AWS Route 53</span>. These seed jobs serve as the foundation for setting up the Jenkins pipeline, dynamically adjusting repository and account values to match the configuration file. This approach ensures that Jenkins jobs are always aligned with the latest infrastructure requirements without manual intervention.
+
+      code: |+
+        
+        import yaml
+        from jinja2 import Environment, FileSystemLoader
 
 
-              def app():
+        def app():
 
-                  # Load the YAML configuration file
-                  with open('config/config.yaml', 'r') as f:
-                      config = yaml.safe_load(f)
+            # Load the YAML configuration file
+            with open('config/config.yaml', 'r') as f:
+                config = yaml.safe_load(f)
 
-                  # Extract the AWS accounts
-                  aws_accounts = config.get('aws_accounts', [])
-                  giturl = config.get('autopilot_repo', '')
+            # Extract the AWS accounts
+            aws_accounts = config.get('aws_accounts', [])
+            giturl = config.get('autopilot_repo', '')
 
-                  # Set up Jinja2 environment to load templates
-                  env = Environment(loader=FileSystemLoader('dsl/jinja'))  # Assuming templates are in the 'templates' directory
-                  template_ecs_autopilot = env.get_template('seed_job_ecs_deployer.groovy.jinja')
-                  template_fetch_repos = env.get_template('seed_job_fetch_repos.groovy.jinja')
-                  template_fetch_subdomains = env.get_template('seed_job_fetch_subdomains.groovy.jinja')
+            # Set up Jinja2 environment to load templates
+            env = Environment(loader=FileSystemLoader('dsl/jinja'))  # Assuming templates are in the 'templates' directory
+            template_ecs_autopilot = env.get_template('seed_job_ecs_deployer.groovy.jinja')
+            template_fetch_repos = env.get_template('seed_job_fetch_repos.groovy.jinja')
+            template_fetch_subdomains = env.get_template('seed_job_fetch_subdomains.groovy.jinja')
 
-                  # Render the template with the AWS accounts
-                  rendered_autopilot = template_ecs_autopilot.render(aws_accounts=aws_accounts, autopilot_repo=giturl)
-                  rendered_repos = template_fetch_repos.render(autopilot_repo=giturl)
-                  rendered_subdomains = template_fetch_subdomains.render(autopilot_repo=giturl)
-                  
+            # Render the template with the AWS accounts
+            rendered_autopilot = template_ecs_autopilot.render(aws_accounts=aws_accounts, autopilot_repo=giturl)
+            rendered_repos = template_fetch_repos.render(autopilot_repo=giturl)
+            rendered_subdomains = template_fetch_subdomains.render(autopilot_repo=giturl)
+            
 
-                  # Write the generated DSL script to a file
-                  with open('dsl/seed_job_ecs_deployer.groovy', 'w') as f:
-                      f.write(rendered_autopilot)
+            # Write the generated DSL script to a file
+            with open('dsl/seed_job_ecs_deployer.groovy', 'w') as f:
+                f.write(rendered_autopilot)
 
-                  with open('dsl/seed_job_fetch_repos.groovy', 'w') as f:
-                      f.write(rendered_repos)
-                  with open('dsl/seed_job_fetch_subdomains.groovy', 'w') as f:
-                      f.write(rendered_subdomains)
-                  
-                  print("DSL Jobs Generated Successfully!")
-                  print('Jobs generated: \n')
-                  print('\tdsl/seed_job_ecs_deployer.groovy')
-                  print('\tdsl/seed_job_fetch_repos.groovy')
-                  print('\tdsl/seed_job_fetch_subdomains.groovy')
-                  print('\n')
-                  
-              if __name__ == '__main__':
-                  app()
-                  
-        - content: |
-              Three seed jobs are generated for each account in the configuration yaml. These seed jobs are DSL jobs that will generate the Jenkins jobs based on the configuration yaml:
-          pageSection: "Seed Job Scripts"
+            with open('dsl/seed_job_fetch_repos.groovy', 'w') as f:
+                f.write(rendered_repos)
+            with open('dsl/seed_job_fetch_subdomains.groovy', 'w') as f:
+                f.write(rendered_subdomains)
+            
+            print("DSL Jobs Generated Successfully!")
+            print('Jobs generated: \n')
+            print('\tdsl/seed_job_ecs_deployer.groovy')
+            print('\tdsl/seed_job_fetch_repos.groovy')
+            print('\tdsl/seed_job_fetch_subdomains.groovy')
+            print('\n')
+            
+        if __name__ == '__main__':
+            app()
+            
+    - content: |
+        Three seed jobs are generated for each account in the configuration yaml. These seed jobs are DSL jobs that will generate the Jenkins jobs based on the configuration yaml:
+      pageSection: "Seed Job Scripts"
 
-          listItems:
-            - text: "First is the main seed job for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong>, which will generate the main pipeline job (pictured below)."
-            - text: "The second seed job is for the <span style='color: #006ab7; font-family: EmberHeavy;'>repository fetch</span>, which will fetch the repositories from the user's Github account."
-            - text: "The third seed job is for the <span style='color: #006ab7; font-family: EmberHeavy;'>subdomain fetch</span>, which will fetch the subdomains from the user's Route 53 hosted zone.<br><br>"
+      listItems:
+      - text: "First is the main seed job for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong>, which will generate the main pipeline job (pictured below)."
+      - text: "The second seed job is for the <span style='color: #006ab7; font-family: EmberHeavy;'>repository fetch</span>, which will fetch the repositories from the user's Github account."
+      - text: "The third seed job is for the <span style='color: #006ab7; font-family: EmberHeavy;'>subdomain fetch</span>, which will fetch the subdomains from the user's Route 53 hosted zone.<br><br>"
 
-          groovy: |
-              
-              pipelineJob('test_ecs-AutoPilot') {
-              description('Autopilot pipeline to deploy any Dockerized application to ECS.')
+      groovy: |
+        
+        pipelineJob('test_ecs-AutoPilot') {
+        description('Autopilot pipeline to deploy any Dockerized application to ECS.')
 
-              parameters {
-                  activeChoiceParam('Repository') {
-                      description('Select a repository.')
-                      choiceType('SINGLE_SELECT')
-                      groovyScript {
-                          script('''
-                            import groovy.json.JsonSlurper
-                            def jenkinsHome = System.getenv("JENKINS_HOME")
-                            def jsonFile = new File("${jenkinsHome}/github/github_branches.json")
-                            if (!jsonFile.exists()) {
-                                return ["No Repositories Found"]
+        parameters {
+            activeChoiceParam('Repository') {
+                description('Select a repository.')
+                choiceType('SINGLE_SELECT')
+                groovyScript {
+                    script('''
+                      import groovy.json.JsonSlurper
+                      def jenkinsHome = System.getenv("JENKINS_HOME")
+                      def jsonFile = new File("${jenkinsHome}/github/github_branches.json")
+                      if (!jsonFile.exists()) {
+                          return ["No Repositories Found"]
+                      }
+                      def jsonContent = new JsonSlurper().parseText(jsonFile.text)
+                      return jsonContent.keySet().toList()
+                        ''')
+                    }
+                }
+
+                activeChoiceReactiveParam('Branch') {
+                    description('Select a branch based on the repository.')
+                    choiceType('RADIO')
+                    referencedParameter('Repository')
+                    groovyScript {
+                        script('''
+                          import groovy.json.JsonSlurper
+                          def jenkinsHome = System.getenv("JENKINS_HOME")
+                          def jsonFile = new File("${jenkinsHome}/github/github_branches.json")
+                          if (!jsonFile.exists()) {
+                              return ["No Branches Found"]
+                          }
+                          def jsonContent = new JsonSlurper().parseText(jsonFile.text)
+                          def branches = jsonContent[Repository] ?: ["No Branches Found"]
+                          return branches
+
+                        ''')
+                    }
+                }
+
+                choiceParam('Options', ['Deploy', 'Update', 'Destroy', 'Test'], 'Select an operation.')
+                // updates with your own AWS account numbers
+                choiceParam('Account', ['61039789243','551796573889'], 'Select an AWS account.')
+                stringParam('Subdomain', 'myapp', 'Subdomain to deploy (eg. php = php.example.net or php.dev.example.net).')
+
+                activeChoiceParam('Subdomains Currently In Use') {
+                    description('Displays currently used subdomains.')
+                    choiceType('MULTI_SELECT')
+                    groovyScript {
+                        script('''
+                          import groovy.json.JsonSlurper
+                          def filePath = "/home/jenkins_home/workspace/fetch_subdomains/subdomains.json"
+                          def subdomainsList = []
+                          if (new File(filePath).exists()) {
+                              def jsonText = new File(filePath).text
+                              subdomainsList = new JsonSlurper().parseText(jsonText)
+                          }
+                          if (subdomainsList.isEmpty()) {
+                              return ["No subdomains currently in use."]
+                          } else {
+                              return subdomainsList
+                          }
+                        ''')
+                    }
+                }
+            }
+
+            definition {
+                cpsScm {
+                    scm {
+                        git {
+                            remote {
+                                // jinja2 will update with your own repository
+                                url('https://github.com/syuhas/ecs_autopilot')
                             }
-                            def jsonContent = new JsonSlurper().parseText(jsonFile.text)
-                            return jsonContent.keySet().toList()
-                              ''')
-                          }
-                      }
-
-                      activeChoiceReactiveParam('Branch') {
-                          description('Select a branch based on the repository.')
-                          choiceType('RADIO')
-                          referencedParameter('Repository')
-                          groovyScript {
-                              script('''
-                                import groovy.json.JsonSlurper
-                                def jenkinsHome = System.getenv("JENKINS_HOME")
-                                def jsonFile = new File("${jenkinsHome}/github/github_branches.json")
-                                if (!jsonFile.exists()) {
-                                    return ["No Branches Found"]
-                                }
-                                def jsonContent = new JsonSlurper().parseText(jsonFile.text)
-                                def branches = jsonContent[Repository] ?: ["No Branches Found"]
-                                return branches
-
-                              ''')
-                          }
-                      }
-
-                      choiceParam('Options', ['Deploy', 'Update', 'Destroy', 'Test'], 'Select an operation.')
-                      // updates with your own AWS account numbers
-                      choiceParam('Account', ['61039789243','551796573889'], 'Select an AWS account.')
-                      stringParam('Subdomain', 'myapp', 'Subdomain to deploy (eg. php = php.example.net or php.dev.example.net).')
-
-                      activeChoiceParam('Subdomains Currently In Use') {
-                          description('Displays currently used subdomains.')
-                          choiceType('MULTI_SELECT')
-                          groovyScript {
-                              script('''
-                                import groovy.json.JsonSlurper
-                                def filePath = "/home/jenkins_home/workspace/fetch_subdomains/subdomains.json"
-                                def subdomainsList = []
-                                if (new File(filePath).exists()) {
-                                    def jsonText = new File(filePath).text
-                                    subdomainsList = new JsonSlurper().parseText(jsonText)
-                                }
-                                if (subdomainsList.isEmpty()) {
-                                    return ["No subdomains currently in use."]
-                                } else {
-                                    return subdomainsList
-                                }
-                              ''')
-                          }
-                      }
-                  }
-
-                  definition {
-                      cpsScm {
-                          scm {
-                              git {
-                                  remote {
-                                      // jinja2 will update with your own repository
-                                      url('https://github.com/syuhas/ecs_autopilot')
-                                  }
-                                  branch('*/main')
-                              }
-                          }
-                          scriptPath('deploy/docker/Jenkinsfile')
-                          lightweight(true)
-                      }
-                  }
-              }
-
-        - content: |
-              This main pipeline seed job also sets up the <span style='color: #006ab7; font-family: EmberHeavy;'>Active Choices Parameters</span> using an inline groovy script to pull the current list of subdomains as well as the repositories and branches saved to the filesystem. This allows the user to select the repository and branch from a dropdown list when triggering the pipeline, and lists out the current in-use subdomains. In the next section, I will cover how the fetch jobs are configured.<br><br>
-
-              The only manual configuration required in Jenkins will be to actually <span style='color: #006ab7; font-family: EmberHeavy;'>create run the seed jobs from the AutoPilot repository</span>. To create the seed jobs in Jenkins, <span style='color: #006ab7; font-family: EmberHeavy;'>a Freestyle job will need to be created for each DSL script</span>. The seed jobs will then generate the Jenkins jobs based on the seed jobs that were generated from the configuration yaml file. 
-
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_1.png
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_2.png
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_3.png
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_4.png
-        - content: |
-              Once the seed jobs are run, the Jenkins jobs will be generated and the pipeline will be ready to deploy the application to ECS. This will need to be made for each <span style='color: #006ab7';>fetch job</span> to fetch the list of GitHub Repositories and Branches and the list of current Subdomains in use in each account.
-          pageSection: "Running the Seed Job"
-
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_5.png
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_6.png
-
-        - content: |
-              The generated pipeline will then be available to use to deploy the application and list out the repositories and subdomains for the main pipeline.
-
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_7.png
-
-    - title: Fetch Jobs for Repositories and Subdomains
-      tabTitle: Fetch Jobs
-      subsections:
-        - content: |
-              As part of the <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> setup, <span style='color: #006ab7; font-family: EmberHeavy;'>two auxiliary Jenkins jobs are responsible for dynamically retrieving available GitHub repositories, branches, and active subdomains from Route 53</span>. These jobs ensure that deployment options remain up to date and eliminate the need for manual input. By automating repository and subdomain discovery, this system streamlines the selection process, reducing errors and simplifying application deployment.
-
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_1.png
-
-        - content: |
-              These jobs run on the <span style='color: #006ab7; font-family: EmberHeavy;'>built-in or master node</span> in Jenkins, <span style='color: #006ab7; font-family: EmberHeavy;'>fetching the latest repository and branch data from GitHub</span> and <span style='color: #006ab7; font-family: EmberHeavy;'>querying Route 53 for active subdomains</span>. The retrieved data is stored as JSON files on the server, which the main pipeline job references to populate dropdown menus for repository selection, branch selection, and subdomain tracking.
-
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_2.png
-        - content: |
-              The <span style='color: #006ab7; font-family: EmberHeavy;'>repositories and branches fetch job</span> is a <span style='color: #006ab7; font-family: EmberHeavy;'>Bash Script</span> that retrieves the list of repositories and associated branches from the user’s GitHub account. It utilizes a <span style='color: #006ab7; font-family: EmberHeavy;'>personal access token (GITHUB_TOKEN)</span> stored as a Jenkins credential, injecting it into the environment to authenticate API requests to GitHub. The resulting repository and branch data are saved as a JSON file, which is later used to populate the Active Choices Parameter in Jenkins, allowing users to select a repository and branch for deployment.
-
-          pageSection: "Fetching Repositories and Branches"
-
-          code: |
-              
-              #!/bin/bash
-              set -x
-
-              # Define file paths
-              REPO_LIST_FILE="$WORKSPACE/github_repos.txt"
-              BRANCHES_LIST_FILE="$WORKSPACE/github_branches.json"
-
-              # Fetch repositories
-              curl -s -H "Accept: application/vnd.github+json" \
-                  -H "Authorization: Bearer $TOKEN" \
-                  -H "X-GitHub-Api-Version: 2022-11-28" \
-                  "https://api.github.com/user/repos?per_page=100" | jq -r '.[].clone_url' > "$REPO_LIST_FILE"
-
-              echo "Repositories saved to $REPO_LIST_FILE"
-
-              # Initialize JSON object
-              echo "{" > "$BRANCHES_LIST_FILE"
-
-              while read -r repo; do
-                  # Extract repository name and owner
-                  repo_name=$(basename "$repo" .git) # Extract repo name
-                  repo_owner=$(echo "$repo" | awk -F '/' '{print $(NF-1)}') # Extract repo owner
-
-                  # Construct GitHub API URL
-                  branchesApiUrl="https://api.github.com/repos/$repo_owner/$repo_name/branches"
-
-                  echo "Fetching branches from: $branchesApiUrl"
-
-                  # Fetch branches
-                  branches=$(curl -s -H "Accept: application/vnd.github+json" \
-                                -H "Authorization: Bearer $TOKEN" \
-                                "$branchesApiUrl" | jq -r '[.[].name]')
-
-                  # Handle empty branch list
-                  if [[ "$branches" == "[]" ]]; then
-                      branches='["main"]'
-                  fi
-
-                  # Append repo information to JSON file (ensure proper formatting)
-                  echo "\"$repo\": $branches," >> "$BRANCHES_LIST_FILE"
-
-              done < "$REPO_LIST_FILE"
-
-              # Remove the last comma to maintain valid JSON
-              sed -i '$ s/,$//' "$BRANCHES_LIST_FILE"
-
-              # Close the JSON object properly
-              echo "}" >> "$BRANCHES_LIST_FILE"
-
-              echo "Branches saved to $BRANCHES_LIST_FILE"
-
-              mkdir -p "/home/jenkins_home/github"
-              cp -p "$BRANCHES_LIST_FILE" "$JENKINS_HOME/github/github_branches.json"
-        - content: |
-              Below is the <span style='color: #006ab7; font-family: EmberHeavy;'>resulting list of repositories and branches as saved to the server</span>. This file is used by the main pipeline as an <span style='color: #006ab7; font-family: EmberHeavy;'>Active Choices Parameter</span> to populate the dropdown for the user to select the repository and branch for deployment.
-
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_3.png
-        - content: |
-              Similarly, the <span style='color: #006ab7; font-family: EmberHeavy;'>subdomains fetch job</span> queries AWS Route 53 to obtain a list of subdomains currently in use. This job executes a <span style='color: #006ab7; font-family: EmberHeavy;'>Python script</span> that makes <span style='color: #006ab7; font-family: EmberHeavy;'>API requests to Route 53</span>, ensuring the system is aware of assigned subdomains before provisioning new deployments. This data is also stored in a JSON file, enabling Jenkins to track and display available subdomains dynamically.
-          pageSection: "Fetching Active Subdomains"
-          code: |
-              
-              import boto3
-              import json
-              import os
-              import re
-              from loguru import logger
-              import yaml
-              import json
-
-              accounts = []
-              jenkins_home = os.environ['JENKINS_HOME']
-
-              def assume_role_session(account):
-                  sts_client = boto3.client('sts')
-                  assumed_role = sts_client.assume_role(
-                      RoleArn=f"arn:aws:iam::{account['account_id']}:role/{account['cross_account_role']}",
-                      RoleSessionName="XacntAssumeRoleSession"
-                  )
-                  credentials = assumed_role['Credentials']
-                  session = boto3.Session(
-                      aws_access_key_id=credentials['AccessKeyId'],
-                      aws_secret_access_key=credentials['SecretAccessKey'],
-                      aws_session_token=credentials['SessionToken']
-                  )
-                  return session
-
-              def get_subdomains(session):
-                  domains = []
-                  client = session.client('route53')
-                  paginator = client.get_paginator('list_hosted_zones')
-                  for page in paginator.paginate():
-                      for hosted_zone in page['HostedZones']:
-                          hosted_zone_id = hosted_zone['Id']
-                          paginator = client.get_paginator('list_resource_record_sets')
-                          for page in paginator.paginate(HostedZoneId=hosted_zone_id):
-                              for record_set in page['ResourceRecordSets']:
-                                  if record_set['Type'] == 'A':
-                                      identity = session.client('sts').get_caller_identity()
-                                      name = record_set['Name']
-                                      domains.append(f'{name} ({identity["Account"]})')
-                                      
-                                      
-                  return domains
-
-              # put the account info manually or drop the generated config.yaml file in the fetch_jobs directory
-              if not os.path.exists('config/config.yaml'):
-                  logger.info('config.yaml file not found')
-                  logger.info('Using manual account info...')
-                  accounts = [
-                      {
-                          'account_id': '551796573889',
-                          'cross_account_role': 'jenkinsAdminXacnt'
-                      },
-                      {
-                          'account_id': '061039789243',
-                          'cross_account_role': 'jenkinsAdminXacnt'
-                      }    
-                  ]
-              else:
-                  with open('config/config.yaml', 'r') as file:
-                      config = yaml.load(file, Loader=yaml.FullLoader)
-                  for acct in config.get('aws_accounts'):
-                      account_dict = {}
-                      account_dict['account_id'] = acct
-                      account_dict['cross_account_role'] = config.get('aws_accounts')[acct].get('cross_account_role')
-                      accounts.append(account_dict)
-
-
-                                      
-                  
-
-              subdomains = []
-              for account in accounts:
-                  session = assume_role_session(account)
-                  subdomains += get_subdomains(session)
-
-                  
-              # make the github directory if it doesnt exist
-              os.makedirs(f'{jenkins_home}/github', exist_ok=True)
-
-              with open(f'{jenkins_home}/github/subdomains.json', 'w') as f:
-                  json.dump(subdomains, f)
-                  
-              logger.info(f"Subdomains saved to: {jenkins_home}/github/subdomains.json")
-
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_4.png
-        - content: |
-              Once these fetch jobs complete, their outputs feed directly into the main deployment pipeline. When a user initiates a deployment, <span style='color: #006ab7; font-family: EmberHeavy;'>a dropdown menu provides an updated list of repositories and branches fetched from GitHub</span>. As long as the selected repository contains a valid Dockerfile and a configuration file, <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One'>AutoPilot</strong> will automatically clone the repository, build the container image, and deploy it to ECS.
-
-          pageSection: "Integration with the Deployment Pipeline"
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_5.png
-        - content: |
-              Additionally, the <span style='color: #006ab7; font-family: EmberHeavy;'>subdomain data fetched from Route 53 is presented to the user within the pipeline interface</span>, offering insight into subdomains currently allocated across AWS accounts. This prevents conflicts and ensures smooth domain assignments.
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_6.png
-
-        - content: |
-              By automating repository, branch, and subdomain discovery, AutoPilot enhances efficiency, reduces manual overhead, and maintains a continuously updated deployment environment.
-
-    - title: Dynamically Provisioning Infrastructure with Terraform
-      tabTitle: Terraform
-      subsections:
-        - content: |
-              At the core of <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> is <span style='color: #006ab7; font-family: EmberHeavy;'>Terraform</span>, the foudational tool that enables the system to dynamically generate infrastructure for each application. By leveraging <span style='color: #006ab7; font-family: EmberHeavy;'>Infrastructure as Code (IaC)</span>, Terraform ensures that AutoPilot can provision and manage cloud resources in a consistent, repeatable and scalable manner.<br><br>
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/jenkins_ecs7.gif
-        - content: |
-              Unlike traditional deployment methods that require manual setup and custom scripts per application, <span style='color: #006ab7; font-family: EmberHeavy;'>AutoPilot abstracts the entire infrastructure configuration into a containerized deployment model</span>. This means that as long as an application has a valid Dockerfile, AutoPilot can deploy it to ECS, regardless of the language or framework. The actual infrastructure configuration—load balancers, networking, IAM roles, and ECS clusters—is handled dynamically by Terraform, while Jenkins orchestrates the deployment pipeline.
-
-        - content: |
-              A key aspect of Terraform’s role in AutoPilot is its ability to dynamically configure resources based on user input and environment-specific settings. Instead of hardcoding values, AutoPilot <span style='color: #006ab7; font-family: EmberHeavy;'>loads essential configurations from a centralized YAML configuration file and injects them as environment variables</span> into Terraform.
-          pageSection: "Loading Environment Variables into Terraform"
-
-          code: |
-              
-              # Jenkinsfile
-
-              stage('Set Environment Variables') {
-                  steps {
-                      echo "Account ID: ${AWS_ACCOUNT_ID}"
-                      echo "Setting Environment Variables"
-                      sh 'ls -la deploy/docker'
-                      script {
-                          config = readYaml file: 'deploy/docker/config.yaml'
-                          accountConfig = config["aws_accounts"]["${AWS_ACCOUNT_ID}"]
-                          env.TF_VAR_app_name = config.app_name
-                          env.TF_VAR_aws_account_id = AWS_ACCOUNT_ID
-                          env.TF_VAR_aws_region = config.region
-                          env.TF_VAR_aws_security_group = accountConfig.security_group
-                          env.TF_VAR_aws_subnet_ids = groovy.json.JsonOutput.toJson(accountConfig.subnet_ids)
-                          env.TF_VAR_aws_vpc_id = accountConfig.vpc_id
-                          env.TF_BUCKET = accountConfig.tf_bucket
-                          env.TF_TABLE = accountConfig.tf_table
-                          env.TF_VAR_aws_ssl_certificate_arn = accountConfig.ssl_certificate_arn
-                          env.TF_VAR_aws_route53_zone_id = accountConfig.route53_zone_id
-                          env.TF_VAR_aws_domain = accountConfig.domain
-                          env.TF_VAR_aws_subdomain = "${ params.Subdomain }"
-                          env.TF_VAR_aws_ecr_image_tag = IMAGE_TAG
-                          env.XACNT_ROLE = accountConfig.cross_account_role
-                          env.TF_VAR_execution_role = accountConfig.execution_role
-                          env.TF_VAR_task_role = accountConfig.task_role
-                      }
-                      echo "Environment Variables Set"
-
-                      script {
-                          dir('deploy/docker') {
-                              try {
-                                  terraformInit()
-                                  sh 'terraform state show aws_ecr_repository.ecr'
-                                  sh 'terraform output -raw ecr_repository_url'
-                                  env.ECR_REPOSITORY_URL = sh(script: 'terraform output -raw ecr_repository_url', returnStdout: true).trim()
-                              } catch (Exception e) {
-                                  echo "ECR Repository not yet created, skipping..."
-                              }
-                          }
-                      }
-
-                      script {
-                          echo "App Name: ${env.TF_VAR_app_name}"
-                          echo "Account ID: ${env.TF_VAR_aws_account_id}"
-                          echo "AWS Region: ${env.TF_VAR_aws_region}"
-                          echo "Security Group: ${env.TF_VAR_aws_security_group}"
-                          echo "Subnet IDs: ${env.TF_VAR_aws_subnet_ids}"
-                          echo "VPC ID: ${env.TF_VAR_aws_vpc_id}"
-                          echo "Terraform Bucket: ${env.TF_BUCKET}"
-                          echo "Terraform Table: ${env.TF_TABLE}"
-                          echo "SSL Certificate ARN: ${env.TF_VAR_aws_ssl_certificate_arn}"
-                          echo "Route53 Zone ID: ${env.TF_VAR_aws_route53_zone_id}"
-                          echo "Domain: ${env.TF_VAR_aws_domain}"
-                          echo "Subdomain: ${env.TF_VAR_aws_subdomain}"
-                          echo "Image Tag: ${env.TF_VAR_aws_ecr_image_tag}"
-                          echo "Cross Account Role: ${env.XACNT_ROLE}"
-                          echo "Execution Role: ${env.TF_VAR_execution_role}"
-                          echo "Task Role: ${env.TF_VAR_task_role}"
-                          echo "ECR Repository URL: ${env.ECR_REPOSITORY_URL ?: 'ECR Repository not yet created'}"
-                      }
-                  }
-              }
-        - content: |
-              The Jenkinsfile will load in the configuration yaml from the staging directory and set the environment variables for Terraform to use. Jenkins will load in the account-specific environment variables based on which account is selected from the dropdown when the job is triggered. This allows for the same Terraform configuration to be used for multiple accounts.
-
-          code: |
-              
-              #Terraform Configuration File
-
-              variable "aws_account_id" {type = string}
-              variable "aws_region" {type = string}
-              variable "aws_security_group" {type = string}
-              variable "aws_subnet_ids" {type = list(string)}
-              variable "aws_vpc_id" {type = string}
-              variable "aws_ssl_certificate_arn" {type = string}
-              variable "aws_route53_zone_id" {type = string}
-              variable "aws_domain" {type = string}
-              variable "aws_subdomain" {type = string}
-              variable "aws_ecr_image" {
-                  type = string
-                  default = "placeholder"
-              }
-              variable "aws_ecr_image_tag" {
-                  type = string
-                  default = "latest"
-              }
-              variable "app_name" {type = string}
-              variable "execution_role" {type = string}
-              variable "task_role" {type = string}
-
-        - content: |
-              <span style='text-align: center;display: block;'>These environment variables define:</span>
-          listItems:
-            - text: "<strong style='color: blue;'>The AWS account and region</strong> for deployment."
-            - text: "<strong style='color: blue;'>The ECS cluster and task definition</strong> details."
-            - text: "<strong style='color: blue;'>Network settings</strong> such as VPC, subnets, and security group."
-            - text: "<strong style='color: blue;'>The ECR repository</strong> where the container images will be stored."
-            - text: "<strong style='color: blue;'>Logging and monitoring</strong> configurations via CloudWatch and ECS Exec."
-        - content: |
-              This method ensures that AutoPilot can provision infrastructure on-demand, without requiring any manual intervention. Every deployment is tailored to the specified parameters, making the system flexible and adaptable for different environments.
-        - content: |
-              Terraform follows a specific sequence when deploying infrastructure to ensure dependencies are met and the deployment process runs smoothly. The following is the order of infrastructure deployment for AutoPilot:
-          pageSection: "Order of Infrastructure Deployment"
-
-        - content: |
-              <strong style='color: blue;'>Terraform Backend Initialization</strong><br>
-
-              The system initializes Terraform state management by configuring an <span style='color: #006ab7; font-family: EmberHeavy;'>S3 bucket for state storage</span> and a <span style='color: #006ab7; font-family: EmberHeavy;'>DynamoDB table for state locking</span>. This prevents conflicts during concurrent deployments and ensures infrastructure changes are tracked properly.<br><br>
-              The Terraform backend is left empty intentionally and <span style='color: #006ab7; font-family: EmberHeavy;'>dynamically set in the Jenkinsfile using Terraform variables</span>. This allows deployments to configure the backend at runtime, adapting to different AWS accounts without manual changes, and ensures seamless state management between applications and subdomains, preventing conflicts and enabling fully automated, multi-account deployments.
-
-          code: |
-              
-              terraform {
-                  backend "s3" {}
-              }
-
-              # from Jenkinsfile
-              stage('Terraform Backend') {
-                  steps {
-                      script {
-                          terraformInit = {
-                              sh """
-                                  terraform init -reconfigure \
-                                      -backend-config="bucket=${env.TF_BUCKET}" \
-                                      -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
-                                      -backend-config="region=${env.TF_VAR_aws_region}" \
-                                      -backend-config="dynamodb_table=${env.TF_TABLE}"
-                              """
-                          }
-                      }
-                  }
-              }
-        - content: |
-              <strong style='color: blue;'>ECR Repository</strong><br>
-
-              The first step is to create the Amazon Elastic Container Registry (ECR). This portion of the Terraform file is targeted independently to ensure the ECR repository is created before proceeding with the deployment. This is required before the pipeline can push the application image, ensuring it is available for subsequent steps in the deployment.
-
-          code: |
-              
-              #create ecr repository
-              resource "aws_ecr_repository" "ecr" {
-                  name = var.app_name
-                  force_delete = true
-              }
-
-              # output the repo url for the build pipeline
-              output "ecr_repository_url" {
-                  value = aws_ecr_repository.ecr.repository_url
-              }
-        - content: |
-              <strong style='color: blue;'>Application Load Balancer and Target Group</strong><br>
-
-              The system sets up an Application Load Balancer (ALB) and target groups, which later route traffic to the ECS service. The ALB is required for external access, and target groups enable proper request distribution to the running containers. This is necessary to configure prior to launching the ECS service since the service will reference and register the load balancer later in the deployment process.<br><br>
-
-              In addition, the ALB is configured with HTTP and HTTPS listeners, ensuring secure communication with the application. The HTTPS listener references an SSL certificate ARN (defined in the configuration file), enabling encrypted traffic between the client and the load balancer.
-          code: |
-              
-              # create target group for load balancer
-              resource "aws_lb_target_group" "tg" {
-                name = "${var.app_name}-tg"
-                port = 80
-                protocol = "HTTP"
-                vpc_id = var.aws_vpc_id
-                target_type = "ip"
-                health_check {
-                  path = "/"
-                  interval = 30
-                  timeout = 5
-                  healthy_threshold = 2
-                  unhealthy_threshold = 2
+                            branch('*/main')
+                        }
+                    }
+                    scriptPath('deploy/docker/Jenkinsfile')
+                    lightweight(true)
                 }
-              }
+            }
+        }
 
-              # create load balancer
-              resource "aws_lb" "lb" {
-                name = "${var.app_name}-lb"
-                internal = false
-                load_balancer_type = "application"
-                security_groups = [var.aws_security_group]
+    - content: |
+        This main pipeline seed job also sets up the <span style='color: #006ab7; font-family: EmberHeavy;'>Active Choices Parameters</span> using an inline groovy script to pull the current list of subdomains as well as the repositories and branches saved to the filesystem. This allows the user to select the repository and branch from a dropdown list when triggering the pipeline, and lists out the current in-use subdomains. In the next section, I will cover how the fetch jobs are configured.<br><br>
+
+        The only manual configuration required in Jenkins will be to actually <span style='color: #006ab7; font-family: EmberHeavy;'>create run the seed jobs from the AutoPilot repository</span>. To create the seed jobs in Jenkins, <span style='color: #006ab7; font-family: EmberHeavy;'>a Freestyle job will need to be created for each DSL script</span>. The seed jobs will then generate the Jenkins jobs based on the seed jobs that were generated from the configuration yaml file. 
+
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_1.png
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_2.png
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_3.png
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_4.png
+    - content: |
+        Once the seed jobs are run, the Jenkins jobs will be generated and the pipeline will be ready to deploy the application to ECS. This will need to be made for each <span style='color: #006ab7';>fetch job</span> to fetch the list of GitHub Repositories and Branches and the list of current Subdomains in use in each account.
+      pageSection: "Running the Seed Job"
+
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_5.png
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_6.png
+
+    - content: |
+        The generated pipeline will then be available to use to deploy the application and list out the repositories and subdomains for the main pipeline.
+
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs5_7.png
+
+  - title: Fetch Jobs for Repositories and Subdomains
+    tabTitle: Fetch Jobs
+    subsections:
+    - content: |
+        As part of the <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> setup, <span style='color: #006ab7; font-family: EmberHeavy;'>two auxiliary Jenkins jobs are responsible for dynamically retrieving available GitHub repositories, branches, and active subdomains from Route 53</span>. These jobs ensure that deployment options remain up to date and eliminate the need for manual input. By automating repository and subdomain discovery, this system streamlines the selection process, reducing errors and simplifying application deployment.
+
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_1.png
+
+    - content: |
+        These jobs run on the <span style='color: #006ab7; font-family: EmberHeavy;'>built-in or master node</span> in Jenkins, <span style='color: #006ab7; font-family: EmberHeavy;'>fetching the latest repository and branch data from GitHub</span> and <span style='color: #006ab7; font-family: EmberHeavy;'>querying Route 53 for active subdomains</span>. The retrieved data is stored as JSON files on the server, which the main pipeline job references to populate dropdown menus for repository selection, branch selection, and subdomain tracking.
+
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_2.png
+    - content: |
+        The <span style='color: #006ab7; font-family: EmberHeavy;'>repositories and branches fetch job</span> is a <span style='color: #006ab7; font-family: EmberHeavy;'>Bash Script</span> that retrieves the list of repositories and associated branches from the user’s GitHub account. It utilizes a <span style='color: #006ab7; font-family: EmberHeavy;'>personal access token (GITHUB_TOKEN)</span> stored as a Jenkins credential, injecting it into the environment to authenticate API requests to GitHub. The resulting repository and branch data are saved as a JSON file, which is later used to populate the Active Choices Parameter in Jenkins, allowing users to select a repository and branch for deployment.
+
+      pageSection: "Fetching Repositories and Branches"
+
+      code: |
+        
+        #!/bin/bash
+        set -x
+
+        # Define file paths
+        REPO_LIST_FILE="$WORKSPACE/github_repos.txt"
+        BRANCHES_LIST_FILE="$WORKSPACE/github_branches.json"
+
+        # Fetch repositories
+        curl -s -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/user/repos?per_page=100" | jq -r '.[].clone_url' > "$REPO_LIST_FILE"
+
+        echo "Repositories saved to $REPO_LIST_FILE"
+
+        # Initialize JSON object
+        echo "{" > "$BRANCHES_LIST_FILE"
+
+        while read -r repo; do
+            # Extract repository name and owner
+            repo_name=$(basename "$repo" .git) # Extract repo name
+            repo_owner=$(echo "$repo" | awk -F '/' '{print $(NF-1)}') # Extract repo owner
+
+            # Construct GitHub API URL
+            branchesApiUrl="https://api.github.com/repos/$repo_owner/$repo_name/branches"
+
+            echo "Fetching branches from: $branchesApiUrl"
+
+            # Fetch branches
+            branches=$(curl -s -H "Accept: application/vnd.github+json" \
+                          -H "Authorization: Bearer $TOKEN" \
+                          "$branchesApiUrl" | jq -r '[.[].name]')
+
+            # Handle empty branch list
+            if [[ "$branches" == "[]" ]]; then
+                branches='["main"]'
+            fi
+
+            # Append repo information to JSON file (ensure proper formatting)
+            echo "\"$repo\": $branches," >> "$BRANCHES_LIST_FILE"
+
+        done < "$REPO_LIST_FILE"
+
+        # Remove the last comma to maintain valid JSON
+        sed -i '$ s/,$//' "$BRANCHES_LIST_FILE"
+
+        # Close the JSON object properly
+        echo "}" >> "$BRANCHES_LIST_FILE"
+
+        echo "Branches saved to $BRANCHES_LIST_FILE"
+
+        mkdir -p "/home/jenkins_home/github"
+        cp -p "$BRANCHES_LIST_FILE" "$JENKINS_HOME/github/github_branches.json"
+    - content: |
+        Below is the <span style='color: #006ab7; font-family: EmberHeavy;'>resulting list of repositories and branches as saved to the server</span>. This file is used by the main pipeline as an <span style='color: #006ab7; font-family: EmberHeavy;'>Active Choices Parameter</span> to populate the dropdown for the user to select the repository and branch for deployment.
+
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_3.png
+    - content: |
+        Similarly, the <span style='color: #006ab7; font-family: EmberHeavy;'>subdomains fetch job</span> queries AWS Route 53 to obtain a list of subdomains currently in use. This job executes a <span style='color: #006ab7; font-family: EmberHeavy;'>Python script</span> that makes <span style='color: #006ab7; font-family: EmberHeavy;'>API requests to Route 53</span>, ensuring the system is aware of assigned subdomains before provisioning new deployments. This data is also stored in a JSON file, enabling Jenkins to track and display available subdomains dynamically.
+      pageSection: "Fetching Active Subdomains"
+      code: |
+        
+        import boto3
+        import json
+        import os
+        import re
+        from loguru import logger
+        import yaml
+        import json
+
+        accounts = []
+        jenkins_home = os.environ['JENKINS_HOME']
+
+        def assume_role_session(account):
+            sts_client = boto3.client('sts')
+            assumed_role = sts_client.assume_role(
+                RoleArn=f"arn:aws:iam::{account['account_id']}:role/{account['cross_account_role']}",
+                RoleSessionName="XacntAssumeRoleSession"
+            )
+            credentials = assumed_role['Credentials']
+            session = boto3.Session(
+                aws_access_key_id=credentials['AccessKeyId'],
+                aws_secret_access_key=credentials['SecretAccessKey'],
+                aws_session_token=credentials['SessionToken']
+            )
+            return session
+
+        def get_subdomains(session):
+            domains = []
+            client = session.client('route53')
+            paginator = client.get_paginator('list_hosted_zones')
+            for page in paginator.paginate():
+                for hosted_zone in page['HostedZones']:
+                    hosted_zone_id = hosted_zone['Id']
+                    paginator = client.get_paginator('list_resource_record_sets')
+                    for page in paginator.paginate(HostedZoneId=hosted_zone_id):
+                        for record_set in page['ResourceRecordSets']:
+                            if record_set['Type'] == 'A':
+                                identity = session.client('sts').get_caller_identity()
+                                name = record_set['Name']
+                                domains.append(f'{name} ({identity["Account"]})')
+                                
+                                
+            return domains
+
+        # put the account info manually or drop the generated config.yaml file in the fetch_jobs directory
+        if not os.path.exists('config/config.yaml'):
+            logger.info('config.yaml file not found')
+            logger.info('Using manual account info...')
+            accounts = [
+                {
+                    'account_id': '551796573889',
+                    'cross_account_role': 'jenkinsAdminXacnt'
+                },
+                {
+                    'account_id': '061039789243',
+                    'cross_account_role': 'jenkinsAdminXacnt'
+                }    
+            ]
+        else:
+            with open('config/config.yaml', 'r') as file:
+                config = yaml.load(file, Loader=yaml.FullLoader)
+            for acct in config.get('aws_accounts'):
+                account_dict = {}
+                account_dict['account_id'] = acct
+                account_dict['cross_account_role'] = config.get('aws_accounts')[acct].get('cross_account_role')
+                accounts.append(account_dict)
+
+
+                                
+            
+
+        subdomains = []
+        for account in accounts:
+            session = assume_role_session(account)
+            subdomains += get_subdomains(session)
+
+            
+        # make the github directory if it doesnt exist
+        os.makedirs(f'{jenkins_home}/github', exist_ok=True)
+
+        with open(f'{jenkins_home}/github/subdomains.json', 'w') as f:
+            json.dump(subdomains, f)
+            
+        logger.info(f"Subdomains saved to: {jenkins_home}/github/subdomains.json")
+
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_4.png
+    - content: |
+        Once these fetch jobs complete, their outputs feed directly into the main deployment pipeline. When a user initiates a deployment, <span style='color: #006ab7; font-family: EmberHeavy;'>a dropdown menu provides an updated list of repositories and branches fetched from GitHub</span>. As long as the selected repository contains a valid Dockerfile and a configuration file, <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One'>AutoPilot</strong> will automatically clone the repository, build the container image, and deploy it to ECS.
+
+      pageSection: "Integration with the Deployment Pipeline"
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_5.png
+    - content: |
+        Additionally, the <span style='color: #006ab7; font-family: EmberHeavy;'>subdomain data fetched from Route 53 is presented to the user within the pipeline interface</span>, offering insight into subdomains currently allocated across AWS accounts. This prevents conflicts and ensures smooth domain assignments.
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs6_6.png
+
+    - content: |
+        By automating repository, branch, and subdomain discovery, AutoPilot enhances efficiency, reduces manual overhead, and maintains a continuously updated deployment environment.
+
+  - title: Dynamically Provisioning Infrastructure with Terraform
+    tabTitle: Terraform
+    subsections:
+    - content: |
+        At the core of <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> is <span style='color: #006ab7; font-family: EmberHeavy;'>Terraform</span>, the foudational tool that enables the system to dynamically generate infrastructure for each application. By leveraging <span style='color: #006ab7; font-family: EmberHeavy;'>Infrastructure as Code (IaC)</span>, Terraform ensures that AutoPilot can provision and manage cloud resources in a consistent, repeatable and scalable manner.<br><br>
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs7.gif
+    - content: |
+        Unlike traditional deployment methods that require manual setup and custom scripts per application, <span style='color: #006ab7; font-family: EmberHeavy;'>AutoPilot abstracts the entire infrastructure configuration into a containerized deployment model</span>. This means that as long as an application has a valid Dockerfile, AutoPilot can deploy it to ECS, regardless of the language or framework. The actual infrastructure configuration—load balancers, networking, IAM roles, and ECS clusters—is handled dynamically by Terraform, while Jenkins orchestrates the deployment pipeline.
+
+    - content: |
+        A key aspect of Terraform’s role in AutoPilot is its ability to dynamically configure resources based on user input and environment-specific settings. Instead of hardcoding values, AutoPilot <span style='color: #006ab7; font-family: EmberHeavy;'>loads essential configurations from a centralized YAML configuration file and injects them as environment variables</span> into Terraform.
+      pageSection: "Loading Environment Variables into Terraform"
+
+      code: |
+        
+        # Jenkinsfile
+
+        stage('Set Environment Variables') {
+            steps {
+                echo "Account ID: ${AWS_ACCOUNT_ID}"
+                echo "Setting Environment Variables"
+                sh 'ls -la deploy/docker'
+                script {
+                    config = readYaml file: 'deploy/docker/config.yaml'
+                    accountConfig = config["aws_accounts"]["${AWS_ACCOUNT_ID}"]
+                    env.TF_VAR_app_name = config.app_name
+                    env.TF_VAR_aws_account_id = AWS_ACCOUNT_ID
+                    env.TF_VAR_aws_region = config.region
+                    env.TF_VAR_aws_security_group = accountConfig.security_group
+                    env.TF_VAR_aws_subnet_ids = groovy.json.JsonOutput.toJson(accountConfig.subnet_ids)
+                    env.TF_VAR_aws_vpc_id = accountConfig.vpc_id
+                    env.TF_BUCKET = accountConfig.tf_bucket
+                    env.TF_TABLE = accountConfig.tf_table
+                    env.TF_VAR_aws_ssl_certificate_arn = accountConfig.ssl_certificate_arn
+                    env.TF_VAR_aws_route53_zone_id = accountConfig.route53_zone_id
+                    env.TF_VAR_aws_domain = accountConfig.domain
+                    env.TF_VAR_aws_subdomain = "${ params.Subdomain }"
+                    env.TF_VAR_aws_ecr_image_tag = IMAGE_TAG
+                    env.XACNT_ROLE = accountConfig.cross_account_role
+                    env.TF_VAR_execution_role = accountConfig.execution_role
+                    env.TF_VAR_task_role = accountConfig.task_role
+                }
+                echo "Environment Variables Set"
+
+                script {
+                    dir('deploy/docker') {
+                        try {
+                            terraformInit()
+                            sh 'terraform state show aws_ecr_repository.ecr'
+                            sh 'terraform output -raw ecr_repository_url'
+                            env.ECR_REPOSITORY_URL = sh(script: 'terraform output -raw ecr_repository_url', returnStdout: true).trim()
+                        } catch (Exception e) {
+                            echo "ECR Repository not yet created, skipping..."
+                        }
+                    }
+                }
+
+                script {
+                    echo "App Name: ${env.TF_VAR_app_name}"
+                    echo "Account ID: ${env.TF_VAR_aws_account_id}"
+                    echo "AWS Region: ${env.TF_VAR_aws_region}"
+                    echo "Security Group: ${env.TF_VAR_aws_security_group}"
+                    echo "Subnet IDs: ${env.TF_VAR_aws_subnet_ids}"
+                    echo "VPC ID: ${env.TF_VAR_aws_vpc_id}"
+                    echo "Terraform Bucket: ${env.TF_BUCKET}"
+                    echo "Terraform Table: ${env.TF_TABLE}"
+                    echo "SSL Certificate ARN: ${env.TF_VAR_aws_ssl_certificate_arn}"
+                    echo "Route53 Zone ID: ${env.TF_VAR_aws_route53_zone_id}"
+                    echo "Domain: ${env.TF_VAR_aws_domain}"
+                    echo "Subdomain: ${env.TF_VAR_aws_subdomain}"
+                    echo "Image Tag: ${env.TF_VAR_aws_ecr_image_tag}"
+                    echo "Cross Account Role: ${env.XACNT_ROLE}"
+                    echo "Execution Role: ${env.TF_VAR_execution_role}"
+                    echo "Task Role: ${env.TF_VAR_task_role}"
+                    echo "ECR Repository URL: ${env.ECR_REPOSITORY_URL ?: 'ECR Repository not yet created'}"
+                }
+            }
+        }
+    - content: |
+        The Jenkinsfile will load in the configuration yaml from the staging directory and set the environment variables for Terraform to use. Jenkins will load in the account-specific environment variables based on which account is selected from the dropdown when the job is triggered. This allows for the same Terraform configuration to be used for multiple accounts.
+
+      code: |
+        
+        #Terraform Configuration File
+
+        variable "aws_account_id" {type = string}
+        variable "aws_region" {type = string}
+        variable "aws_security_group" {type = string}
+        variable "aws_subnet_ids" {type = list(string)}
+        variable "aws_vpc_id" {type = string}
+        variable "aws_ssl_certificate_arn" {type = string}
+        variable "aws_route53_zone_id" {type = string}
+        variable "aws_domain" {type = string}
+        variable "aws_subdomain" {type = string}
+        variable "aws_ecr_image" {
+            type = string
+            default = "placeholder"
+        }
+        variable "aws_ecr_image_tag" {
+            type = string
+            default = "latest"
+        }
+        variable "app_name" {type = string}
+        variable "execution_role" {type = string}
+        variable "task_role" {type = string}
+
+    - content: |
+        <span style='text-align: center;display: block;'>These environment variables define:</span>
+      listItems:
+      - text: "<strong style='color: blue;'>The AWS account and region</strong> for deployment."
+      - text: "<strong style='color: blue;'>The ECS cluster and task definition</strong> details."
+      - text: "<strong style='color: blue;'>Network settings</strong> such as VPC, subnets, and security group."
+      - text: "<strong style='color: blue;'>The ECR repository</strong> where the container images will be stored."
+      - text: "<strong style='color: blue;'>Logging and monitoring</strong> configurations via CloudWatch and ECS Exec."
+    - content: |
+        This method ensures that AutoPilot can provision infrastructure on-demand, without requiring any manual intervention. Every deployment is tailored to the specified parameters, making the system flexible and adaptable for different environments.
+    - content: |
+        Terraform follows a specific sequence when deploying infrastructure to ensure dependencies are met and the deployment process runs smoothly. The following is the order of infrastructure deployment for AutoPilot:
+      pageSection: "Order of Infrastructure Deployment"
+
+    - content: |
+        <strong style='color: blue;'>Terraform Backend Initialization</strong><br>
+
+        The system initializes Terraform state management by configuring an <span style='color: #006ab7; font-family: EmberHeavy;'>S3 bucket for state storage</span> and a <span style='color: #006ab7; font-family: EmberHeavy;'>DynamoDB table for state locking</span>. This prevents conflicts during concurrent deployments and ensures infrastructure changes are tracked properly.<br><br>
+        The Terraform backend is left empty intentionally and <span style='color: #006ab7; font-family: EmberHeavy;'>dynamically set in the Jenkinsfile using Terraform variables</span>. This allows deployments to configure the backend at runtime, adapting to different AWS accounts without manual changes, and ensures seamless state management between applications and subdomains, preventing conflicts and enabling fully automated, multi-account deployments.
+
+      code: |
+        
+        terraform {
+            backend "s3" {}
+        }
+
+        # from Jenkinsfile
+        stage('Terraform Backend') {
+            steps {
+                script {
+                    terraformInit = {
+                        sh """
+                            terraform init -reconfigure \
+                                -backend-config="bucket=${env.TF_BUCKET}" \
+                                -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
+                                -backend-config="region=${env.TF_VAR_aws_region}" \
+                                -backend-config="dynamodb_table=${env.TF_TABLE}"
+                        """
+                    }
+                }
+            }
+        }
+    - content: |
+        <strong style='color: blue;'>ECR Repository</strong><br>
+
+        The first step is to create the Amazon Elastic Container Registry (ECR). This portion of the Terraform file is targeted independently to ensure the ECR repository is created before proceeding with the deployment. This is required before the pipeline can push the application image, ensuring it is available for subsequent steps in the deployment.
+
+      code: |
+        
+        #create ecr repository
+        resource "aws_ecr_repository" "ecr" {
+            name = var.app_name
+            force_delete = true
+        }
+
+        # output the repo url for the build pipeline
+        output "ecr_repository_url" {
+            value = aws_ecr_repository.ecr.repository_url
+        }
+    - content: |
+        <strong style='color: blue;'>Application Load Balancer and Target Group</strong><br>
+
+        The system sets up an Application Load Balancer (ALB) and target groups, which later route traffic to the ECS service. The ALB is required for external access, and target groups enable proper request distribution to the running containers. This is necessary to configure prior to launching the ECS service since the service will reference and register the load balancer later in the deployment process.<br><br>
+
+        In addition, the ALB is configured with HTTP and HTTPS listeners, ensuring secure communication with the application. The HTTPS listener references an SSL certificate ARN (defined in the configuration file), enabling encrypted traffic between the client and the load balancer.
+      code: |
+        
+        # create target group for load balancer
+        resource "aws_lb_target_group" "tg" {
+          name = "${var.app_name}-tg"
+          port = 80
+          protocol = "HTTP"
+          vpc_id = var.aws_vpc_id
+          target_type = "ip"
+          health_check {
+            path = "/"
+            interval = 30
+            timeout = 5
+            healthy_threshold = 2
+            unhealthy_threshold = 2
+          }
+        }
+
+        # create load balancer
+        resource "aws_lb" "lb" {
+          name = "${var.app_name}-lb"
+          internal = false
+          load_balancer_type = "application"
+          security_groups = [var.aws_security_group]
+          subnets = var.aws_subnet_ids
+        }
+
+        # create http listener for load balancer
+        resource "aws_lb_listener" "http-listener" {
+          load_balancer_arn = aws_lb.lb.arn
+          port = 80
+          protocol = "HTTP"
+
+          default_action {
+            type = "forward"
+            target_group_arn = aws_lb_target_group.tg.arn
+          }
+        }
+
+        # create https listener for load balancer
+        resource "aws_lb_listener" "https-listener" {
+          load_balancer_arn = aws_lb.lb.arn
+          port = 443
+          protocol = "HTTPS"
+
+          default_action {
+            type = "forward"
+            target_group_arn = aws_lb_target_group.tg.arn
+          }
+
+          certificate_arn = var.aws_ssl_certificate_arn
+          ssl_policy = "ELBSecurityPolicy-TLS13-1-3-2021-06"
+        }
+    - content: |
+        <strong style='color: blue;'>ECS Cluster</strong><br>
+
+        Terraform provisions the ECS cluster where the containerized application will be deployed. An ECS cluster is a logical grouping of tasks and services, providing a centralized location for managing containerized applications. The cluster is created with a user-defined name from the configuration file, allowing for easy identification and management of the deployed application.
+
+      code: |
+        
+        # create ecs cluster
+        resource "aws_ecs_cluster" "cluster" {
+            name = var.app_name
+        }
+
+    - content: |
+        <strong style='color: blue;'>CloudWatch Log Group</strong><br>
+
+        The system creates a CloudWatch log group to store container logs generated by the application. This log group is essential for monitoring and troubleshooting the application, providing a centralized location for log storage and analysis. The log group is named based on the application name, ensuring logs are easily identifiable and organized within CloudWatch.
+      code: |
+        
+        resource "aws_cloudwatch_log_group" "ecs_logs" {
+          name = "/ecs/${var.app_name}"
+
+          retention_in_days = 30  # Set log retention period (optional)
+        }
+    - content: |
+        <strong style='color: blue;'>Task Definition</strong><br>
+
+        The task definition is the core configuration for the running container in ECS. It defines the container image, resource requirements, logging configuration, and IAM role attachments. The task definition is created with the application name and references the ECR repository and image tag for the container image name and the previously created log groups for log storage.
+
+      code: |
+        
+        # create task definition
+        resource "aws_ecs_task_definition" "task" {
+            family = var.app_name
+            requires_compatibilities = ["FARGATE"]
+            network_mode = "awsvpc"
+            cpu = "256"
+            memory = "512"
+            execution_role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.execution_role}"
+            task_role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.task_role}"
+            depends_on = [aws_ecr_repository.ecr, aws_cloudwatch_log_group.ecs_logs]
+            container_definitions = jsonencode([
+                {
+                    name = var.app_name
+                    image = "${aws_ecr_repository.ecr.repository_url}:${var.aws_ecr_image_tag}"
+                    essential = true
+                    portMappings = [
+                        {
+                            containerPort = 80
+                            hostPort = 80
+                            protocol = "tcp"
+                        }
+                    ]
+                    logConfiguration = {
+                        logDriver = "awslogs"
+                        options = {
+                            awslogs-group = "/ecs/${var.app_name}"
+                            awslogs-region = var.aws_region
+                            awslogs-create-group = "true"
+                            awslogs-stream-prefix = "ecs"
+                        }
+                    }
+                }
+            ])
+        }
+    - content: |
+        <strong style='color: blue;'>Service Deployment with Load Balancer Registration</strong><br>
+
+        The ECS service is launched, referencing the task definition. Terraform ensures the latest image is pulled from ECR and registers the service with the load balancer for external access.
+
+      code: |
+        
+        # create ecs service
+        resource "aws_ecs_service" "service" {
+            name = var.app_name
+            cluster = aws_ecs_cluster.cluster.arn
+            task_definition = aws_ecs_task_definition.task.arn
+            desired_count = 1
+            launch_type = "FARGATE"
+            enable_execute_command = true
+            force_new_deployment = true
+            network_configuration {
                 subnets = var.aws_subnet_ids
-              }
+                security_groups = [var.aws_security_group]
+                assign_public_ip = true
+            }
+            load_balancer {
+                target_group_arn = aws_lb_target_group.tg.arn
+                container_name = var.app_name
+                container_port = 80
+            }
+        }
+    - content: |
+        <strong style='color: blue;'>Route 53 Subdomain Record</strong><br>
 
-              # create http listener for load balancer
-              resource "aws_lb_listener" "http-listener" {
-                load_balancer_arn = aws_lb.lb.arn
-                port = 80
-                protocol = "HTTP"
+        A DNS record is created in Route 53, mapping a user-defined subdomain to the Application Load Balancer. This ensures the application is accessible via a custom domain. The subdomain is defined when the pipeline is triggered, pulled from the Active Choices Parameter in Jenkins and injected as an environment variable into Terraform.
+      code: |
+        
+        # create route53 record for subdomain
+        resource "aws_route53_record" "subdomain" {
+            zone_id = var.aws_route53_zone_id
+            name = "${var.aws_subdomain}.${var.aws_domain}"
+            type = "A"
 
-                default_action {
-                  type = "forward"
-                  target_group_arn = aws_lb_target_group.tg.arn
+            alias {
+                name = aws_lb.lb.dns_name
+                zone_id = aws_lb.lb.zone_id
+                evaluate_target_health = true
+            }
+        }
+
+    - content: ""
+
+  - title: Jenkins Pipeline Script
+    tabTitle: Jenkins
+    subsections:
+    - content: |
+        Jenkins plays a pivotal role in orchestrating the deployment process for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong>. As the automation engine behind the system, Jenkins ensures that each step in the pipeline is executed in a repeatable and controlled manner. The pipeline in responsible for <span style='color: #006ab7; font-family: EmberHeavy;'>triggering Terraform, managing environment variable, orchestrating infrastructure provisioning, and deploying the application to ECS</span>. Leveraging Jenkins pipelines, AutoPilot eliminates manual intervention, ensuring a streamlined deployment workflow across multiple AWS accounts.<br><br>
+
+        Unlike traditional deployment pipelines that require hardcoded scripts for each application, <span style='color: #006ab7; font-family: EmberHeavy;'>AutoPilot dynamically adapts based on user inputs and repository configurations</span>. This approach allows for a <span style='color: #006ab7; font-family: EmberHeavy;'>universal, application-agnostic deployment process</span> that is entirely dependent on the presence of a valid Dockerfile and configuration YAML file.
+    - content: |
+        <strong style='color: blue;'>Cloning the Application Repository</strong><br>
+
+        The pipeline begins by <span style='color: #006ab7; font-family: EmberHeavy;'>cloning the selected application repository from GitHub</span>. These variables are then injected into Terraform, <span style='color: #006ab7; font-family: EmberHeavy;'>enabling dynamic infrastructure provisioning</span>. This step ensures that a valid Dockerfile and configuration YAML file are present before proceeding. The repository's contents are now available in the Jenkins workspace for use in later steps.<br><br>
+      pageSection: "Pipeline Overview and Execution Flow"
+
+      groovy: |
+        
+        pipeline {
+        agent any
+        environment {
+            AWS_ACCOUNT_ID = "${ params.Account }"
+            REPOSITORY = "${ params.Repository }"
+            BRANCH = "${ params.Branch }"
+        }
+
+        stages {
+            stage('Clone Application Repository') {
+                steps {
+                    script {
+                        sh """
+                            rm -r application_files && mkdir application_files
+                            git clone -b ${BRANCH} ${REPOSITORY} application_files
+                        """
+                        
+                        IMAGE_TAG = sh(script: 'git -C application_files rev-parse --short HEAD', returnStdout: true).trim()
+                        echo "Image Tag: ${IMAGE_TAG}"
+
+                        if (fileExists('application_files/deploy') == false) {
+                            echo "Please have the deploy directory in the root of the application with a config.yaml file present"
+                            error("Deploy directory is missing")
+                        }
+
+                        sh """
+                            ls -la application_files
+                            sudo cp -r application_files/.[!.]* application_files/* .
+                            sudo cp -r application_files/deploy/docker/. deploy/docker/
+                            sudo cp -r application_files/deploy/scripts/. deploy/scripts/
+                            sudo chown -R ec2-user:ec2-user .
+                            ls -lah
+                        """
+                    }
                 }
-              }
+            }
+    - content: |
+        <strong style='color: blue;'>Terraform Backend Initialization</strong><br>
 
-              # create https listener for load balancer
-              resource "aws_lb_listener" "https-listener" {
-                load_balancer_arn = aws_lb.lb.arn
-                port = 443
-                protocol = "HTTPS"
+        The pipeline <span style='color: #006ab7; font-family: EmberHeavy;'>defines the Terraform backend by calling a function in the Jenkinsfile</span>. This function configures S3 for state storage and a DynamoDB table for state locking to prevent conflicts. Defining the backend here ensures <span style='color: #006ab7; font-family: EmberHeavy;'>consistent infrastructure state management across multiple deployments</span>.<br><br>
+      groovy: |
+        
+        stage('Terraform Backend') {
+            steps {
+                script {
+                    terraformInit = {
+                        sh """
+                            terraform init -reconfigure \
+                                -backend-config="bucket=${env.TF_BUCKET}" \
+                                -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
+                                -backend-config="region=${env.TF_VAR_aws_region}" \
+                                -backend-config="dynamodb_table=${env.TF_TABLE}"
+                        """
+                    }
+                }
+            }
+        }
 
-                default_action {
-                  type = "forward"
-                  target_group_arn = aws_lb_target_group.tg.arn
+    - content: |
+        <strong style='color: blue;'>Load Environment Variables from Configuration File and Job Parameters</strong><br>
+
+        The YAML configuration file is parsed, and relevant <span style='color: #006ab7; font-family: EmberHeavy;'>values are injected as environment variables</span>. These variables include AWS account details, networking parameters, IAM roles, and other deployment-specific settings. This <span style='color: #006ab7; font-family: EmberHeavy;'>allows Terraform to dynamically adapt to different environments without requiring hardcoded values</span>.<br><br>
+
+        Before proceeding with infrastructure deployment, the pipeline attempts to <span style='color: #006ab7; font-family: EmberHeavy;'>extract the ECR repository URL to check if the repository already exists</span>. If found, it retrieves the repository URL for later use; otherwise, it continues with the provisioning process.<br><br>
+      groovy: |
+        
+        stage('Set Environment Variables') {
+            steps {
+                echo "Account ID: ${AWS_ACCOUNT_ID}"
+                echo "Setting Environment Variables"
+                sh 'ls -la deploy/docker'
+                script {
+                    config = readYaml file: 'deploy/docker/config.yaml'
+                    accountConfig = config["aws_accounts"]["${AWS_ACCOUNT_ID}"]
+                    env.TF_VAR_app_name = config.app_name
+                    env.TF_VAR_aws_account_id = AWS_ACCOUNT_ID
+                    env.TF_VAR_aws_region = config.region
+                    env.TF_VAR_aws_security_group = accountConfig.security_group
+                    env.TF_VAR_aws_subnet_ids = groovy.json.JsonOutput.toJson(accountConfig.subnet_ids)
+                    env.TF_VAR_aws_vpc_id = accountConfig.vpc_id
+                    env.TF_BUCKET = accountConfig.tf_bucket
+                    env.TF_TABLE = accountConfig.tf_table
+                    env.TF_VAR_aws_ssl_certificate_arn = accountConfig.ssl_certificate_arn
+                    env.TF_VAR_aws_route53_zone_id = accountConfig.route53_zone_id
+                    env.TF_VAR_aws_domain = accountConfig.domain
+                    env.TF_VAR_aws_subdomain = "${ params.Subdomain }"
+                    env.TF_VAR_aws_ecr_image_tag = IMAGE_TAG
+                    env.XACNT_ROLE = accountConfig.cross_account_role
+                    env.TF_VAR_execution_role = accountConfig.execution_role
+                    env.TF_VAR_task_role = accountConfig.task_role
+                }
+                echo "Environment Variables Set"
+
+                script {
+                    dir('deploy/docker') {
+                        try {
+                            terraformInit()
+                            sh 'terraform state show aws_ecr_repository.ecr'
+                            sh 'terraform output -raw ecr_repository_url'
+                            env.ECR_REPOSITORY_URL = sh(script: 'terraform output -raw ecr_repository_url', returnStdout: true).trim()
+                        } catch (Exception e) {
+                            echo "ECR Repository not yet created, skipping..."
+                        }
+                    }
                 }
 
-                certificate_arn = var.aws_ssl_certificate_arn
-                ssl_policy = "ELBSecurityPolicy-TLS13-1-3-2021-06"
-              }
-        - content: |
-              <strong style='color: blue;'>ECS Cluster</strong><br>
+                script {
+                    echo "App Name: ${env.TF_VAR_app_name}"
+                    echo "Account ID: ${env.TF_VAR_aws_account_id}"
+                    echo "AWS Region: ${env.TF_VAR_aws_region}"
+                    echo "Security Group: ${env.TF_VAR_aws_security_group}"
+                    echo "Subnet IDs: ${env.TF_VAR_aws_subnet_ids}"
+                    echo "VPC ID: ${env.TF_VAR_aws_vpc_id}"
+                    echo "Terraform Bucket: ${env.TF_BUCKET}"
+                    echo "Terraform Table: ${env.TF_TABLE}"
+                    echo "SSL Certificate ARN: ${env.TF_VAR_aws_ssl_certificate_arn}"
+                    echo "Route53 Zone ID: ${env.TF_VAR_aws_route53_zone_id}"
+                    echo "Domain: ${env.TF_VAR_aws_domain}"
+                    echo "Subdomain: ${env.TF_VAR_aws_subdomain}"
+                    echo "Image Tag: ${env.TF_VAR_aws_ecr_image_tag}"
+                    echo "Cross Account Role: ${env.XACNT_ROLE}"
+                    echo "Execution Role: ${env.TF_VAR_execution_role}"
+                    echo "Task Role: ${env.TF_VAR_task_role}"
+                    echo "ECR Repository URL: ${env.ECR_REPOSITORY_URL ?: 'ECR Repository not yet created'}"
+                }
+            }
+        }
 
-              Terraform provisions the ECS cluster where the containerized application will be deployed. An ECS cluster is a logical grouping of tasks and services, providing a centralized location for managing containerized applications. The cluster is created with a user-defined name from the configuration file, allowing for easy identification and management of the deployed application.
+    - content: |
+        <strong style='color: blue;'>Assume Cross Account Role</strong><br>
 
-          code: |
-              
-              # create ecs cluster
-              resource "aws_ecs_cluster" "cluster" {
-                  name = var.app_name
-              }
+        The build agent assumes the cross-account role in the target AWS account, as defined in the configuration file. This step <span style='color: #006ab7; font-family: EmberHeavy;'>ensures that the pipeline can interact with resources in the target account securely</span>. A trust relationship should be defined between the build agent role in the account where the build agent resides and each target account role, and the necessary permissions should be granted to the cross-account role to enable it to deploy the infrastructure.
 
-        - content: |
-              <strong style='color: blue;'>CloudWatch Log Group</strong><br>
+      groovy: |
+        
+        stage('AssumeRole') {
+            steps {
+                script {
+                    def assumeRoleCmd = """
+                        aws sts assume-role --role-arn arn:aws:iam::${env.TF_VAR_aws_account_id}:role/${XACNT_ROLE} --role-session-name CrossAccountSession
+                    """
+                    def assumeRoleOutput = sh(script: assumeRoleCmd, returnStdout: true).trim()
+                    def creds = readJSON(text: assumeRoleOutput).Credentials
 
-              The system creates a CloudWatch log group to store container logs generated by the application. This log group is essential for monitoring and troubleshooting the application, providing a centralized location for log storage and analysis. The log group is named based on the application name, ensuring logs are easily identifiable and organized within CloudWatch.
-          code: |
-              
-              resource "aws_cloudwatch_log_group" "ecs_logs" {
-                name = "/ecs/${var.app_name}"
+                    env.AWS_ACCESS_KEY_ID = creds.AccessKeyId
+                    env.AWS_SECRET_ACCESS_KEY = creds.SecretAccessKey
+                    env.AWS_SESSION_TOKEN = creds.SessionToken
+                }
+            }
+        }
 
-                retention_in_days = 30  # Set log retention period (optional)
-              }
-        - content: |
-              <strong style='color: blue;'>Task Definition</strong><br>
+    - content: |
+        <strong style='color: blue;'>Destroy Existing Stack (Conditional)</strong><br>
 
-              The task definition is the core configuration for the running container in ECS. It defines the container image, resource requirements, logging configuration, and IAM role attachments. The task definition is created with the application name and references the ECR repository and image tag for the container image name and the previously created log groups for log storage.
+        If a fresh deployment is chosen, or the user opts to tear down an existing application, this step executes. This ensures <span style='color: #006ab7; font-family: EmberHeavy;'>old resources are properly removed before provisioning new infrastructure</span>. If an update is selected, this step is skipped.
 
-          code: |
-              
-              # create task definition
-              resource "aws_ecs_task_definition" "task" {
-                  family = var.app_name
-                  requires_compatibilities = ["FARGATE"]
-                  network_mode = "awsvpc"
-                  cpu = "256"
-                  memory = "512"
-                  execution_role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.execution_role}"
-                  task_role_arn = "arn:aws:iam::${var.aws_account_id}:role/${var.task_role}"
-                  depends_on = [aws_ecr_repository.ecr, aws_cloudwatch_log_group.ecs_logs]
-                  container_definitions = jsonencode([
-                      {
-                          name = var.app_name
-                          image = "${aws_ecr_repository.ecr.repository_url}:${var.aws_ecr_image_tag}"
-                          essential = true
-                          portMappings = [
-                              {
-                                  containerPort = 80
-                                  hostPort = 80
-                                  protocol = "tcp"
-                              }
-                          ]
-                          logConfiguration = {
-                              logDriver = "awslogs"
-                              options = {
-                                  awslogs-group = "/ecs/${var.app_name}"
-                                  awslogs-region = var.aws_region
-                                  awslogs-create-group = "true"
-                                  awslogs-stream-prefix = "ecs"
-                              }
-                          }
-                      }
-                  ])
-              }
-        - content: |
-              <strong style='color: blue;'>Service Deployment with Load Balancer Registration</strong><br>
+      groovy: |
+        
+        stage('Destroy Infrastructure') {
+            when {
+                expression { params.Options == 'Deploy' || params.Options == 'Destroy' }
+            }
+            steps {
+                script{
+                    dir('deploy/docker') {
+                        terraformInit()
+                        try {
+                            sh 'terraform destroy -auto-approve || echo "No existing infrastructure to destroy."'
+                        } catch (Exception e) {
+                            echo "Terraform destroy failed: ${e}"
+                            echo "Exiting due to Terraform destroy failure"
+                        }
+                    }
+                }
+            }
+        }
 
-              The ECS service is launched, referencing the task definition. Terraform ensures the latest image is pulled from ECR and registers the service with the load balancer for external access.
+    - content: |
+        <strong style='color: blue;'>Deploy ECR Repository (Conditional)</strong><br>
 
-          code: |
-              
-              # create ecs service
-              resource "aws_ecs_service" "service" {
-                  name = var.app_name
-                  cluster = aws_ecs_cluster.cluster.arn
-                  task_definition = aws_ecs_task_definition.task.arn
-                  desired_count = 1
-                  launch_type = "FARGATE"
-                  enable_execute_command = true
-                  force_new_deployment = true
-                  network_configuration {
-                      subnets = var.aws_subnet_ids
-                      security_groups = [var.aws_security_group]
-                      assign_public_ip = true
-                  }
-                  load_balancer {
-                      target_group_arn = aws_lb_target_group.tg.arn
-                      container_name = var.app_name
-                      container_port = 80
-                  }
-              }
-        - content: |
-              <strong style='color: blue;'>Route 53 Subdomain Record</strong><br>
+        If no ECR repository is yet associated with the application and a fresh deployment is selected, a new ECR repository will be created. Using <span style='color: #006ab7; font-family: EmberHeavy;'>Terraform's ability to target specific resources in the stack</span>, the ECR will be created apart from the rest of the infrastructure. This is necessary to <span style='color: #006ab7; font-family: EmberHeavy;'>ensure that the ECR repository URL (stored as an environment variable) is available to tag and push the application image</span> to ECR prior to the deployment of the rest of the infrastructure stack.
 
-              A DNS record is created in Route 53, mapping a user-defined subdomain to the Application Load Balancer. This ensures the application is accessible via a custom domain. The subdomain is defined when the pipeline is triggered, pulled from the Active Choices Parameter in Jenkins and injected as an environment variable into Terraform.
-          code: |
-              
-              # create route53 record for subdomain
-              resource "aws_route53_record" "subdomain" {
-                  zone_id = var.aws_route53_zone_id
-                  name = "${var.aws_subdomain}.${var.aws_domain}"
-                  type = "A"
+      groovy: |
+        
+        stage('Deploy ECR Repository') {
+            when {
+                expression { (params.Options == 'Deploy' || params.Options == 'Update') && (env.ECR_REPOSITORY_URL == null || env.ECR_REPOSITORY_URL == '') }
+            }
+            steps {
+                script {
+                    dir('deploy/docker') {
+                        terraformInit()
+                        try {
+                            sh 'terraform plan -out=ecr.tfplan -target=aws_ecr_repository.ecr'
+                            sh 'terraform apply -auto-approve ecr.tfplan'
+                            env.ECR_REPOSITORY_URL = sh(script: 'terraform output -raw ecr_repository_url', returnStdout: true).trim()
+                            echo "ECR Repository URL: ${ECR_REPOSITORY_URL}"
+                        } catch (Exception e) {
+                            echo "Terraform apply failed: ${e}"
+                            echo "Rolling back changes"
+                            sh "terraform destroy -auto-approve"
+                            echo "Exiting due to Terraform apply failure"
+                        }
+                    }
+                }
+            }
+        }
 
-                  alias {
-                      name = aws_lb.lb.dns_name
-                      zone_id = aws_lb.lb.zone_id
-                      evaluate_target_health = true
-                  }
-              }
+    - content: |
+        <strong style='color: blue;'>Run Custom Application Scripts</strong><br>
 
-        - content: ""
+        The pipeline checks the application repository for additional scripts required for configuration. If present, these <span style='color: #006ab7; font-family: EmberHeavy;'>scripts execute to dynamically configure application-specific settings</span> such as environment variables internal to the application or any additional configuration required for the application to run correctly in the target account and environment. Currently, the <span style='color: #006ab7; font-family: EmberHeavy;'>languages supported are Bash and Python</span>, the latter requiring a requirements.txt file for dependencies.
 
-    - title: Jenkins Pipeline Script
-      tabTitle: Jenkins
-      subsections:
-        - content: |
-              Jenkins plays a pivotal role in orchestrating the deployment process for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong>. As the automation engine behind the system, Jenkins ensures that each step in the pipeline is executed in a repeatable and controlled manner. The pipeline in responsible for <span style='color: #006ab7; font-family: EmberHeavy;'>triggering Terraform, managing environment variable, orchestrating infrastructure provisioning, and deploying the application to ECS</span>. Leveraging Jenkins pipelines, AutoPilot eliminates manual intervention, ensuring a streamlined deployment workflow across multiple AWS accounts.<br><br>
+      groovy: |
+        
+        stage('Run Application Scripts') {
+            when {
+                expression { params.Options == 'Deploy' || params.Options == 'Update' || params.Options == 'Test'}
+            }
+            steps {
+                script {
+                    try {
+                        dir('deploy/scripts') {
+                            // Optional bash scripts will run here
+                            def bashScripts = findFiles(glob: '*.sh')
+                            if (bashScripts.length > 0) {
+                                echo "Running bash scripts"
+                                sh 'chmod +x *.sh'
+                                for (script in bashScripts) {
+                                    sh "./${script.name}"
+                                }
+                            } else {
+                                echo "No bash scripts found"
+                            }
 
-              Unlike traditional deployment pipelines that require hardcoded scripts for each application, <span style='color: #006ab7; font-family: EmberHeavy;'>AutoPilot dynamically adapts based on user inputs and repository configurations</span>. This approach allows for a <span style='color: #006ab7; font-family: EmberHeavy;'>universal, application-agnostic deployment process</span> that is entirely dependent on the presence of a valid Dockerfile and configuration YAML file.
-        - content: |
-              <strong style='color: blue;'>Cloning the Application Repository</strong><br>
+                            // Optional python scripts will run here - be sure to include dependencies via requirements.txt
+                            def pythonScripts = findFiles(glob: '*.py')
+                            if (pythonScripts.length > 0) {
+                                echo "Running python scripts"
+                                for (script in pythonScripts) {
+                                    sh "sudo dnf install python3 -y"
+                                    sh "sudo dnf install python3-pip -y"
+                                    sh "python3 -m venv venv"
+                                    sh "source venv/bin/activate"
+                                    sh "pip install -U pip"
+                                    sh "pip install -r requirements.txt"
+                                    sh "python3 ./${script.name}"
+                                }
+                            } else {
+                                echo "No python scripts found"
+                            }
+                        }
+                    } catch (Exception e) {
+                        echo "Application scripts failed or no scripts found: ${e}"
+                        echo "Exiting due to application scripts failure"
+                        error "Script execution failed"
+                    }
+                }
+            }
+        }
 
-              The pipeline begins by <span style='color: #006ab7; font-family: EmberHeavy;'>cloning the selected application repository from GitHub</span>. These variables are then injected into Terraform, <span style='color: #006ab7; font-family: EmberHeavy;'>enabling dynamic infrastructure provisioning</span>. This step ensures that a valid Dockerfile and configuration YAML file are present before proceeding. The repository's contents are now available in the Jenkins workspace for use in later steps.<br><br>
-          pageSection: "Pipeline Overview and Execution Flow"
+    - content: |
+        <strong style='color: blue;'>Build and Push Docker Image</strong><br>
 
-          groovy: |
-              
-              pipeline {
-              agent any
-              environment {
-                  AWS_ACCOUNT_ID = "${ params.Account }"
-                  REPOSITORY = "${ params.Repository }"
-                  BRANCH = "${ params.Branch }"
-              }
+        The Docker image is built using the cloned application repository’s Dockerfile. The <span style='color: #006ab7; font-family: EmberHeavy;'>image is then tagged with the application name and the image tag variable</span>. A key thing to note is that the image tag used here is a <span style='color: #006ab7; font-family: EmberHeavy;'>unique hash value generated from the application repository latest commmit</span>. This is necessary for Terraform to track the changes in the application image in ECR. <span style='color: #006ab7; font-family: EmberHeavy;'>If this value is not changed, Terraform will not detect a change in the image and will register the image as up-to-date, preventing the ECS service from updating the running containers</span>. Any variable value can be used here theoretically, but the latest commit hash is a good choice to remain consistent with the application repository and show some relationship between the two that can be tracked. The image is then pushed to the ECR repository and ready to be used to deploy the applicaiton to ECS.
 
-              stages {
-                  stage('Clone Application Repository') {
-                      steps {
-                          script {
-                              sh """
-                                  rm -r application_files && mkdir application_files
-                                  git clone -b ${BRANCH} ${REPOSITORY} application_files
-                              """
-                              
-                              IMAGE_TAG = sh(script: 'git -C application_files rev-parse --short HEAD', returnStdout: true).trim()
-                              echo "Image Tag: ${IMAGE_TAG}"
+      groovy: |
+        
+        stage('Build Docker Image') {
+            when {
+                expression { params.Options == 'Deploy' || params.Options == 'Update'  }
+            }
+            steps {
+                script {
+                    sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${TF_VAR_aws_account_id}.dkr.ecr.${TF_VAR_aws_region}.amazonaws.com'
+                    sh 'docker build -t ${TF_VAR_app_name}:${TF_VAR_aws_ecr_image_tag} .'
+                }
+            }
+        }
 
-                              if (fileExists('application_files/deploy') == false) {
-                                  echo "Please have the deploy directory in the root of the application with a config.yaml file present"
-                                  error("Deploy directory is missing")
-                              }
+        stage('Push Docker Image') {
+            when {
+                expression { params.Options == 'Deploy' || params.Options == 'Update'  }
+            }
+            steps {
+                script {
+                    sh "docker tag ${TF_VAR_app_name}:${TF_VAR_aws_ecr_image_tag} ${ECR_REPOSITORY_URL}:${TF_VAR_aws_ecr_image_tag}"
+                    sh "docker push ${ECR_REPOSITORY_URL}:${TF_VAR_aws_ecr_image_tag}"
+                }
+            }
+        }
 
-                              sh """
-                                  ls -la application_files
-                                  sudo cp -r application_files/.[!.]* application_files/* .
-                                  sudo cp -r application_files/deploy/docker/. deploy/docker/
-                                  sudo cp -r application_files/deploy/scripts/. deploy/scripts/
-                                  sudo chown -R ec2-user:ec2-user .
-                                  ls -lah
-                              """
-                          }
-                      }
-                  }
-        - content: |
-              <strong style='color: blue;'>Terraform Backend Initialization</strong><br>
+    - content: |
+        <strong style='color: blue;'>Deploy Remaining Application Stack</strong><br>
 
-              The pipeline <span style='color: #006ab7; font-family: EmberHeavy;'>defines the Terraform backend by calling a function in the Jenkinsfile</span>. This function configures S3 for state storage and a DynamoDB table for state locking to prevent conflicts. Defining the backend here ensures <span style='color: #006ab7; font-family: EmberHeavy;'>consistent infrastructure state management across multiple deployments</span>.<br><br>
-          groovy: |
-              
-              stage('Terraform Backend') {
-                  steps {
-                      script {
-                          terraformInit = {
-                              sh """
-                                  terraform init -reconfigure \
-                                      -backend-config="bucket=${env.TF_BUCKET}" \
-                                      -backend-config="key=${env.TF_VAR_aws_subdomain}.${env.TF_VAR_aws_domain}/terraform.tfstate" \
-                                      -backend-config="region=${env.TF_VAR_aws_region}" \
-                                      -backend-config="dynamodb_table=${env.TF_TABLE}"
-                              """
-                          }
-                      }
-                  }
-              }
+        Finally, the pipeline applies Terraform to <span style='color: #006ab7; font-family: EmberHeavy;'>provision the required remaining infrastructure for the application</span>. This includes the ECS cluster, load balancing, and DNS configuration as defined in the previous section. The ECS service is launched, and the application is deployed to ECS and now accessible via the subdomain URL defined in the job parameters.
 
-        - content: |
-              <strong style='color: blue;'>Load Environment Variables from Configuration File and Job Parameters</strong><br>
+      groovy: |
+        
+        stage('Deploy Infrastructure') {
+            when {
+                expression { params.Options == 'Deploy' || params.Options == 'Update' }
+            }
+            steps {
+                script {
+                    dir('deploy/docker') {
+                        terraformInit()
+                        sh "terraform plan -out=ecs-update.tfplan -var 'aws_ecr_image=${ECR_REPOSITORY_URL}:${env.TF_VAR_aws_ecr_image_tag}'"
+                        sh "terraform apply -auto-approve ecs-update.tfplan"
+                    }
+                }
+            }
+        }
+    - content: |
+        As a final step, the pipeline will clean up the workspace by <span style='color: #006ab7; font-family: EmberHeavy;'>removing any AutoPilot deployment and application files</span> that were cloned from the repository. This ensures that the workspace is clean for the next deployment and prevents any conflicts or issues with future deployments.<br><br>
+      groovy: |
+        
+        post {
+            always {
+                echo 'Cleaning up workspace'
+                cleanWs()
+            }
+        }
+    - content: |
+        The Jenkins pipeline serves as the <span style='color: #006ab7; font-family: EmberHeavy;'>execution layer for AutoPilot</span>, ensuring a structured deployment process with minimal manual intervention. It <span style='color: #006ab7; font-family: EmberHeavy;'>orchestrates infrastructure provisioning, container image deployment, and service registration, all while dynamically adapting to different application environments</span>. This streamlined approach eliminates the need for custom deployment scripts, making it scalable, repeatable, and fully automated.
 
-              The YAML configuration file is parsed, and relevant <span style='color: #006ab7; font-family: EmberHeavy;'>values are injected as environment variables</span>. These variables include AWS account details, networking parameters, IAM roles, and other deployment-specific settings. This <span style='color: #006ab7; font-family: EmberHeavy;'>allows Terraform to dynamically adapt to different environments without requiring hardcoded values</span>.<br><br>
+  - title: Summary
+    tabTitle: Summary
+    subsections:
+    - content: ""
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/conveyorv2.png
+    - content: |
+        <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> was born out of a desire to <span style='color: #006ab7; font-family: EmberHeavy;'>eliminate the repetitive, manual toil of setting up infrastructure for my applications</span>. When working on personal projects, I found that <span style='color: #006ab7; font-family: EmberHeavy;'>setting up deployment pipelines can often be just as time-consuming as developing the application itself</span>. Each time I wanted to deploy something new, I had to manually configure Jenkins jobs, define build steps, input AWS credentials, specify infrastructure parameters, and ensure everything was wired together correctly. This process was repetitive, error-prone, and slowed down iteration—especially when I just wanted to quickly test an application in a real environment in the cloud.<br><br>
 
-              Before proceeding with infrastructure deployment, the pipeline attempts to <span style='color: #006ab7; font-family: EmberHeavy;'>extract the ECR repository URL to check if the repository already exists</span>. If found, it retrieves the repository URL for later use; otherwise, it continues with the provisioning process.<br><br>
-          groovy: |
-              
-              stage('Set Environment Variables') {
-                  steps {
-                      echo "Account ID: ${AWS_ACCOUNT_ID}"
-                      echo "Setting Environment Variables"
-                      sh 'ls -la deploy/docker'
-                      script {
-                          config = readYaml file: 'deploy/docker/config.yaml'
-                          accountConfig = config["aws_accounts"]["${AWS_ACCOUNT_ID}"]
-                          env.TF_VAR_app_name = config.app_name
-                          env.TF_VAR_aws_account_id = AWS_ACCOUNT_ID
-                          env.TF_VAR_aws_region = config.region
-                          env.TF_VAR_aws_security_group = accountConfig.security_group
-                          env.TF_VAR_aws_subnet_ids = groovy.json.JsonOutput.toJson(accountConfig.subnet_ids)
-                          env.TF_VAR_aws_vpc_id = accountConfig.vpc_id
-                          env.TF_BUCKET = accountConfig.tf_bucket
-                          env.TF_TABLE = accountConfig.tf_table
-                          env.TF_VAR_aws_ssl_certificate_arn = accountConfig.ssl_certificate_arn
-                          env.TF_VAR_aws_route53_zone_id = accountConfig.route53_zone_id
-                          env.TF_VAR_aws_domain = accountConfig.domain
-                          env.TF_VAR_aws_subdomain = "${ params.Subdomain }"
-                          env.TF_VAR_aws_ecr_image_tag = IMAGE_TAG
-                          env.XACNT_ROLE = accountConfig.cross_account_role
-                          env.TF_VAR_execution_role = accountConfig.execution_role
-                          env.TF_VAR_task_role = accountConfig.task_role
-                      }
-                      echo "Environment Variables Set"
+        AutoPilot solves this problem in my workflows by abstracting the pipeline setup into a <span style='color: #006ab7; font-family: EmberHeavy;'>reusable, dynamic deployment framework</span>. Instead of manually entering infrastructure details for every project, AutoPilot reads a configuration file and automatically provisions the required deployment steps. This means that whether I’m working on a Flask API, a Node.js service, or a static site, the <span style='color: #006ab7; font-family: EmberHeavy;'>deployment process remains consistent and adaptable</span>. With minimal changes, I can spin up fully functional deployments across different AWS accounts, reducing the overhead of pipeline management and allowing me to focus on development rather than deployment.<br><br>
+        The best use cases for AutoPilot are scenarios where speed and consistency matter, such as:
+      listItems:
+      - text: "<strong style='color: blue;'>Proof of concept applications that need rapid iteration and testing</strong>."
+      - text: "<strong style='color: blue;'>Personal or small business web applications that can be deployed cost-effectively on ECS without the overhead of manually managing infrastructure</strong>."
+      - text: "<strong style='color: blue;'>Multi-account deployments where the same application needs to be deployed across multiple AWS environments with minimal changes</strong>."
+    - content: |
+        Through this project, I gained a deeper understanding of the <span style='color: #006ab7; font-family: EmberHeavy;'>power of abstraction in infrastructure automation</span>. AutoPilot demonstrates that a well-designed system can dynamically deploy applications to AWS ECS with minimal input, handling multiple environments and configurations seamlessly. However, building something universal comes with challenges. While AutoPilot works exceptionally well for stateless applications, its current iteration has limitations. <span style='color: #006ab7; font-family: EmberHeavy;'>More complex workloads—such as applications that require persistent storage, multi-service orchestration, or intricate networking rules—would require additional customization</span>. Additionally, while AutoPilot is designed to be efficient and flexible, I’ve identified areas for future improvement, such as adding rollback mechanisms, better observability features, and more advanced deployment strategies like blue-green or canary deployments. Every automation system is a work in progress, and the ability to anticipate and refine future improvements is what makes a tool like this truly valuable.<br><br>
 
-                      script {
-                          dir('deploy/docker') {
-                              try {
-                                  terraformInit()
-                                  sh 'terraform state show aws_ecr_repository.ecr'
-                                  sh 'terraform output -raw ecr_repository_url'
-                                  env.ECR_REPOSITORY_URL = sh(script: 'terraform output -raw ecr_repository_url', returnStdout: true).trim()
-                              } catch (Exception e) {
-                                  echo "ECR Repository not yet created, skipping..."
-                              }
-                          }
-                      }
+        AutoPilot has shown me the power of abstraction in infrastructure automation and how a well-designed system can eliminate repetitive work. While it started as a way to streamline my own deployment workflows, it has grown into a flexible and scalable solution that can adapt to various applications and environments.<br><br>
 
-                      script {
-                          echo "App Name: ${env.TF_VAR_app_name}"
-                          echo "Account ID: ${env.TF_VAR_aws_account_id}"
-                          echo "AWS Region: ${env.TF_VAR_aws_region}"
-                          echo "Security Group: ${env.TF_VAR_aws_security_group}"
-                          echo "Subnet IDs: ${env.TF_VAR_aws_subnet_ids}"
-                          echo "VPC ID: ${env.TF_VAR_aws_vpc_id}"
-                          echo "Terraform Bucket: ${env.TF_BUCKET}"
-                          echo "Terraform Table: ${env.TF_TABLE}"
-                          echo "SSL Certificate ARN: ${env.TF_VAR_aws_ssl_certificate_arn}"
-                          echo "Route53 Zone ID: ${env.TF_VAR_aws_route53_zone_id}"
-                          echo "Domain: ${env.TF_VAR_aws_domain}"
-                          echo "Subdomain: ${env.TF_VAR_aws_subdomain}"
-                          echo "Image Tag: ${env.TF_VAR_aws_ecr_image_tag}"
-                          echo "Cross Account Role: ${env.XACNT_ROLE}"
-                          echo "Execution Role: ${env.TF_VAR_execution_role}"
-                          echo "Task Role: ${env.TF_VAR_task_role}"
-                          echo "ECR Repository URL: ${env.ECR_REPOSITORY_URL ?: 'ECR Repository not yet created'}"
-                      }
-                  }
-              }
+        What excites me most is that this project is far from finished. Every deployment, every iteration, and every challenge presents an opportunity to refine and expand its capabilities. Building something universal is an ongoing learning experience, and AutoPilot will continue evolving as I explore new ways to optimize automation, improve efficiency, and push the boundaries of what’s possible with infrastructure as code.<br><br><br><br>
 
-        - content: |
-              <strong style='color: blue;'>Assume Cross Account Role</strong><br>
 
-              The build agent assumes the cross-account role in the target AWS account, as defined in the configuration file. This step <span style='color: #006ab7; font-family: EmberHeavy;'>ensures that the pipeline can interact with resources in the target account securely</span>. A trust relationship should be defined between the build agent role in the account where the build agent resides and each target account role, and the necessary permissions should be granted to the cross-account role to enable it to deploy the infrastructure.
+        Through this project, I gained a deeper understanding of the <span style='color: #006ab7; font-family: EmberHeavy;'>power of abstraction in infrastructure automation</span>. AutoPilot demonstrates how a well-designed system can dynamically deploy applications with minimal input, seamlessly handling multiple environments and configurations. However, building something universal comes with challenges. While AutoPilot works exceptionally well for stateless applications, <span style='color: #006ab7; font-family: EmberHeavy;'>more complex workloads—such as applications requiring persistent storage, multi-service orchestration, or intricate networking rules—would require additional customization</span>.<br><br>
 
-          groovy: |
-              
-              stage('AssumeRole') {
-                  steps {
-                      script {
-                          def assumeRoleCmd = """
-                              aws sts assume-role --role-arn arn:aws:iam::${env.TF_VAR_aws_account_id}:role/${XACNT_ROLE} --role-session-name CrossAccountSession
-                          """
-                          def assumeRoleOutput = sh(script: assumeRoleCmd, returnStdout: true).trim()
-                          def creds = readJSON(text: assumeRoleOutput).Credentials
+        AutoPilot is designed to be <span style='color: #006ab7; font-family: EmberHeavy;'>efficient and flexible</span>, but there’s always room for growth. I’ve identified areas for future improvement, such as <span style='color: #006ab7; font-family: EmberHeavy;'>adding rollback mechanisms, better observability, and advanced deployment strategies like blue-green or canary releases</span>. Every automation system is a work in progress, and the ability to anticipate and refine future improvements is what makes a tool like this truly valuable.<br><br>
 
-                          env.AWS_ACCESS_KEY_ID = creds.AccessKeyId
-                          env.AWS_SECRET_ACCESS_KEY = creds.SecretAccessKey
-                          env.AWS_SESSION_TOKEN = creds.SessionToken
-                      }
-                  }
-              }
-
-        - content: |
-              <strong style='color: blue;'>Destroy Existing Stack (Conditional)</strong><br>
-
-              If a fresh deployment is chosen, or the user opts to tear down an existing application, this step executes. This ensures <span style='color: #006ab7; font-family: EmberHeavy;'>old resources are properly removed before provisioning new infrastructure</span>. If an update is selected, this step is skipped.
-
-          groovy: |
-              
-              stage('Destroy Infrastructure') {
-                  when {
-                      expression { params.Options == 'Deploy' || params.Options == 'Destroy' }
-                  }
-                  steps {
-                      script{
-                          dir('deploy/docker') {
-                              terraformInit()
-                              try {
-                                  sh 'terraform destroy -auto-approve || echo "No existing infrastructure to destroy."'
-                              } catch (Exception e) {
-                                  echo "Terraform destroy failed: ${e}"
-                                  echo "Exiting due to Terraform destroy failure"
-                              }
-                          }
-                      }
-                  }
-              }
-
-        - content: |
-              <strong style='color: blue;'>Deploy ECR Repository (Conditional)</strong><br>
-
-              If no ECR repository is yet associated with the application and a fresh deployment is selected, a new ECR repository will be created. Using <span style='color: #006ab7; font-family: EmberHeavy;'>Terraform's ability to target specific resources in the stack</span>, the ECR will be created apart from the rest of the infrastructure. This is necessary to <span style='color: #006ab7; font-family: EmberHeavy;'>ensure that the ECR repository URL (stored as an environment variable) is available to tag and push the application image</span> to ECR prior to the deployment of the rest of the infrastructure stack.
-
-          groovy: |
-              
-              stage('Deploy ECR Repository') {
-                  when {
-                      expression { (params.Options == 'Deploy' || params.Options == 'Update') && (env.ECR_REPOSITORY_URL == null || env.ECR_REPOSITORY_URL == '') }
-                  }
-                  steps {
-                      script {
-                          dir('deploy/docker') {
-                              terraformInit()
-                              try {
-                                  sh 'terraform plan -out=ecr.tfplan -target=aws_ecr_repository.ecr'
-                                  sh 'terraform apply -auto-approve ecr.tfplan'
-                                  env.ECR_REPOSITORY_URL = sh(script: 'terraform output -raw ecr_repository_url', returnStdout: true).trim()
-                                  echo "ECR Repository URL: ${ECR_REPOSITORY_URL}"
-                              } catch (Exception e) {
-                                  echo "Terraform apply failed: ${e}"
-                                  echo "Rolling back changes"
-                                  sh "terraform destroy -auto-approve"
-                                  echo "Exiting due to Terraform apply failure"
-                              }
-                          }
-                      }
-                  }
-              }
-
-        - content: |
-              <strong style='color: blue;'>Run Custom Application Scripts</strong><br>
-
-              The pipeline checks the application repository for additional scripts required for configuration. If present, these <span style='color: #006ab7; font-family: EmberHeavy;'>scripts execute to dynamically configure application-specific settings</span> such as environment variables internal to the application or any additional configuration required for the application to run correctly in the target account and environment. Currently, the <span style='color: #006ab7; font-family: EmberHeavy;'>languages supported are Bash and Python</span>, the latter requiring a requirements.txt file for dependencies.
-
-          groovy: |
-              
-              stage('Run Application Scripts') {
-                  when {
-                      expression { params.Options == 'Deploy' || params.Options == 'Update' || params.Options == 'Test'}
-                  }
-                  steps {
-                      script {
-                          try {
-                              dir('deploy/scripts') {
-                                  // Optional bash scripts will run here
-                                  def bashScripts = findFiles(glob: '*.sh')
-                                  if (bashScripts.length > 0) {
-                                      echo "Running bash scripts"
-                                      sh 'chmod +x *.sh'
-                                      for (script in bashScripts) {
-                                          sh "./${script.name}"
-                                      }
-                                  } else {
-                                      echo "No bash scripts found"
-                                  }
-
-                                  // Optional python scripts will run here - be sure to include dependencies via requirements.txt
-                                  def pythonScripts = findFiles(glob: '*.py')
-                                  if (pythonScripts.length > 0) {
-                                      echo "Running python scripts"
-                                      for (script in pythonScripts) {
-                                          sh "sudo dnf install python3 -y"
-                                          sh "sudo dnf install python3-pip -y"
-                                          sh "python3 -m venv venv"
-                                          sh "source venv/bin/activate"
-                                          sh "pip install -U pip"
-                                          sh "pip install -r requirements.txt"
-                                          sh "python3 ./${script.name}"
-                                      }
-                                  } else {
-                                      echo "No python scripts found"
-                                  }
-                              }
-                          } catch (Exception e) {
-                              echo "Application scripts failed or no scripts found: ${e}"
-                              echo "Exiting due to application scripts failure"
-                              error "Script execution failed"
-                          }
-                      }
-                  }
-              }
-
-        - content: |
-              <strong style='color: blue;'>Build and Push Docker Image</strong><br>
-
-              The Docker image is built using the cloned application repository’s Dockerfile. The <span style='color: #006ab7; font-family: EmberHeavy;'>image is then tagged with the application name and the image tag variable</span>. A key thing to note is that the image tag used here is a <span style='color: #006ab7; font-family: EmberHeavy;'>unique hash value generated from the application repository latest commmit</span>. This is necessary for Terraform to track the changes in the application image in ECR. <span style='color: #006ab7; font-family: EmberHeavy;'>If this value is not changed, Terraform will not detect a change in the image and will register the image as up-to-date, preventing the ECS service from updating the running containers</span>. Any variable value can be used here theoretically, but the latest commit hash is a good choice to remain consistent with the application repository and show some relationship between the two that can be tracked. The image is then pushed to the ECR repository and ready to be used to deploy the applicaiton to ECS.
-
-          groovy: |
-              
-              stage('Build Docker Image') {
-                  when {
-                      expression { params.Options == 'Deploy' || params.Options == 'Update'  }
-                  }
-                  steps {
-                      script {
-                          sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${TF_VAR_aws_account_id}.dkr.ecr.${TF_VAR_aws_region}.amazonaws.com'
-                          sh 'docker build -t ${TF_VAR_app_name}:${TF_VAR_aws_ecr_image_tag} .'
-                      }
-                  }
-              }
-
-              stage('Push Docker Image') {
-                  when {
-                      expression { params.Options == 'Deploy' || params.Options == 'Update'  }
-                  }
-                  steps {
-                      script {
-                          sh "docker tag ${TF_VAR_app_name}:${TF_VAR_aws_ecr_image_tag} ${ECR_REPOSITORY_URL}:${TF_VAR_aws_ecr_image_tag}"
-                          sh "docker push ${ECR_REPOSITORY_URL}:${TF_VAR_aws_ecr_image_tag}"
-                      }
-                  }
-              }
-
-        - content: |
-              <strong style='color: blue;'>Deploy Remaining Application Stack</strong><br>
-
-              Finally, the pipeline applies Terraform to <span style='color: #006ab7; font-family: EmberHeavy;'>provision the required remaining infrastructure for the application</span>. This includes the ECS cluster, load balancing, and DNS configuration as defined in the previous section. The ECS service is launched, and the application is deployed to ECS and now accessible via the subdomain URL defined in the job parameters.
-
-          groovy: |
-              
-              stage('Deploy Infrastructure') {
-                  when {
-                      expression { params.Options == 'Deploy' || params.Options == 'Update' }
-                  }
-                  steps {
-                      script {
-                          dir('deploy/docker') {
-                              terraformInit()
-                              sh "terraform plan -out=ecs-update.tfplan -var 'aws_ecr_image=${ECR_REPOSITORY_URL}:${env.TF_VAR_aws_ecr_image_tag}'"
-                              sh "terraform apply -auto-approve ecs-update.tfplan"
-                          }
-                      }
-                  }
-              }
-        - content: |
-              As a final step, the pipeline will clean up the workspace by <span style='color: #006ab7; font-family: EmberHeavy;'>removing any AutoPilot deployment and application files</span> that were cloned from the repository. This ensures that the workspace is clean for the next deployment and prevents any conflicts or issues with future deployments.<br><br>
-          groovy: |
-              
-              post {
-                  always {
-                      echo 'Cleaning up workspace'
-                      cleanWs()
-                  }
-              }
-        - content: |
-              The Jenkins pipeline serves as the <span style='color: #006ab7; font-family: EmberHeavy;'>execution layer for AutoPilot</span>, ensuring a structured deployment process with minimal manual intervention. It <span style='color: #006ab7; font-family: EmberHeavy;'>orchestrates infrastructure provisioning, container image deployment, and service registration, all while dynamically adapting to different application environments</span>. This streamlined approach eliminates the need for custom deployment scripts, making it scalable, repeatable, and fully automated.
-
-    - title: Summary
-      tabTitle: Summary
-      subsections:
-        - content: ""
-          imgs:
-            - /assets/project-images/jenkins-ecs-images/conveyorv2.png
-        - content: |
-              <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> was born out of a desire to <span style='color: #006ab7; font-family: EmberHeavy;'>eliminate the repetitive, manual toil of setting up infrastructure for my applications</span>. When working on personal projects, I found that <span style='color: #006ab7; font-family: EmberHeavy;'>setting up deployment pipelines can often be just as time-consuming as developing the application itself</span>. Each time I wanted to deploy something new, I had to manually configure Jenkins jobs, define build steps, input AWS credentials, specify infrastructure parameters, and ensure everything was wired together correctly. This process was repetitive, error-prone, and slowed down iteration—especially when I just wanted to quickly test an application in a real environment in the cloud.<br><br>
-
-              AutoPilot solves this problem in my workflows by abstracting the pipeline setup into a <span style='color: #006ab7; font-family: EmberHeavy;'>reusable, dynamic deployment framework</span>. Instead of manually entering infrastructure details for every project, AutoPilot reads a configuration file and automatically provisions the required deployment steps. This means that whether I’m working on a Flask API, a Node.js service, or a static site, the <span style='color: #006ab7; font-family: EmberHeavy;'>deployment process remains consistent and adaptable</span>. With minimal changes, I can spin up fully functional deployments across different AWS accounts, reducing the overhead of pipeline management and allowing me to focus on development rather than deployment.<br><br>
-
-              Through this project, I gained a deeper understanding of the power of abstraction in infrastructure automation. AutoPilot demonstrates that a well-designed system can dynamically deploy applications to AWS ECS with minimal input, handling multiple environments and configurations seamlessly. However, building something universal comes with challenges. While AutoPilot works exceptionally well for stateless applications, its current iteration has limitations. More complex workloads—such as applications that require persistent storage, multi-service orchestration, or intricate networking rules—would require additional customization. Additionally, while AutoPilot is designed to be efficient and flexible, I’ve identified areas for future improvement, such as adding rollback mechanisms, better observability features, and more advanced deployment strategies like blue-green or canary deployments. Every automation system is a work in progress, and the ability to anticipate and refine future improvements is what makes a tool like this truly valuable.<br><br>
-
-              The best use cases for AutoPilot are scenarios where speed and consistency matter, such as:
-          listItems:
-            - text: "<strong style='color: blue;'>Proof of concept applications that need rapid iteration and testing</strong>."
-            - text: "<strong style='color: blue;'>Personal or small business web applications that can be deployed cost-effectively on ECS without the overhead of manually managing infrastructure</strong>."
-            - text: "<strong style='color: blue;'>Multi-account deployments where the same application needs to be deployed across multiple AWS environments with minimal changes</strong>."
-        - content: |
-              If building and deploying applications is like assembling furniture, AutoPilot is the pre-built toolkit—rather than searching for the right screws and measurements, everything is included and streamlined for immediate use. It's a powerful tool for developers, DevOps engineers, and small teams looking to automate their infrastructure without the complexity of custom scripts or manual configurations.
+        What excites me most is that <span style='color: #006ab7; font-family: EmberHeavy;'>this project is far from finished</span>. Every deployment, every iteration, and every challenge presents an <span style='color: #006ab7; font-family: EmberHeavy;'>opportunity to refine and expand its capabilities</span>. Building something universal is an ongoing learning experience, and AutoPilot will continue evolving as I explore new ways to optimize automation, improve efficiency, and push the boundaries of infrastructure as code.
+      pageSection: "Final Thoughts"
 
 #       <strong style="color: rgb(0, 255, 0);">greencode</strong>
 #       <strong style="color: rgb(172, 172, 255);">blueishcode</strong>

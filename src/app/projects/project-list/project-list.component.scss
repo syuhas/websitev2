@@ -2,7 +2,7 @@
     // padding-bottom: 15vh;
     min-width: 350px;
     min-height: calc(100vh - 350px);
-    font-family: "Roboto Condensed", sans-serif;
+    // font-family: "Roboto Condensed", sans-serif;
 }
 
 .cardItem {
@@ -98,10 +98,6 @@ a {
     gap: 1rem;
     padding-top: 2rem;
 }
-
-// .ngx-pagination {
-//     font-family: Roboto !important;
-// }
 
 .ngx-pagination .current {
     background: #222ceb !important;

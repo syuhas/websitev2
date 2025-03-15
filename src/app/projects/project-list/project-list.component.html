@@ -21,7 +21,9 @@
             <div class="title">
                 <img [src]="project.listIcon" class="img-fluid">
                 <!-- <span class="material-symbols-outlined">lists</span> -->
-                <a [routerLink]="['/projects', project.id]"><h3 class="card-title"><strong>{{ project.title }}</strong></h3></a>
+                <div *ngIf="project.title">
+                  <a [routerLink]="['/projects', project.id]"><h3 class="card-title"><strong [innerHTML]="project.title"></strong></h3></a>
+                </div>
             </div>
             <hr>
             <p class="card-text">{{ project.description }}</p>

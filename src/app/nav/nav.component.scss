@@ -26,13 +26,17 @@
     background-repeat: no-repeat;
     background-size: cover;
     background: linear-gradient(to bottom, #11132c 2%, #1a1c42 40%);
-
-
+    & a {
+        margin-top: 4rem;
+        display: flex;
+        justify-content: center;
+        // opacity: .9;
+    }
 }
 
 p {
     font-family: "Roboto", serif;
-    font-weight: 400;
+    font-weight: 400 !important;
 }
 
 mat-sidenav {
@@ -44,11 +48,13 @@ mat-sidenav-content {
     height: 100%;
 }
 .logo {
-    width: 80%;
+    width: 90%;
     height: auto;
     object-fit: contain;
     object-position: top;
-  }
+    opacity: .9;
+}
+
 .mat-toolbar {
     background-color: #1a1c42;
     height: 100px;
@@ -64,14 +70,6 @@ mat-sidenav-content {
     align-items: center;
     width: 95%;
     margin: 0 auto;
-    // & p {
-    //     opacity: 75%;
-    //     padding-top: 1rem;
-    //     transform: skewX(-10deg);
-    //     font-style: italic;
-    //     letter-spacing: 8px;
-    //     font-family: Roboto;
-    // }
     & div {
         display: flex;
         align-items: center;
@@ -86,6 +84,17 @@ mat-sidenav-content {
         border-radius: 30%;
         border: black 3px solid;
     }
+    & .dss-logo {
+        object-fit: contain;
+        height: 60px;
+        width: auto;
+        margin: 0 10px;
+        background: none;
+        border: none;
+        border-radius: 0;
+        margin-left: 2vw;
+        opacity: .6;
+    }
 }
 .header-handset {
     display: flex;
@@ -94,14 +103,6 @@ mat-sidenav-content {
     align-items: center;
     width: 95%;
     margin: 0 auto;
-    // & p {
-    //     opacity: 75%;
-    //     padding-top: 1rem;
-    //     transform: skewX(-10deg);
-    //     font-style: italic;
-    //     letter-spacing: 8px;
-    //     font-family: Roboto;
-    // }
     & div {
         display: flex;
         align-items: center;
@@ -109,44 +110,25 @@ mat-sidenav-content {
     }
     & img {
         object-fit: contain;
-        height: clamp(40px, 1.15vh, 70px);
+        height: clamp(35px, 5vw, 70px);
         width: auto;
-        margin: 0 10px;
+        margin: 0 3vw;
         background-color: white;
         border-radius: 30%;
         border: black 3px solid;
     }
+    & .dss-logo {
+        object-fit: contain;
+        height: 50px;
+        width: auto;
+        margin: 0;
+        background: none;
+        border: none;
+        border-radius: 0;
+        margin-left: 8vw;
+        opacity: .6;
+    }
 }
-// .header-handset {
-//     display: flex;
-//     flex-direction: column;
-//     justify-content: right;
-//     align-items: flex-start;
-//     width: 20%;
-//     margin: 0 auto;
-//     & p {
-//         padding-top: 2rem;
-//         padding-right: 10rem;
-//         opacity: 75%;
-//         font-style: italic;
-//         letter-spacing: 4px;
-//         font-family: Roboto;
-//     }
-//     & div {
-//         height: 75px;
-//         align-items: flex-start;
-//     }
-//     & img {
-//         object-fit: contain;
-//         height: 40%;
-//         width: auto;
-//         margin: 0 10px;
-//         background-color: white;
-//         border-radius: 30%;
-//         border: black 3px solid;
-//     }
-// }
-
 mat-nav-list a {
     margin-top: 4vh;
 }
@@ -157,6 +139,10 @@ mat-list-item {
 
 .active::before {
     background-color: white !important;
+}
+
+::ng-deep.mdc-list {
+    margin: 2rem 0 !important;
 }
 
 ::ng-deep.mat-mdc-list-item-interactive:hover::before a:hover {

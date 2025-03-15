@@ -2,7 +2,7 @@
     <mat-sidenav [(opened)]="opened" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
         [mode]="(isHandset$ | async) ? 'over' : 'side'" class="background">
         <mat-toolbar class="background2">
-            <a href="/home"><img class="logo" src="assets/home-images/DSTrans80.png" alt="Digital Steve"></a>
+            <a href="/home"><img class="logo" src="assets/home-images/cloudlogo5.png" alt="Digital Steve"></a>
         </mat-toolbar>
         <mat-nav-list>
             <a mat-list-item routerLink="/home" tabindex="-1" routerLinkActive="active"
@@ -44,9 +44,10 @@
                     <img src="/assets/home-images/linkedin.png" alt="" (click)="goToLinkedin()"
                         style="cursor: pointer;">
                     <img src="/assets/home-images/email.png" alt="" (click)="goToEmail()" style="cursor: pointer;">
+                    <img src="/assets/home-images/dsslogo7.png" alt="" class="dss-logo">
                 </div>
             </div>
         </mat-toolbar>
         <router-outlet></router-outlet>
     </mat-sidenav-content>
-</mat-sidenav-container>
+</mat-sidenav-container> 

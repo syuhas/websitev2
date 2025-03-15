@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 // html, body { height: 100%; }
-// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// body { font-family: 'Roboto Condensed', sans-serif; }
 
 
 /* Importing Bootstrap SCSS file. */
@@ -9,4 +9,53 @@
 
 .mat-drawer {
     overflow-y: visible !important;
+}
+
+@font-face {
+    font-family: 'EmberThin';
+    src: url("/assets/fonts/AmazonEmber_Th.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'EmberMedium';
+    src: url("/assets/fonts/Amazon-Ember-Medium.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'EmberBold';
+    src: url("/assets/fonts/AmazonEmber_Bd.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'EmberHeavy';
+    src: url("/assets/fonts/AmazonEmber_He.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'EmberMediumItalic';
+    src: url("/assets/fonts/Amazon-Ember-MediumItalic.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'Bookerly';
+    src: url('/assets/fonts/Bookerly-Bold.ttf') format('truetype');
+}
+
+.mat-body, 
+.mat-body-1,
+.mat-body-2,
+.mat-typography,
+.mat-typography p, 
+.mat-headline-5,
+.mat-headline-6 {
+    font-family: 'EmberMedium', serif;
+}
+.mat-h1, 
+.mat-h2, 
+.mat-h3,
+.mat-h4,
+.mat-h5,
+.mat-h6,
+.mat-typography h1,
+.mat-typography h2,
+.mat-typography h3,
+.mat-typography h4,
+.mat-typography h5,
+.mat-typography h6 {
+    font-family: 'EmberMedium', sans-serif;
 }

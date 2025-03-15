@@ -7,6 +7,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, distinctUntilChanged, shareReplay, Observable } from 'rxjs';
 import { YamlService } from '../../services/yaml.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-project-list',
@@ -26,7 +27,8 @@ export class ProjectListComponent implements OnInit{
     private route: ActivatedRoute,
     private http: HttpClient,
     private router: Router,
-    private yamlService: YamlService
+    private yamlService: YamlService,
+    private sanitizer: DomSanitizer
   ){}
   ngOnInit() {
     // const projectId = String(this.route.snapshot.paramMap.get('id'));
@@ -38,6 +40,12 @@ export class ProjectListComponent implements OnInit{
       .subscribe(
         (projects) => {
           this.projects = projects;
+          this.projects.forEach(project => {
+            console.log(project.title);
+            if (project.title) {
+              project.title = this.sanitizer.bypassSecurityTrustHtml(project.title as string) as string;
+            }
+          });
         }
       );
 

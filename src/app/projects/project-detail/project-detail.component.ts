@@ -10,6 +10,11 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import { YamlService } from '../../services/yaml.service';
 import * as Prism from '@syuhas22/prismjs';
 import '@syuhas22/prismjs/components/prism-python';
+import '@syuhas22/prismjs/components/prism-groovy';
+import '@syuhas22/prismjs/components/prism-java';
+import '@syuhas22/prismjs/components/prism-yaml';
+import '@syuhas22/prismjs/components/prism-bash';
+import '@syuhas22/prismjs/components/prism-json';
 // import 'prismjs/plugins/line-numbers/prism-line-numbers';
 // import 'prismjs/plugins/custom-class/prism-custom-class';
 
@@ -71,6 +76,9 @@ export class ProjectDetailComponent implements OnInit {
     this.project = this.projects.find((p) => p.id === projectId) as Project;
   
     if (this.project) {
+      if (this.project.title) {
+        this.project.title = this.sanitizer.bypassSecurityTrustHtml(this.project.title as string) as string;
+      }
       this.project.sections.forEach((section) => {
         section.subsections.forEach((subsection) => {
           if (subsection.content) {
@@ -78,6 +86,13 @@ export class ProjectDetailComponent implements OnInit {
           }
           if (subsection.code) {
             subsection.code = this.sanitizer.bypassSecurityTrustHtml(subsection.code as string);
+          }
+          
+          if (subsection.groovy) {
+            subsection.groovy = this.sanitizer.bypassSecurityTrustHtml(subsection.groovy as string);
+          }
+          if (subsection.yaml) {
+            subsection.yaml = this.sanitizer.bypassSecurityTrustHtml(subsection.yaml as string);
           }
 
           if (subsection.listItems) {

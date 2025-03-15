@@ -3,9 +3,9 @@
         <div class="titleImgs">
             <img *ngFor="let icon of project.titleIcons" src="{{ icon }}" alt="">
         </div>
-        <h1><strong>{{ project.title }}</strong></h1>
+        <h1><strong [innerHTML]="project.title"></strong></h1>
     </div>
-    <h2>{{ project.subtitle }} [ <img src="/assets/home-images/git.png" alt=""><a class="my-4" href="{{ project.github }}" target="_blank">Github</a> ]</h2>
+    <h2 class="github">{{ project.subtitle }} [ <img src="/assets/home-images/git.png" alt=""><a class="my-4" href="{{ project.github }}" target="_blank">GITHUB</a> ]</h2>
     <!-- <hr class="my-0"> -->
 
 
@@ -21,9 +21,13 @@
         </div>
         <div class="sections" *ngFor="let section of project.sections">
             <div *ngIf="activeSection === section.tabTitle">
-                <h2 class="card-title sectionTitle"><strong>{{ section.title }}</strong></h2>
+                <h2 class="card-title sectionTitle"><span id="sectionTitle"><strong>{{ section.title }}</strong><hr></span></h2>
                 <div class="row" *ngFor="let subsection of section.subsections">
                     <div class="col-xxl-7 col-lg-8">
+                        <div *ngIf="subsection.pageSection">
+                            <h2 *ngIf="subsection.pageSection != ''" class="text-break pageSection" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'" [innerHTML]="subsection.pageSection"></h2>
+                            <hr>
+                        </div>
 
                         <div *ngIf="subsection.content != ''">
                             <p *ngIf="subsection.content != ''" class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'" [innerHTML]="subsection.content"></p>
@@ -43,6 +47,18 @@
                         <div *ngIf="subsection.code">
                             <pre class="text-break">
                                 <code class="language-python" [innerHTML]="subsection.code"></code>
+                            </pre>
+                        </div>
+
+                        <div *ngIf="subsection.groovy">
+                            <pre class="text-break">
+                                <code class="language-groovy" [innerHTML]="subsection.groovy"></code>
+                            </pre>
+                        </div>
+
+                        <div *ngIf="subsection.yaml">
+                            <pre class="text-break">
+                                <code class="language-yaml" [innerHTML]="subsection.yaml"></code>
                             </pre>
                         </div>
                     </div>

@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'EmberMedium';
+    src: url("/assets/fonts/Amazon-Ember-Medium.ttf") format("truetype");
+}
+@font-face {
+    font-family: 'EmberMediumItalic';
+    src: url("/assets/fonts/Amazon-Ember-MediumItalic.ttf") format("truetype");
+}

@@ -1,5 +1,5 @@
 includes:
-# - assets/project_yaml/projects/jenkins-ecs.yaml
+- assets/project_yaml/projects/jenkins-ecs.yaml
 - assets/project_yaml/projects/backfill.yaml
 - assets/project_yaml/projects/event.yaml
 - assets/project_yaml/projects/rproxy.yaml

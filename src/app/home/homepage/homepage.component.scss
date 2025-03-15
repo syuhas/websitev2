@@ -5,6 +5,10 @@
 
 }
 
+.intro {
+  font-family: 'EmberHeavy', serif;
+}
+
 // .name::before {
 //   content: "";
 //   position: absolute;
@@ -37,7 +41,7 @@
 .pageWrapper {
   color: #444A53;
   padding-bottom: 3rem;
-  font-family: "Roboto Condensed", sans-serif;
+  // font-family: "EmberMedium";
   margin-top: 5rem;
 }
 
@@ -47,12 +51,13 @@
   // justify-items: center;
   margin-top: 3rem;
   & .name {
-    font-style: italic;
+    // font-style: italic;
     letter-spacing: .2rem;
     margin: 0;
     font-weight: 600;
     font-size: clamp(1.6rem, 2.75vw, 2.5rem);
     animation: fadeInSpaceIn 1s ease-in-out;
+    font-family: 'EmberHeavy', serif;
   }
   & .title {
     font-style: italic;
@@ -64,6 +69,7 @@
     animation: fadeInSpaceOut 1s ease-in-out;
     margin-top: 1rem;
     text-shadow: 1px 1px 1px #1a1c4244;
+    font-family: 'EmberMedium', serif;
   }
 }
 
@@ -95,8 +101,9 @@ hr {
 }
 
 .hi{
+  // font-family: 'EmberMediumItalic', serif;
   font-size: xx-large;
-  font-weight: 300;
+  // font-weight: 300;
   white-space: nowrap;
   & strong {
     font-weight: 900;

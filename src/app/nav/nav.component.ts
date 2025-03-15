@@ -65,7 +65,7 @@ export class NavComponent implements OnInit {
 
   closeIfHandset() {
     this.isHandset$.subscribe(isHandset => {
-      console.log('isHandset:', isHandset);
+      // console.log('isHandset:', isHandset);
       if (isHandset) {
         this.opened = false;
       } else {

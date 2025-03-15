@@ -1,5 +1,5 @@
 - id: backfill
-  title: Optimizing Database Backfill with Python Threads in AWS Lambda
+  title: Backfilling Data with Threads in Python
   subtitle: Designing an efficient and scalable backfill process for handling large historical datasets.
   github: https://github.com/syuhas/awsdash-lambda
   description: |

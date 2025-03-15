@@ -16,16 +16,21 @@ export interface Project {
 }
 
 export interface ProjectSections {
-    title: string;
+    title: SafeHtml;
     tabTitle: string;
     subsections: ProjectSubSection[];
 }
 
 export interface ProjectSubSection {
+    pageSection: string;    
     content: SafeHtml;
     listItems? : ListItem[];
     imgs?: string[];
     code?: SafeHtml;
+    groovy?: SafeHtml;
+    yaml?: SafeHtml;
+    bash?: SafeHtml;
+    json?: SafeHtml;
 }
 
 export interface ListItem {

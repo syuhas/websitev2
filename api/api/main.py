@@ -7,7 +7,12 @@ from .database.database import getDatabaseSession
 
 
 
-app = FastAPI(root_path='/api')
+app = FastAPI(
+    root_path='/api',
+    title="S3 Bucket API",
+    description="API to list metadata of S3 buckets and objects",
+    version="0.1"
+)
 
 
 @app.get("/health")

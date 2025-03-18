@@ -1,6 +1,6 @@
 - id: jenkins-ecs
   title: "<strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong>: Deploying Any Dockerized Application to AWS"
-  subtitle: "Application-agnostic, multi-account ECS deployment solution built with Jenkins and Teraform."
+  subtitle: "Application-agnostic, multi-account ECS deployment solution built with Jenkins and Terraform."
   github: https://github.com/syuhas/ecs_deployer
   description: |
     Building an application-agnostic solution using Terraform and Jenkins to deploy any Dockerized app to ECS across multiple AWS accounts.
@@ -17,37 +17,40 @@
     - content: ""
 
       imgs:
-      - /assets/project-images/jenkins-ecs-images/jenkinsworkflow.gif
-
+      - /assets/project-images/jenkins-ecs-images/jenkins.gif
     - content: |
-        <span style='color: #006ab7; font-family: EmberHeavy;'>Automation has always fascinated me</span>—there’s something incredibly satisfying about writing code, pressing a button, and watching an entire system come to life. I’ve always been drawn to <span style='color: #006ab7; font-family: EmberHeavy;'>Rube Goldberg machines</span>—intricate, over-engineered contraptions where one action triggers another in a fascinating (but ultimately impractical) chain reaction. Unlike Rube Goldbergs, automation isn’t just for spectacle—it’s about efficiency, repeatability, and eliminating unnecessary complexity. But it is a spectacle nonetheless. Whether it's automating infrastructure with Terraform, orchestrating deployments with Jenkins, or configuring servers with Ansible, I love streamlining complex processes to make them efficient, scalable, and repeatable.<br><br>
+        <span style='color: #006ab7; font-family: EmberHeavy;'>Automation has always captivated me</span>—the ability to write code, press a button, and watch an entire system come to life is exhilarating. I’ve always been fascinated by <span style='color: #006ab7; font-family: EmberHeavy;'>Rube Goldberg machines</span>, where a single action sets off an intricate chain reaction. While those machines are often impractical, <span style='color: #006ab7; font-family: EmberHeavy;'>automation is the opposite: it’s about efficiency, consistency, and eliminating unnecessary complexity</span>. Yet, there's still a spectacle in watching a well-orchestrated system unfold.
+
+        Whether provisioning infrastructure with Terraform, managing deployments with Jenkins, or automating configurations with Ansible, I’m driven by the challenge of transforming complex, manual tasks into streamlined, repeatable processes.
+
       imgs:
       - /assets/project-images/jenkins-ecs-images/rb.gif
     - content: |
-        My initial goal with this project was to integrate Terraform into a framework that could deploy applications across multiple AWS accounts. Over time, I recognized an opportunity to expand beyond simply deploying a single application to any account—I wanted to create a system that could deploy any containerized application to ECS with minimal configuration. This led to the idea for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> — <span style='color: #006ab7; font-family: EmberHeavy;'>a universal ECS deployment system designed to handle any containerized application with minimal upfront configuration</span>.<br><br>
+        This project began as a way to integrate Terraform into a multi-account deployment framework. However, I quickly saw the potential to go beyond deploying a single application. This led to the idea for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong>—<span style='color: #006ab7; font-family: EmberHeavy;'>a universal ECS deployment system capable of handling any containerized application with minimal setup</span>.
 
     - content: ""
       imgs:
-      - /assets/project-images/jenkins-ecs-images/jenkins.gif
+      - /assets/project-images/jenkins-ecs-images/jenkinsworkflow.gif
+
     - content: |
-        <span style='text-align: center;display: block;'>The system is built around two core requirements:</span>
+        <span style='text-align: center;display: block;'>AutoPilot relies on two key configurations to deploy applications:</span>
       listItems:
-      - text: "A valid working <strong style='color: blue;'>Dockerfile</strong> to build the application."
-      - text: "A <strong style='color: blue;'>Configuration File</strong> that can be generated with the provided CLI tool to define the infrastructure."
+      - text: "<strong style='color: blue;'>Dockerfile</strong> – Specific to each application, defining how it runs in a container."
+      - text: "<strong style='color: blue;'>Configuration File</strong> – Set up once to define infrastructure, networking, and AWS account details for all deployments."
     - content: |
         Currently, AutoPilot serves as a proof of concept, enabling the deployment of simple web applications to ECS using Jenkins and Terraform. It automates provisioning, builds container images, deploys them to ECS, and manages networking, logging, and execution—all while <span style='color: #006ab7; font-family: EmberHeavy;'>eliminating the need to manually define deployment pipelines or infrastructure for every new application</strong>.
 
     - content: ""
       pageSection: "Key Features:"
       listItems:
-      - text: "<strong style='color: blue;'>Jenkins-driven automation</strong> for seamless pipeline execution."
-      - text: "<strong style='color: blue;'>Multi-account Support</strong> for deploying across multiple AWS accounts."
-      - text: "<strong style='color: blue;'>Terraform-based AWS provisioning</strong>, dynamically creating the required infrastructure."
-      - text: "<strong style='color: blue;'>GitHub API integration</strong> for dynamic repository and branch selection."
-      - text: "<strong style='color: blue;'>Route 53 subdomain management</strong>, ensuring conflict-free domain assignments."
-      - text: "<strong style='color: blue;'>Custom script support</strong> for additional application-specific configuration."
-      - text: "<strong style='color: blue;'>AWS CloudWatch logging setup</strong>, enabling detailed monitoring and troubleshooting."
-      - text: "<strong style='color: blue;'>ECS Exec support</strong>, allowing direct container access for debugging and live management."
+      - text: "<strong style='color: blue;'>Fully Automated Deployments</strong> – Centralized Jenkins pipeline to streamline the entire process."
+      - text: "<strong style='color: blue;'>Multi-Account Support</strong> – Deploy seamlessly across AWS accounts."
+      - text: "<strong style='color: blue;'>Terraform-Based Provisioning</strong> – Dynamically generates AWS infrastructure."
+      - text: "<strong style='color: blue;'>GitHub API integration</strong> – Auto-detects repositories and branches."
+      - text: "<strong style='color: blue;'>Subdomain Management</strong> – Uses Route 53 to prevent conflicts."
+      - text: "<strong style='color: blue;'>Custom Script Support</strong> – Run additional configurations as needed."
+      - text: "<strong style='color: blue;'>Built-in Monitoring</strong> – AWS CloudWatch integration for logging and troubleshooting."
+      - text: "<strong style='color: blue;'>ECS Exec Access</strong> – Direct container access for debugging and live management."
     - content: |
         While AutoPilot provides a simple and efficient ECS deployment workflow, there are some key constraints and future opportunities to consider. The deployment flow is relatively basic, lacking advanced rollout strategies such as progressive delivery, blue-green deployments, or rollback mechanisms. While it can deploy any containerized application, it is primarily optimized for stateless applications, and does not yet support persistent storage, complex networking, or stateful workloads. Scaling limitations exist in the current implementation, as it primarily focuses on single-service deployments per job execution, without native orchestration for multi-service deployments within a single run. Security and configuration flexibility are also areas for improvement—secrets management is limited to environment variables injected via Terraform, and a more advanced integration with AWS Secrets Manager or Vault could enhance security.<br><br>
 
@@ -70,22 +73,24 @@
     tabTitle: Prerequisites
     subsections:
     - content: |
-        This project is designed to be very flexible and repeatable, but it does require some prerequisites to get started. Namely some existing infrastructure and knowledge of AWS services are required. That being said, once these prerequisites are met and configured, no additional configuration is is required for all future application deployments!! The prerequisites for this project are as follows:
+        <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong> is <span style='color: #006ab7; font-family: EmberHeavy;'>designed to make the deployment pipeline repeatable and efficient, not to replace all aspects of infrastructure configuration</span>. While it streamlines the deployment process to AWS ECS by automating the pipeline setup, it assumes that the user has existing AWS infrastructure and a fundamental understanding of AWS services.<br><br>
+
+        The primary goal of AutoPilot is to <span style='color: #006ab7; font-family: EmberHeavy;'>simplify the process of deploying applications to AWS without forcing a rigid infrastructure setup</span>. It provides the flexibility to use any networking architecture, IAM structure, or other infrastructure components that best fit the user's needs. This ensures that AutoPilot can integrate into different AWS environments rather than enforcing a specific networking or security model.<br><br>
+
+        It is important to note that AutoPilot does not eliminate the need for AWS knowledge. Users should still be familiar with setting up and managing IAM roles, VPCs, Route 53 domains, SSL certificates, and other necessary AWS components. AutoPilot focuses on making application deployment repeatable, leaving infrastructure design and configuration decisions to the user. The prerequisites for this project are as follows:<br><br>
       listItems:
-      - text: "<strong style='color: blue;'>Configured IAM Roles:</strong>."
-        subList:
-        - "<strong style='color: #bb519e;'>Build Agent IMDSv2 Role</strong>: This role should have the necessary permissions to assume each role in each target account."
-        - "<strong style='color: #bb519e;'>Cross Account Roles</strong>: A role in each account that is assumed by the build agent. This role should have the necessary permissions to deploy the application infrastructure."
-        - "<strong style='color: #bb519e;'>Task Execution Role</strong>: A role that the ECS task will assume to access other AWS services."
-        - "<strong style='color: #bb519e;'>Task Role for ECSExec</strong>: A role that the ECSExec service will assume to access the ECS task."
-      - text: "<strong style='color: blue;'>Jenkins server with the following plugins installed</strong>:"
+      - text: "<strong style='color: blue;'>Jenkins server with AWS credentials attached via an IMDSv2 role or saved to the server. Jenkins should have the following plugins installed</strong>:"
         subList:
         - "<strong style='color: #bb519e;'>Active Choices, Pipeline: Groovy, Git, Job DSL, Credentials Binding, Pipeline Utility</strong>"
-        # - "<strong style='color: #bb519e;'></strong>"
-        # - "<strong style='color: #bb519e;'></strong>"
-        # - "<strong style='color: #bb519e;'></strong>"
-        # - "<strong style='color: #bb519e;'></strong>"
-        # - "<strong style='color: #bb519e;'></strong>"
+      - text: "<strong style='color: blue;'>Build node with appropriate credentials attached, and the following dependencies</strong>:"
+        subList:
+        - "<strong style='color: #bb519e;'>java, git, docker, jenkins, terraform, awscli (comes with Amazon Linux 2023 AMI), python3 (comes with Amazon Linux 2023 AMI) </strong>"
+      - text: "<strong style='color: blue;'>Configured IAM Roles:</strong>."
+        subList:
+        - "<strong style='color: #bb519e;'>Build Agent IMDSv2 Role</strong>: This role should have the necessary permissions to assume each cross account role in each target account."
+        - "<strong style='color: #bb519e;'>Cross Account Roles</strong>: A role in each account that is assumed by the build agent role. This role should have the necessary permissions to deploy the application infrastructure."
+        - "<strong style='color: #bb519e;'>Task Execution Role</strong>: A role that the ECS task will assume to access other AWS services."
+        - "<strong style='color: #bb519e;'>Task Role for ECSExec</strong>: A role that the ECSExec service will assume to access the ECS task."
 
       - text: "<strong style='color: blue;'>Route 53 domain with a hosted zone</strong>. This domain will be used to route the application to a subdomain."
       - text: "<strong style='color: blue;'>SSL Certificate for the domain</strong>. This certificate will be used to secure the application and should be requested through ACM."
@@ -97,6 +102,58 @@
     - content: |
         If these requirements are met, all that is required is to enter the information into the provided <span style='color: #006ab7; font-family: EmberHeavy;'>configuration yaml</span>. For each deployment, the user will only need to input the job parameters and have a valid Dockerfile in their Application repository. The configuration will be used for all future deployments and will only need to be updated if the infrastructure changes or if new accounts are added.
 
+    - content: |
+        For the main Jenkins server that AutoPilot will run on, the user can choose any configuration they want as long as credentials are setup to be able to assume the cross account roles listed in the AutoPilot configuration. For mine, I chose to <span style='color: #006ab7; font-family: EmberHeavy;'>attach the role to the server via IMDSv2</span>. This role has the necessary permissions to assume the cross account roles in each target account. The Jenkins server should also have the above listed plugins installed to run the AutoPilot pipeline.
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs2_1.png
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs2_2.png
+      pageSection: "Jenkins Main Server"
+
+    - content: |
+        The build server for AutoPilot should be an <span style='color: #006ab7; font-family: EmberHeavy;'>auto-provisioned for each job</span> with all of the necessary dependencies installed as a best-practice. While you can run all of the jobs on the main node, Jenkins provides an easy way to have new servers spin up for each new pipeline job.<br><br>
+
+        In the configuration for the build node, <span style='color: #006ab7; font-family: EmberHeavy;'>AutoPilot requires a role to be attached via the EC2 instance profile (IMDSv2)</span>. The alternative is to use stored Jenkins AWS Credentials using the Cloudbees AWS Credentials plugin, but support for this is not yet available for this iteration of AutoPilot and would require additional setup. <span style='color: #006ab7; font-family: EmberHeavy;'>Using the instance profile to assume the cross account role is the most secure way to handle the permissions</span> needed for the pipeline to run. I have chosen the <span style='color: #006ab7; font-family: EmberHeavy;'>latest version of Amazon Linux 2023 (ami-063d43db0594b521b)</span> as the base image for the build node. If another image is chosen, some additional dependencies may need to be installed.
+      pageSection: "Jenkins Build Server"
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs2_3.png
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs2_4.png
+    - content: |
+        The build server should also have security group(s) setup to be able to SSH into the build server if needed. In addition, each build server that is spun up should have certain <span style='color: #006ab7; font-family: EmberHeavy;'>dependencies in place for AutoPilot to function correctly</span>. The following screenshots show the security group and initialization script for the build node. I have also included it in a code block below for reference.
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs2_5.png
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs2_6.png
+    - content: ""
+      code: |
+        
+        sudo yum update -y
+        sudo dnf install java-17-amazon-corretto -y
+        sudo yum install git -y
+        sudo yum install docker -y
+        sudo groupadd docker
+        sudo usermod -aG docker ec2-user
+
+
+
+        sudo service docker start
+
+
+        sudo mkdir -p /var/jenkins
+        sudo chown -R ec2-user:ec2-user /var/jenkins
+        sudo chmod -R 770 /var/jenkins
+
+        sudo chmod 777 /var/run/docker.sock
+
+        sudo yum install -y yum-utils shadow-utils
+        sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+        sudo yum -y install terraform
+
+    - content: |
+        To <span style='color: #006ab7; font-family: EmberHeavy;'>enable IMDSv2, the build server must be configured with an IAM role that allows it to assume cross-account roles for AutoPilot</span>. This role is specified in the IAM Instance Profile field. Additionally, selecting Instance Metadata Supported, Enable Metadata HTTP Endpoint, and Metadata Require HTTP Tokens <span style='color: #006ab7; font-family: EmberHeavy;'>ensures that IMDSv2 is used instead of IMDSv1</span>. IMDSv2 improves security by requiring <span style='color: #006ab7; font-family: EmberHeavy;'>session-based authentication with a token</span>, preventing unauthorized access to metadata and reducing the risk of SSRF (Server-Side Request Forgery) attacks. AWS recommends using IMDSv2 for all EC2 instances to enhance security and protect against potential vulnerabilities.
+      imgs:
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs2_8.png
+      - /assets/project-images/jenkins-ecs-images/jenkins_ecs2_9.png
+    - content: |
+        With these prerequisites in place, AutoPilot can <span style='color: #006ab7; font-family: EmberHeavy;'>seamlessly deploy any Dockerized application to ECS across any account</span> that the role has access to. The configuration yaml will define what the account infrastructure looks like, and the Jenkins job parameters will define where the application will be deployed.
   - title: "Deployment Workflow"
     tabTitle: Workflow
     subsections:
@@ -954,7 +1011,7 @@
     tabTitle: Jenkins
     subsections:
     - content: |
-        Jenkins plays a pivotal role in orchestrating the deployment process for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong>. As the automation engine behind the system, Jenkins ensures that each step in the pipeline is executed in a repeatable and controlled manner. The pipeline in responsible for <span style='color: #006ab7; font-family: EmberHeavy;'>triggering Terraform, managing environment variable, orchestrating infrastructure provisioning, and deploying the application to ECS</span>. Leveraging Jenkins pipelines, AutoPilot eliminates manual intervention, ensuring a streamlined deployment workflow across multiple AWS accounts.<br><br>
+        Jenkins plays a pivotal role in orchestrating the deployment process for <strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong>. As the automation engine behind the system, Jenkins ensures that each step in the pipeline is executed in a repeatable and controlled manner. The pipeline is responsible for <span style='color: #006ab7; font-family: EmberHeavy;'>triggering Terraform, managing environment variable, orchestrating infrastructure provisioning, and deploying the application to ECS</span>. Leveraging Jenkins pipelines, AutoPilot eliminates manual intervention, ensuring a streamlined deployment workflow across multiple AWS accounts.<br><br>
 
         Unlike traditional deployment pipelines that require hardcoded scripts for each application, <span style='color: #006ab7; font-family: EmberHeavy;'>AutoPilot dynamically adapts based on user inputs and repository configurations</span>. This approach allows for a <span style='color: #006ab7; font-family: EmberHeavy;'>universal, application-agnostic deployment process</span> that is entirely dependent on the presence of a valid Dockerfile and configuration YAML file.
     - content: |

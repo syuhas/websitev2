@@ -1,4 +1,4 @@
-- id: jenkins-ecs
+- id: jenkins-autopilot
   title: "<strong style='color: #ed7100; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; letter-spacing: .1em; font-family: Saira Stencil One;'>AutoPilot</strong>: Deploying Any Dockerized Application to AWS"
   subtitle: "Application-agnostic, multi-account ECS deployment solution built with Jenkins and Terraform."
   github: https://github.com/syuhas/ecs_deployer

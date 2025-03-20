@@ -117,6 +117,11 @@ export class ProjectDetailComponent implements OnInit {
       queryParams: { tab },
       queryParamsHandling: 'merge'
     }).then(() => {
+      setTimeout(() => {
+        Prism.highlightAll();
+        console.log('highlighted');
+      }, 0);
+      console.log('highlighted');
       if (typeof document !== 'undefined') {
         const container = document.querySelector('.mat-sidenav-content');
         if (container) {
@@ -131,6 +136,7 @@ export class ProjectDetailComponent implements OnInit {
     if (typeof document !== 'undefined') {
       setTimeout(() => {
         Prism.highlightAll();
+        console.log('highlighted');
       }, 0);
     }
   }

@@ -61,7 +61,7 @@
   }
   & .title {
     font-style: italic;
-    letter-spacing: .2rem; 
+    letter-spacing: .25rem; 
     margin: 0;
     font-weight: 500;
     font-size: clamp(.9rem, 1.5vw, 1.5rem);
@@ -275,6 +275,12 @@ hr {
 
   .pageWrapper {
     margin-top: 1.75rem;
+  }
+
+  .name-container {
+    & .title {
+      letter-spacing: .1rem;
+    }
   }
   
 }

@@ -31,7 +31,6 @@
                 <li><strong>Object-Oriented Programming</strong></li>
                 <li><strong>Web Applications & APIs</strong></li>
                 <li><strong>Strong Communication</strong></li>
-                <li><strong>Team Management</strong></li>
                 <li><strong>Cross-Functional Collaboration</strong></li>
                 <li><strong>Critical Thinking and Problem Solving</strong></li>
             </ul>
@@ -70,9 +69,9 @@
             <h2 class="card-title">Technologies</h2>
             <ul class="list-unstyled text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
                 <li><strong>Cloud Platforms:</strong> Amazon Web Services (AWS), Microsoft Azure</li>
-                <li><strong>Languages:</strong> Python, JavaScript/Typescript, PHP, Java, Bash, SQL, Groovy</li>
-                <li><strong>CI/CD/Automation:</strong> Jenkins, Terraform, CloudFormation, Rundeck</li>
-                <li><strong>Containerization:</strong> Docker, Kubernetes</li>
+                <li><strong>Languages:</strong> Python, Go JavaScript/Typescript, PHP, Java, Bash, SQL, Groovy</li>
+                <li><strong>CI/CD/Automation:</strong> Jenkins, GitHub Actions, Terraform, CloudFormation, Rundeck</li>
+                <li><strong>Containerization:</strong> Docker, ECS, Kubernetes</li>
                 <li><strong>Collaboration:</strong> Jira, Confluence, Asana</li>
                 <li><strong>Database/Storage:</strong> MySQL, PostgreSQL, DynamoDB, S3/Athena</li>
                 <li><strong>Monitoring/Logging:</strong> Splunk, Cribl, AWS CloudWatch, AWS CloudTrail</li>
@@ -106,15 +105,16 @@
                 <p>Rockville, MD</p>
                 <p>July 2023 – Oct. 2024</p>
                 <ul class="text-break" [ngClass]="(isSmallScreen$ | async) ? 'lh-sm' : 'lh-lg'">
-                    <li>Oversaw and ensured successful daily production deployments for scheduled releases. Leveraged in-depth knowledge of deployment pipelines and AWS resources to identify and correct configuration or access issues.</li>
+                    <li>Deployed and supported applications in AWS environments using Jenkins for automated deployments, ensuring high availability and fault tolerance for mission-critical operations.</li>
                     <li>Coordinated with Operations and Application teams, utilizing Jira to organize weekly release schedules for 100’s of applications within the organization.</li>
                     <li>Managed access to IAM roles and policies for application teams, creating custom roles and policies for specific use cases while ensuring adherence to the principle of least privilege.</li>
-                    <li>Created daily reporting tools, developed custom applications, and implemented automated solutions to streamline processes for monitoring resource utilization, security compliance, and S3 inventory analysis.</li>
+                    <li>Participated in on-call rotations for application outages and deployment issues to ensure system stability and incident resolution.</li>
+                    <li>Developed reporting tools and custom applications with unit testing, automating processes for resource monitoring, security compliance, and S3 inventory analysis.</li>
                     <li>Wrote and updated weekly Groovy scripts for Jenkins pipelines to ensure clean and efficient production releases.</li>
                     <li><strong>Key Projects:</strong></li>
                     <ul>
                         <li><strong>Lambda Automation for Cross-Region Backups:</strong> Created AWS Lambda functions to automate the enrollment of app teams in cross-region backup solutions, ensuring improved data redundancy and availability.</li>
-                        <li><strong>Jira Automation for Deployment Scheduling:</strong> Developed Jira automation workflows to streamline deployment scheduling for multiple app teams, reducing administrative overhead</li>
+                        <li><strong>Jira Automation for Deployment Scheduling:</strong> Developed Jira automation workflows to streamline deployment scheduling for multiple app teams, reducing administrative overhead.</li>
                         <li><strong>S3 Inventory Tracking:</strong> Designed and implemented an automated solution using Athena to track S3 inventory across 100’s of AWS accounts, providing insights into resource usage, storage size, and activity patterns.</li>
                         <li><strong>Internal Deployment Scheduling and Monitoring Tools:</strong> Contributed to Version 2.0 of internal deployment scheduling and monitoring tools, including custom Jira dashboards, AWS Lambda Canary monitoring, and Jira ticket automation, to optimize deployment processes and improve visibility across teams.</li>
                     </ul>

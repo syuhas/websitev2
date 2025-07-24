@@ -1,0 +1,65 @@
+- id: selfhealing
+  title: "Self-Healing Automation with Prometheus and Ansible"
+  subtitle: Designing an efficient and scalable backfill process for handling large historical datasets.
+  github: https://github.com/syuhas/awsdash-lambda
+  description: |
+    Utilizing threading and batch processing to design an efficient and scalable backfill process for historical datasets.
+  listIcon: /assets/project-images/backfill-images/backfill_icon1.png
+  titleIcons:
+  - /assets/project-images/backfill-images/backfill_icon1.png
+  - /assets/project-images/backfill-images/backfill_icon2.png
+  - /assets/project-images/backfill-images/backfill_icon3.png
+  sections:
+  - title: Overview
+    tabTitle: Overview
+    subsections:
+    - content: ""
+      imgs:
+      - /assets/project-images/backfill-images/backfill_diagram1.png
+
+    - content: |
+        Recently, I have been exploring various aspects of backend automation for dashboards and reporting, with a focus on AWS services and Jenkins build data. For my dataset, I collected metadata for all buckets and objects across my accounts to develop a utilization and cost dashboard for my S3 resources. The dashboard I am making will be in <strong style='color: #006ab7;'>PHP using Laravel</strong> and will be a simple way to visualize the data I am collecting here.<br><br>
+
+        In my <a href="/projects/event">previous project</a>, I described the event-driven architecture I built to track future events for gathering my S3 data. This is great for new data but does not address the thousands of historical objects and buckets I already have in my accounts that have not yet been processed and stored in my <strong style="color: #006ab7">PostgreSQL</strong> database.<br><br>
+
+        This is where <strong style='color: #006ab7;'>backfilling</strong> becomes essential. Since my S3 buckets already contain extensive historical data, I needed a way to efficiently insert thousands of objects into the database to fill in the missing records. Given the potential size of these datasets and the processing time required, I focused on optimizing my script to handle the workload efficiently.<br><br>
+
+      imgs:
+      - /assets/project-images/backfill-images/backfill_diagram2.png
+
+    - content: |
+        While working on this, I was also researching the nuances of Python’s <strong style="color: #006ab7">Global Interpreter Lock (GIL)</strong> and how it interacts with threading and multiprocessing. The primary bottleneck in my workflow was database operations, making threading an ideal solution. By leveraging threading, I was able to handle multiple I/O-bound tasks concurrently, allowing write and delete operations to overlap. Although Python’s GIL prevents true concurrency, it releases the lock during I/O waits, enabling threading to significantly improve the efficiency of my backfill process.<br><br>
+
+        To further enhance performance, I combined <strong style='color: #006ab7;'>batch processing</strong> with Python’s <strong style="color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;">ThreadPoolExecutor</strong> to optimize database write and delete operations. Processing data in manageable chunks prevents database overload and minimizes resource contention (which occurs when multiple threads attempt to access the same resource simultaneously). Each batch is processed independently, ensuring stability and scalability, while errors are handled gracefully to maintain data integrity. This approach strikes a balance between performance and reliability, making it highly effective for processing large datasets. Additionally, for existing object comparisons, I implemented object hashing, which allows for faster update checks compared to individually comparing metadata.<br><br>
+
+        Given the dataset size and the optimizations I implemented, I was able to use <strong style="color: #006ab7">AWS Lambda</strong> as a serverless solution to run my script. For larger datasets, <strong style="color: #006ab7">AWS Batch</strong> is a better choice for processes that run for 24 hours or more. However, for my use case, AWS Lambda is sufficient since the average runtime is well within the 15-minute limit. In the following sections, I will walk through the code and discuss the key design decisions.
+
+      imgs:
+
+
+  - title: Summary
+    tabTitle: Summary
+    subsections:
+
+    - content: |
+        Databases and large datasets have always fascinated me. I recently read an article called <a href="https://www.npr.org/2024/01/03/1198909057/brain-struggles-big-numbers-neuroscience" target="_blank" rel="noopener noreferrer">Why big numbers break our brains</a>, which explains how our minds struggle to comprehend massive numbers like millions and billions. We rely on analogies and visualizations to make sense of them, which resonates with me when working on backfill scripts. These projects involve handling enormous datasets, and the challenge of optimizing them as they scale is like solving an ever-evolving puzzle. That constant adaptation is what draws me to data work—it keeps me learning and refining my approach.
+      imgs:
+      - /assets/project-images/backfill-images/trillion-dollar-image.jpg
+    - content: |
+        Backfilling was something I had encountered professionally but never explored deeply. Whether it's syncing S3 object metadata with a database, restoring records after a migration, or ensuring analytics dashboards reflect complete data, backfilling efficiently is crucial. I wanted to push my skills further by making the process faster, scalable, and less resource-intensive. This led me into threading, batch processing, and database optimization. The deeper I went, the more I realized how many ways there are to improve efficiency, and this project was just the beginning.<br><br> 
+
+        The below logs are from one of the final test benchmarks and really shows how much these optimizations paid off. Initially, the script took nearly an hour to run—impractical for AWS Lambda’s time limits. That was my first realization that multi-threading could drastically improve performance by processing multiple buckets and objects concurrently. Python’s <strong style='color: blue; font-family: monospace, sans-serif; background-color: lightgrey; font-size: small;'>ThreadPoolExecutor</strong> made it easy to spin up threads, but that introduced a new issue—database sessions. Sharing a session across threads caused conflicts, so I switched to scoped sessions to ensure each thread had its own connection, which cleaned up the errors instantly.
+      imgs:
+      - /assets/project-images/backfill-images/backfill_coderun.gif
+    - content: |
+        The biggest improvement came with batch processing. Processing one object at a time, even in parallel, was inefficient. Grouping additions and deletions into chunks dramatically reduced database transactions, speeding things up even further. Structured logging with Loguru was another game changer, allowing me to track execution flow, debug issues, and pinpoint bottlenecks in real-time.<br><br>
+
+        Seeing the transformation from a slow, single-threaded script to a multi-threaded, batch-optimized process that runs in minutes instead of an hour was incredibly rewarding. This project reinforced how small, thoughtful optimizations can have a massive impact, and I’ll be taking these lessons with me into future work.
+    # - content: |
+    #       <strong style="color: rgb(0, 255, 0);">greencode</strong>
+    #       <strong style="color: rgb(172, 172, 255);">blueishcode</strong>
+    #         <strong style="color: red;">redcode</strong>
+    #         <strong style="color: orange;">orangecode</strong>
+    #         <strong style='color: #006ab7;'>purptext</strong>
+    #         <strong style='color: blue;'>bluetext</strong>
+

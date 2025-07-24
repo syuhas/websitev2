@@ -9,6 +9,7 @@
     font-weight: bold;
     text-align: center;
     // padding: 1rem;
+    color: #000453;
 }
 .header {
     position: relative; /* Ensure the parent container is positioned */
@@ -51,10 +52,25 @@
     padding-top: 1rem;
 }
 
+#career-profile {
+    color: #000453;
+    font-weight: 500;
+    font-size: clamp(.8rem, 2vw, 1rem);
+}
+
 .card {
     background-color: #161e2706;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.636);
     color: #444A53;
+}
+
+.card-body {
+    & strong {
+        color: #222ceb;
+    }
+    & li {
+        color: #000453;
+    }
 }
 
 #certifications #badges {

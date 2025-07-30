@@ -1,5 +1,5 @@
 includes:
-- assets/project_yaml/projects/selfhealing.yaml
+# - assets/project_yaml/projects/selfhealing.yaml
 - assets/project_yaml/projects/jenkins-autopilot.yaml
 - assets/project_yaml/projects/backfill.yaml
 - assets/project_yaml/projects/event.yaml

@@ -1470,7 +1470,7 @@
       subsections:
 
         - content: |
-              Databases and large datasets have always fascinated me. I recently read an article called <a href="https://www.npr.org/2024/01/03/1198909057/brain-struggles-big-numbers-neuroscience" target="_blank" rel="noopener noreferrer">Why big numbers break our brains</a>, which explains how our minds struggle to comprehend massive numbers like millions and billions. We rely on analogies and visualizations to make sense of them, which resonates with me when working on backfill scripts. These projects involve handling enormous datasets, and the challenge of optimizing them as they scale is like solving an ever-evolving puzzle. That constant adaptation is what draws me to data work—it keeps me learning and refining my approach.
+              Databases and large datasets have always fascinated me. I recently read an article called <a href="https://www.npr.org/2024/01/03/1198909057/brain-struggles-big-numbers-neuroscience" target="_blank" rel="noopener noreferrer" style="color: blue">Why Big Numbers Break Our Brains</a>, which explains how our minds struggle to comprehend massive numbers like millions and billions. We rely on analogies and visualizations to make sense of them, which resonates with me when working on backfill scripts. These projects involve handling enormous datasets, and the challenge of optimizing them as they scale is like solving an ever-evolving puzzle. That constant adaptation is what draws me to data work—it keeps me learning and refining my approach.
           imgs:
             - /assets/project-images/backfill-images/trillion-dollar-image.jpg
         - content: |

@@ -55,7 +55,7 @@
 #career-profile {
     color: #000453;
     font-weight: 500;
-    font-size: clamp(.8rem, 2vw, 1rem);
+    font-size: clamp(.8rem, 1vw, .95rem);
 }
 
 .card {
@@ -70,6 +70,10 @@
     }
     & li {
         color: #000453;
+    }
+    & .sub-job {
+        font-size: small;
+        color: #444A53;
     }
 }
 

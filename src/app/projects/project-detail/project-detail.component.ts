@@ -8,6 +8,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, Observable, shareReplay, forkJoin } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { YamlService } from '../../services/yaml.service';
+import { GoogleAnalyticsService } from '../../services/google-analytics.service';
 import * as Prism from '@syuhas22/prismjs';
 import '@syuhas22/prismjs/components/prism-python';
 import '@syuhas22/prismjs/components/prism-groovy';
@@ -43,6 +44,7 @@ export class ProjectDetailComponent implements OnInit {
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private yamlService: YamlService,
+    private ga: GoogleAnalyticsService,
   ){}
 
   ngOnInit() {
@@ -76,6 +78,9 @@ export class ProjectDetailComponent implements OnInit {
     this.project = this.projects.find((p) => p.id === projectId) as Project;
   
     if (this.project) {
+      // Track project view
+      this.ga.trackProjectView(this.project.id, this.project.title as string);
+      
       if (this.project.title) {
         this.project.title = this.sanitizer.bypassSecurityTrustHtml(this.project.title as string) as string;
       }
@@ -112,6 +117,9 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   setTab(tab: string) {
+    // Track tab change
+    this.ga.trackProjectTabChange(this.project.id, tab);
+    
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab },
@@ -143,13 +151,19 @@ export class ProjectDetailComponent implements OnInit {
 
 
   openPreview(imageUrl: string): void {
+    this.ga.trackImagePreview(imageUrl, this.project.id);
     this.previewImage = imageUrl;
     this.showPreview = true;
   }
 
   openDetailPreview(imageUrl: string): void {
+    this.ga.trackImagePreview(imageUrl, this.project.id);
     this.detailPreviewImage = imageUrl;
     this.showDetailPreview = true;
+  }
+
+  trackGitHubClick() {
+    this.ga.trackExternalLinkClick('Project GitHub', this.project.github);
   }
 
   closePreview(): void {

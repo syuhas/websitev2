@@ -5,7 +5,7 @@
         </div>
         <h1><strong [innerHTML]="project.title"></strong></h1>
     </div>
-    <h2 class="github">{{ project.subtitle }} [ <img src="/assets/home-images/git.png" alt=""><a class="my-4" href="{{ project.github }}" target="_blank">GITHUB</a> ]</h2>
+    <h2 class="github">{{ project.subtitle }} [ <img src="/assets/home-images/git.png" alt=""><a class="my-4" href="{{ project.github }}" target="_blank" (click)="trackGitHubClick()">GITHUB</a> ]</h2>
     <!-- <hr class="my-0"> -->
 
 

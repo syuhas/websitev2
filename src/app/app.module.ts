@@ -26,6 +26,7 @@ import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/
 import { MatTabGroup } from '@angular/material/tabs';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { GoogleAnalyticsService } from './services/google-analytics.service';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
   providers: [
     provideClientHydration(),
     provideAnimationsAsync(),
-    provideHttpClient(withFetch())
+    provideHttpClient(withFetch()),
+    GoogleAnalyticsService
   ],
   bootstrap: [AppComponent]
 })

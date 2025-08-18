@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, Observable, shareReplay } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
+import { GoogleAnalyticsService } from '../services/google-analytics.service';
 
 @Component({
   selector: 'app-nav',
@@ -21,6 +22,7 @@ export class NavComponent implements OnInit {
     public router: Router,
     private renderer: Renderer2,
     private el: ElementRef,
+    public ga: GoogleAnalyticsService,
     @Inject(PLATFORM_ID) private platformId: Object,
     
   ) {}
@@ -75,14 +77,17 @@ export class NavComponent implements OnInit {
   }
 
   goToGithub() {
+    this.ga.trackExternalLinkClick('GitHub', 'https://github.com/syuhas?tab=repositories');
     window.open('https://github.com/syuhas?tab=repositories', '_blank');
   }
 
   goToLinkedin() {
+    this.ga.trackExternalLinkClick('LinkedIn', 'https://www.linkedin.com/in/stephen-yuhas/');
     window.open('https://www.linkedin.com/in/stephen-yuhas/', '_blank');
   }
 
   goToEmail() {
+    this.ga.trackExternalLinkClick('Email', 'mailto:syuhas22@gmail.com');
     window.open('mailto:syuhas22@gmail.com', '_blank');
   }
 

@@ -8,6 +8,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, distinctUntilChanged, shareReplay, Observable } from 'rxjs';
 import { YamlService } from '../../services/yaml.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { GoogleAnalyticsService } from '../../services/google-analytics.service';
 
 @Component({
   selector: 'app-project-list',
@@ -28,7 +29,8 @@ export class ProjectListComponent implements OnInit{
     private http: HttpClient,
     private router: Router,
     private yamlService: YamlService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private ga: GoogleAnalyticsService
   ){}
   ngOnInit() {
     // const projectId = String(this.route.snapshot.paramMap.get('id'));
@@ -58,6 +60,7 @@ export class ProjectListComponent implements OnInit{
   }
 
     goToProject(project: Project) {
+    this.ga.trackEvent('click', 'Project List', `View Project: ${project.id}`, 1);
     this.router.navigate(['/projects', project.id]);
     }
 

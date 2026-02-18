@@ -10,6 +10,7 @@ sudo groupadd docker
 sudo usermod -aG docker ec2-user
 sudo service docker start
 sudo chmod 777 /var/run/docker.sock
+curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
 
 
 

@@ -6,11 +6,18 @@ sudo yum update -y
 sudo dnf install java-17-amazon-corretto -y
 sudo yum install git -y
 sudo yum install docker -y
+sudo dnf install -y nginx
+sudo dnf install -y certbot python3-certbot-nginx python3-certbot-dns-route53
 sudo groupadd docker
 sudo usermod -aG docker ec2-user
 sudo service docker start
 sudo chmod 777 /var/run/docker.sock
 curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+
+echo "Certbot version:"
+certbot --version || true
+echo "Certbot plugins:"
+certbot plugins || true
 
 
 
